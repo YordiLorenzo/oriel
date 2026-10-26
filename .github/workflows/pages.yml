@@ -31,6 +31,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Browsers keep style.css for 10 minutes; a new version in the link makes each deploy load its own.
+      - name: Version the stylesheet link
+        run: sed -i -E "s|style\.css(\?v=[0-9a-f]+)?\"|style.css?v=${GITHUB_SHA::8}\"|" site/*.html
+
       - uses: actions/upload-pages-artifact@v5
         with:
           path: site
