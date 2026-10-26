@@ -1,0 +1,38 @@
+# oriel
+
+> oriel is an MCP server that lets an AI assistant use the apps on your own Windows PC. It reads each window as text, through the Windows accessibility tree (UI Automation), instead of sending the model screenshots. Free and open source under the Apache License 2.0.
+
+- One exe, `oriel.exe`, about 180 KB. It runs on the .NET Framework 4.8 that Windows includes, installs for your Windows account only, and needs no admin rights.
+- Supported: Windows 11 (tested); Windows 10 version 1903 or later (not tested yet).
+- MCP clients: any client that starts a stdio MCP server. Most testing used Claude Code. Configs for Codex, Claude Desktop, Cursor and VS Code follow each client's documented format but aren't tested.
+- Tools: `windows`, `tree`, `find`, `text`, `wait`, `screenshot`, `invoke`, `set`, `select`, `scroll`, `keys`, `click`, `drag`, `launch`, `window`, `focus`, `close`, `status`, `batch`.
+- Every action replies with what changed in the window (`+` new, `~` changed, `-` gone). `invoke`, `set`, `select` and `scroll` don't take keyboard focus or move the mouse.
+- Safety: password fields can't be filled, read or typed into; the lock screen, sign-in and UAC prompts, credential dialogs, common password managers and open terminals are off limits; no shell or file tools by default. oriel makes no network connections except to itself on 127.0.0.1.
+- oriel-vnc, the second MCP server in the repo, operates macOS, Linux or any desktop with a VNC server through screenshots, clicks and keys.
+- WindowsAgentArena round 9 (Microsoft's benchmark, 153 tasks, Claude Sonnet 5.5 in Claude Code on both sides, two runs each), oriel against Cua Driver 0.38.0: median time per task 49 s against 70 s (30% less), model cost $38 against $61 (38% less), 21.8 against 27.0 turns per task (19% fewer). Cua Driver completed 4 points more tasks: 67% against 63%.
+- Not affiliated with or endorsed by Microsoft, Anthropic or Cua.
+
+Set up with Claude Code, in PowerShell:
+
+```
+.\oriel.exe install
+claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp
+```
+
+## Docs
+
+- [README](https://github.com/YordiLorenzo/oriel/blob/main/README.md): what it does, install, MCP client configs, what it changes on your PC, how it compares
+- [Tools](https://github.com/YordiLorenzo/oriel/blob/main/docs/tools.md): every tool and its arguments
+- [Benchmarks](https://github.com/YordiLorenzo/oriel/blob/main/docs/benchmarks.md): WindowsAgentArena, per-call timings, the agent task suite
+- [Security](https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md): what oriel guarantees, its limits, how to report a problem
+- [oriel-vnc](https://github.com/YordiLorenzo/oriel/blob/main/vnc/README.md): the VNC server for macOS, Linux and other desktops
+
+## Downloads
+
+- [Latest release](https://github.com/YordiLorenzo/oriel/releases/latest): `oriel.exe` and `SHA256SUMS`
+- [Changelog](https://github.com/YordiLorenzo/oriel/blob/main/CHANGELOG.md)
+
+## Optional
+
+- [Design](https://github.com/YordiLorenzo/oriel/blob/main/docs/design.md): how it is built and why it is fast
+- [Roadmap](https://github.com/YordiLorenzo/oriel/blob/main/ROADMAP.md)
