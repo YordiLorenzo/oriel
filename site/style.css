@@ -488,6 +488,37 @@ main { padding-bottom: var(--section); }
 .how > div { padding-top: 22px; border-top: 1px solid rgb(255 181 71 / .4); }
 .how p { margin-top: 10px; }
 
+/* Safety: what is off by default beside what can be turned on. Subgrid rows keep the two lists level. */
+
+.pair { display: grid; gap: 64px; }
+
+@media (min-width: 880px) {
+  .pair {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    column-gap: 64px;
+    row-gap: 0;
+  }
+
+  .pair > div {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    align-content: start;
+  }
+}
+
+.pair h2 { align-self: end; font-size: clamp(1.875rem, 1.45rem + 1.6vw, 2.5rem); }
+.pair .lead { margin-bottom: 28px; }
+
+.checks .hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: .875rem;
+}
+
+
 /* Safety */
 
 .checks {
@@ -515,6 +546,13 @@ main { padding-bottom: var(--section); }
   background: var(--amber);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Things to turn on get a plus instead of a tick. */
+.checks.powers li::before {
+  background: var(--honey);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 /* Set up */
