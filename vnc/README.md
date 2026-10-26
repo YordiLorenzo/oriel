@@ -1,10 +1,11 @@
 # oriel-vnc
 
-oriel-vnc is the other half of [oriel](https://github.com/YordiLorenzo/oriel): an MCP server that lets an AI assistant
-operate any computer that runs a VNC server, through screenshots, clicks and keys. Use it for the machines
-`oriel.exe` can't run on (macOS, Linux) and for screens that have no accessibility tree, such as games, remote
-desktops and canvases. On Windows apps, `oriel.exe` is faster and cheaper: it reads the window as text instead of
-sending pictures.
+**oriel-vnc is an MCP server that lets an AI assistant operate any computer that runs a VNC server, through
+screenshots, clicks and keys.**
+
+It is the second MCP server in [oriel](https://github.com/YordiLorenzo/oriel), for what `oriel.exe` can't reach: Macs,
+Linux machines, and screens with no accessibility tree, such as games, remote desktops and canvases. For Windows apps,
+use `oriel.exe`: it reads each window as text, so the assistant doesn't need a screenshot at every step.
 
 oriel-vnc runs on the computer where the assistant runs and connects to each machine's VNC server. Nothing is
 installed on the machines themselves.
@@ -62,9 +63,10 @@ screen. Actions reply with a fresh screenshot about 0.6 s later, so the assistan
 
 ## How it behaves
 
-- One VNC connection per machine, kept open between calls. A failed call drops the connection and retries once.
-- A machine that is off or asleep fails within 5 seconds instead of waiting out VNC's 30-second timeout.
-- Logins are read on first use and kept in memory only.
+- **One connection per machine,** kept open between calls. A failed call drops the connection and retries once.
+- **Quick to fail.** A machine that is off or asleep fails within 5 seconds instead of waiting out the VNC client's
+  30-second timeout.
+- **Logins in memory only.** oriel-vnc reads them on first use and never writes them to disk.
 
 ## Safety
 

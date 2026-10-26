@@ -11,11 +11,15 @@
 **oriel is an MCP server that lets an AI assistant use the apps on your Windows PC. It reads each window as text,
 through the accessibility tree, instead of looking at screenshots.**
 
-Most computer-use agents send the model a picture at every step and take over your mouse to click. Windows already
-describes every window as a tree of named controls, for screen readers. oriel hands that tree to the assistant, acts
-on the controls directly, and answers each action with what changed, so the assistant rarely has to look twice. On
-Microsoft's WindowsAgentArena, the same model finished tasks 30% faster, at 38% lower cost, with oriel than with Cua
-Driver ([details](#how-it-compares)). oriel is free, open source, and one 180 KB exe that needs no admin rights.
+Most computer-use agents send the model a screenshot at every step, then take over your mouse to click where they
+think a button is. Windows already describes every window as a tree of named controls, for screen readers. oriel
+hands that tree to the assistant, acts on the controls directly, and answers each action with what changed, so the
+assistant rarely has to look twice.
+
+On Microsoft's WindowsAgentArena, the same model finished tasks 30% faster and at 38% lower cost with oriel than with
+Cua Driver, another MCP server that reads the accessibility tree. Cua Driver completed more of the tasks: 67% against
+63% ([details](#how-it-compares)). oriel is free, open source, and a single exe under 200 KB that needs no admin
+rights.
 
 [Download for Windows](https://github.com/YordiLorenzo/oriel/releases/latest) ·
 [Set up your MCP client](#set-up-your-mcp-client) · [What it changes on your PC](#what-oriel-changes-on-your-pc) ·
@@ -45,9 +49,9 @@ set "Characters to copy :"
 
 - **Every control on one line.** `tree` lists a window's named and actionable controls, each with a ref such as
   `kqm17` that later calls use directly, without searching again.
-- **Fast.** An action takes 5 to 20 ms and reading a window 20 to 60 ms ([measured](docs/benchmarks.md)). oriel
-  turns off UI Automation's AutoSetFocus, which otherwise stalls every action for 2 seconds on a locked or busy
-  desktop.
+- **Milliseconds per call.** An action takes 5 to 20 ms and reading a window 20 to 60 ms
+  ([measured](docs/benchmarks.md)). oriel turns off UI Automation's AutoSetFocus, which otherwise stalls every action
+  for 2 seconds on a locked or busy desktop.
 - **Search and wait.** `find` looks for controls by name, including off-screen ones. `wait` returns as soon as a
   window or control appears, driven by the app's own events instead of fixed sleeps.
 
@@ -74,6 +78,8 @@ set "Characters to copy :"
 
 ### Reaches your other computers
 
+- **From a Mac or Linux machine.** Run the assistant there and reach the PC over SSH. oriel passes each call to its
+  copy running in your desktop session. [Set up your MCP client](#set-up-your-mcp-client) shows the command.
 - **oriel-vnc** is the second MCP server in this repo. It runs next to the assistant and operates any desktop with a
   VNC server, such as a Mac or a Linux machine, through screenshots, clicks and keys. Nothing is installed on those
   machines. [vnc/README.md](vnc/README.md)
@@ -114,9 +120,12 @@ Every tool and its options: [docs/tools.md](docs/tools.md). How it is built and 
 
 ## Install
 
+oriel needs no admin rights and installs no service or driver. `oriel uninstall` removes everything it added
+([the full list](#what-oriel-changes-on-your-pc)).
+
 1. Download `oriel.exe` from the [latest release](https://github.com/YordiLorenzo/oriel/releases/latest). To check
    the file, compare `Get-FileHash .\oriel.exe` with the release's `SHA256SUMS`.
-2. In PowerShell, in the download folder (no admin rights needed):
+2. In PowerShell, in the download folder:
 
    ```powershell
    .\oriel.exe install
@@ -130,7 +139,7 @@ Every tool and its options: [docs/tools.md](docs/tools.md). How it is built and 
    claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp
    ```
 
-   Then ask Claude "Which windows are open?". Other clients and use from a Mac are under
+   Then ask Claude "Which windows are open?" to see it work. Other clients and use from a Mac are under
    [Set up your MCP client](#set-up-your-mcp-client).
 
 ### Windows warns about oriel.exe
@@ -144,7 +153,8 @@ oriel isn't code-signed yet, so Windows doesn't recognise the publisher:
 - **Antivirus** may be wary of an unsigned program that sends keystrokes and reads other windows. oriel doesn't try
   to get around it. If you'd rather not run an unsigned download, [build it yourself](#build-from-source).
 
-Every new version starts with no reputation, so expect the same warnings when you update.
+Every new version starts with no reputation, so expect the same warnings when you update. Code signing, so that
+Windows names the publisher, is first on the [roadmap](ROADMAP.md).
 
 ### Updating
 
@@ -243,7 +253,7 @@ model provider, as it does with anything else you show it.
 | What an action changed | In the same reply, control by control | Read the window again | A new screenshot, compared by eye |
 | Canvases and games | `screenshot`, `click` and `drag`, or oriel-vnc | Screenshots and mouse | What they are built for |
 
-**On WindowsAgentArena,** Microsoft's benchmark of everyday tasks in a Windows 11 VM, scored by its own scripts. Both
+**WindowsAgentArena** is Microsoft's benchmark of everyday tasks in a Windows 11 VM, scored by its own scripts. Both
 sides ran Claude Sonnet 5.5 in Claude Code with the same prompt and turn limit; only the MCP server was swapped. Two
 runs each, averaged over the 153 tasks scored in every run:
 
@@ -255,14 +265,14 @@ runs each, averaged over the 153 tasks scored in every run:
 | Tasks completed | 96.2 (63%) | **102.7 (67%)** | Cua Driver 4 points more |
 
 The completion gap is close to the noise: a side's score moves by about 5 tasks between two identical runs, and Cua
-Driver has completed slightly more in each of the last four rounds. Per call, oriel was the fastest of four Windows MCP
-servers on every action measured. Method, every round, per-call timings and the rules against tuning to the
-benchmark: [docs/benchmarks.md](docs/benchmarks.md).
+Driver has completed slightly more in each of the last four reported rounds. Per call, oriel took less time than the
+three other Windows MCP servers on every action measured, for example 6 ms to list windows against Cua Driver's
+501 ms. Method, every round, per-call timings and the rules against tuning to the benchmark:
+[docs/benchmarks.md](docs/benchmarks.md).
 
 Choose a screenshot-based agent if most of the work is in games, canvases or remote desktops, where there is no
-accessibility tree. Cua Driver is close to oriel per action and completed a few more benchmark tasks. oriel is for
-assistants working in everyday Windows apps, where it finishes tasks in less time and for less money, from one 180 KB
-exe.
+accessibility tree. Choose Cua Driver if a few more completed tasks matter more to you than time and cost. Choose
+oriel if your assistant works in everyday Windows apps and you want each task done in less time, for less money.
 
 What comes next: [ROADMAP.md](ROADMAP.md).
 
@@ -274,6 +284,17 @@ Treat it like someone using your PC on your behalf: in the windows it may touch,
 it away from passwords, sign-in and UAC prompts, password managers and terminals, gives it no shell or file access,
 and checks every keystroke and click before sending it. [SECURITY.md](SECURITY.md) lists what oriel guarantees and
 what it doesn't.
+
+### Which MCP clients does it work with?
+
+Any client that starts a stdio MCP server. Only Claude Code is tested. The Codex, Claude Desktop, Cursor and VS Code
+configs under [Set up your MCP client](#set-up-your-mcp-client) follow each client's documented format.
+
+### Was oriel tuned to the benchmark?
+
+Fixes have to help on any PC, not only in the benchmark. The tasks are split in two: a dev half, whose traces are
+read while fixing oriel, and a held-out half that is never read. Every result is reported for both halves.
+[bench/waa/README.md](bench/waa/README.md#not-tuning-to-the-benchmark) has the rules.
 
 ### Can I keep using the PC while the assistant works?
 
