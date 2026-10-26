@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>oriel: fast, cheap computer use for Windows (MCP server)</title>
-  <meta name="description" content="oriel is a free, open-source MCP server that lets your AI assistant use the apps on your own Windows PC, reading each window as text instead of screenshots.">
+  <meta name="description" content="oriel is a free, open-source MCP server that lets your AI assistant use the apps on your Windows PC. It reads each window as text instead of screenshots.">
   <meta name="theme-color" content="#0b0f1e">
   <meta name="color-scheme" content="dark">
   <link rel="canonical" href="https://yordilorenzo.github.io/oriel/">
@@ -12,17 +12,17 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="oriel">
   <meta property="og:title" content="oriel: fast, cheap computer use for Windows">
-  <meta property="og:description" content="A free, open-source MCP server that lets your AI assistant use the apps on your own Windows PC. Same model, 30% faster and 38% cheaper per task than with Cua Driver on WindowsAgentArena.">
+  <meta property="og:description" content="A free, open-source MCP server that lets your AI assistant use the apps on your Windows PC. Same model, 30% faster and 38% cheaper per task than with Cua Driver on WindowsAgentArena.">
   <meta property="og:url" content="https://yordilorenzo.github.io/oriel/">
   <meta property="og:image" content="https://yordilorenzo.github.io/oriel/social-preview.png">
   <meta property="og:image:width" content="1280">
   <meta property="og:image:height" content="640">
-  <meta property="og:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel and the line "Fast, cheap computer use for Windows."">
+  <meta property="og:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel and the line &quot;Fast, cheap computer use for Windows.&quot;">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="oriel: fast, cheap computer use for Windows">
-  <meta name="twitter:description" content="A free, open-source MCP server that lets your AI assistant use the apps on your own Windows PC. Same model, 30% faster and 38% cheaper per task than with Cua Driver on WindowsAgentArena.">
+  <meta name="twitter:description" content="A free, open-source MCP server that lets your AI assistant use the apps on your Windows PC. Same model, 30% faster and 38% cheaper per task than with Cua Driver on WindowsAgentArena.">
   <meta name="twitter:image" content="https://yordilorenzo.github.io/oriel/social-preview.png">
-  <meta name="twitter:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel and the line "Fast, cheap computer use for Windows."">
+  <meta name="twitter:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel and the line &quot;Fast, cheap computer use for Windows.&quot;">
 
   <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" href="icon-32.png" type="image/png" sizes="32x32">
@@ -42,27 +42,11 @@
         "description": "Fast, cheap computer use for Windows."
       },
       {
-        "@type": "WebPage",
-        "@id": "https://yordilorenzo.github.io/oriel/#webpage",
-        "url": "https://yordilorenzo.github.io/oriel/",
-        "name": "oriel: fast, cheap computer use for Windows (MCP server)",
-        "isPartOf": {
-          "@id": "https://yordilorenzo.github.io/oriel/#website"
-        },
-        "about": {
-          "@id": "https://yordilorenzo.github.io/oriel/#software"
-        },
-        "inLanguage": "en-GB",
-        "datePublished": "2026-10-26",
-        "dateModified": "2026-10-26",
-        "primaryImageOfPage": "https://yordilorenzo.github.io/oriel/social-preview.png"
-      },
-      {
         "@type": "SoftwareApplication",
         "@id": "https://yordilorenzo.github.io/oriel/#software",
         "name": "oriel",
         "url": "https://yordilorenzo.github.io/oriel/",
-        "description": "oriel is an MCP server that lets an AI assistant use the apps on your own Windows PC. It reads each window as text, through the accessibility tree, instead of sending the model screenshots. A second server, oriel-vnc, operates any desktop with a VNC server through screenshots, clicks and keys.",
+        "description": "oriel is an MCP server that lets an AI assistant use the apps on your Windows PC. It reads each window as text, through the accessibility tree, instead of screenshots.",
         "applicationCategory": "DeveloperApplication",
         "applicationSubCategory": "MCP server",
         "operatingSystem": "Windows 11, Windows 10 version 1903 or later",
@@ -74,75 +58,10 @@
         "releaseNotes": "https://github.com/YordiLorenzo/oriel/blob/main/CHANGELOG.md",
         "license": "https://www.apache.org/licenses/LICENSE-2.0",
         "isAccessibleForFree": true,
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "image": "https://yordilorenzo.github.io/oriel/social-preview.png",
-        "author": {
-          "@type": "Person",
-          "name": "YordiLorenzo",
-          "url": "https://github.com/YordiLorenzo"
-        },
-        "sameAs": [
-          "https://github.com/YordiLorenzo/oriel"
-        ],
-        "featureList": [
-          "Lists a window's controls as text lines, each with a stable ref",
-          "Every action replies with what changed in the window",
-          "invoke, set, select and scroll act through UI Automation without taking keyboard focus or moving the mouse",
-          "Password fields, sign-in and UAC prompts, password managers and open terminals are off limits",
-          "No shell or file tools by default",
-          "Runs on the PC, or from a Mac or Linux machine over SSH"
-        ]
-      },
-      {
-        "@type": "SoftwareSourceCode",
-        "@id": "https://yordilorenzo.github.io/oriel/#source",
-        "name": "oriel",
-        "codeRepository": "https://github.com/YordiLorenzo/oriel",
-        "programmingLanguage": [
-          "C#",
-          "Python"
-        ],
-        "license": "https://www.apache.org/licenses/LICENSE-2.0",
-        "targetProduct": {
-          "@id": "https://yordilorenzo.github.io/oriel/#software"
-        },
-        "author": {
-          "@type": "Person",
-          "name": "YordiLorenzo",
-          "url": "https://github.com/YordiLorenzo"
-        }
-      },
-      {
-        "@type": "HowTo",
-        "@id": "https://yordilorenzo.github.io/oriel/#install",
-        "name": "Set up oriel with Claude Code",
-        "step": [
-          {
-            "@type": "HowToStep",
-            "position": 1,
-            "name": "Download oriel.exe",
-            "url": "https://yordilorenzo.github.io/oriel/#install",
-            "text": "Download oriel.exe from the latest release. To check the file, compare Get-FileHash .\\oriel.exe with the release's SHA256SUMS."
-          },
-          {
-            "@type": "HowToStep",
-            "position": 2,
-            "name": "Install it",
-            "url": "https://yordilorenzo.github.io/oriel/#install",
-            "text": "In PowerShell, in the download folder, run .\\oriel.exe install. It copies oriel to %LOCALAPPDATA%\\Programs\\oriel and starts it. Add --autostart to start it at sign-in."
-          },
-          {
-            "@type": "HowToStep",
-            "position": 3,
-            "name": "Add it to Claude Code",
-            "url": "https://yordilorenzo.github.io/oriel/#install",
-            "text": "In the same PowerShell window, run claude mcp add --scope user oriel -- \"$env:LOCALAPPDATA\\Programs\\oriel\\oriel.exe\" mcp. Then ask Claude \"Which windows are open?\""
-          }
-        ]
+        "author": { "@type": "Person", "name": "YordiLorenzo", "url": "https://github.com/YordiLorenzo" },
+        "sameAs": ["https://github.com/YordiLorenzo/oriel"]
       },
       {
         "@type": "FAQPage",
@@ -150,83 +69,33 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "How does it compare with Cua Driver and screenshot-based agents?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Screenshot-based agents read pictures of the screen and click at pixel positions. Cua Driver reads the accessibility tree as text too, with screenshots on request, and reads the window again to see what an action changed. oriel lists what changed in the same reply, element by element. In WindowsAgentArena round 9, with the same model, a task took a median of 49 s with oriel and 70 s with Cua Driver, and all 153 tasks cost $38 against $61. Cua Driver completed 4 points more tasks: 67% against 63%. The benchmarks have every round."
-            }
+            "name": "How is it different from Cua Driver?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Both read the accessibility tree. oriel answers every action with what changed, so the assistant doesn't read the window again. On WindowsAgentArena that made tasks 30% faster and 38% cheaper with the same model. Cua Driver completed 4 points more tasks: 67% against 63%." }
           },
           {
             "@type": "Question",
             "name": "Is it safe to let an assistant use my PC?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Treat it like someone using your PC on your behalf: in the windows it is allowed to touch, it can do what you can. Keys, clicks and drags go only to a window that is verified to be in front, and wait for a pause in your own typing and mouse use. Nothing is typed into a password field, and text may only come before a key that can move focus, so {TAB}secret is refused. An allow-list in config.json keeps it to the apps you name. SECURITY.md lists what oriel guarantees and what it doesn't."
-            }
+            "acceptedAnswer": { "@type": "Answer", "text": "In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts and password managers, and has no shell. An allow-list in config.json keeps it to the apps you name. SECURITY.md lists what it guarantees." }
           },
           {
             "@type": "Question",
-            "name": "oriel.exe isn't code-signed. Can I trust it?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Windows warns about 0.1.0 because it isn't signed yet. The source is open, every release lists the file's hash in SHA256SUMS, and you can build oriel yourself with the C# compiler that ships with Windows. Code signing is first on the roadmap: the plan is to apply to the SignPath Foundation. oriel doesn't try to get around antivirus."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I keep using the PC while the assistant works?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "For reading and element actions, yes: invoke, set, select and scroll don't take keyboard focus or move the mouse. keys, click, drag and focus bring a window to the front, so they interrupt you. They wait for a pause in your typing and mouse use, and are refused if you keep going."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Which MCP clients does it work with?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Any client that starts a stdio MCP server. Most of the testing used Claude Code. The configs on this page for Codex, Claude Desktop, Cursor and VS Code follow each client's documented format but aren't tested yet."
-            }
+            "name": "It isn't code-signed. Can I trust it?",
+            "acceptedAnswer": { "@type": "Answer", "text": "The source is open, every release lists its hash in SHA256SUMS, and you can build it yourself with the C# compiler that ships with Windows. Code signing is first on the roadmap." }
           },
           {
             "@type": "Question",
             "name": "Does it work on a Mac or on Linux?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "oriel.exe runs on Windows only. From a Mac or a Linux machine, your assistant can use a Windows PC over SSH. To operate the Mac or Linux machine itself, use oriel-vnc, the second MCP server in the repo: it works with any desktop that runs a VNC server, through screenshots, clicks and keys."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What can't it do?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Canvases and games have no accessibility tree, so oriel can only look at them with screenshot and act with click and drag. Apps running as administrator are out of reach unless oriel runs elevated too; don't run it elevated without a reason. On a locked PC, keys, clicks, drags and bringing a window to the front are refused. It has no shell or file tools by default."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What does it change on my PC?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "It needs no admin rights and installs for your Windows account only, with no service or driver. oriel install copies the exe to %LOCALAPPDATA%\\Programs\\oriel. The first time it runs, it makes %LOCALAPPDATA%\\oriel for its per-user key and settings. --autostart adds a logon entry under HKCU\\...\\Run. When a client connects over SSH and the daemon isn't running, a one-time scheduled task starts it and is then deleted. While the daemon runs, it listens on 127.0.0.1 on a port of its own. The full list says how to undo each one."
-            }
+            "acceptedAnswer": { "@type": "Answer", "text": "oriel.exe runs on Windows. From a Mac or Linux machine, your assistant can use a Windows PC over SSH. For the Mac or Linux desktop itself, use oriel-vnc, the second MCP server in the repo." }
           },
           {
             "@type": "Question",
             "name": "Does it send anything anywhere?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. oriel makes no network connections other than between its own processes on 127.0.0.1: no telemetry, no update checks. Your MCP client does send what oriel reads (window titles, control names, the text you ask it to read) to its model provider, as it does with anything else you show it."
-            }
+            "acceptedAnswer": { "@type": "Answer", "text": "No telemetry and no update checks. Your MCP client sends what oriel reads to its model provider, as it does with anything else you show it." }
           },
           {
             "@type": "Question",
             "name": "How do I remove it?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "In PowerShell: & \"$env:LOCALAPPDATA\\Programs\\oriel\\oriel.exe\" uninstall This stops the daemon, removes the logon entry if there is one, deletes the install folder and the settings folder, and lists what it removed. Then remove oriel from your MCP client's config."
-            }
+            "acceptedAnswer": { "@type": "Answer", "text": "Run & \"$env:LOCALAPPDATA\\Programs\\oriel\\oriel.exe\" uninstall in PowerShell. It removes what it added and lists each item. Then remove oriel from your MCP client." }
           }
         ]
       }
@@ -245,9 +114,8 @@
       </a>
       <nav aria-label="Sections">
         <ul class="nav">
-          <li class="nav-wide"><a href="#features">Features</a></li>
-          <li class="nav-wide"><a href="#benchmarks">Benchmarks</a></li>
-          <li><a href="#install">Set up</a></li>
+          <li class="nav-wide"><a href="#benchmark">Benchmark</a></li>
+          <li><a href="#setup">Set up</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel">GitHub</a></li>
         </ul>
@@ -260,7 +128,7 @@
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <h1 id="hero-title">Fast, cheap computer use for Windows.</h1>
-          <p class="lead">oriel is an MCP server that lets your AI assistant use the apps on your own Windows PC. It reads each window as text, through the accessibility tree, instead of sending the model screenshots.</p>
+          <p class="lead">oriel is an MCP server that lets your AI assistant use the apps on your Windows PC. It reads each window as text instead of screenshots.</p>
           <div class="actions">
             <a class="btn btn-primary" href="https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe">
               <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -271,14 +139,7 @@
               View on GitHub
             </a>
           </div>
-          <p class="meta">Free and open&nbsp;source <span aria-hidden="true">·</span> one&nbsp;180&nbsp;KB&nbsp;exe <span aria-hidden="true">·</span> no&nbsp;admin&nbsp;rights <span aria-hidden="true">·</span> Windows&nbsp;10&nbsp;and&nbsp;11</p>
-          <div class="proof">
-            <ul class="proof-stats">
-              <li><strong>49 s</strong> against 70 s <span>median time per task</span></li>
-              <li><strong>$38</strong> against $61 <span>model cost for 153 tasks</span></li>
-            </ul>
-            <p class="proof-note">oriel against Cua Driver, with the same model, on Microsoft's WindowsAgentArena. Cua Driver completed 4 points more tasks. <a class="text-link" href="#benchmarks">All results</a></p>
-          </div>
+          <p class="meta">Free and open&nbsp;source <span aria-hidden="true">·</span> 180&nbsp;KB <span aria-hidden="true">·</span> No admin&nbsp;rights <span aria-hidden="true">·</span> Windows&nbsp;10 and&nbsp;11</p>
         </div>
 
         <figure class="pane pane-hero">
@@ -287,342 +148,129 @@
             <span class="pane-controls"><i></i><i></i><i></i></span>
           </div>
           <pre class="term"><code><span class="l cmd"><b>&gt;</b> tree Character Map</span><span class="l dim">window [264694] charmap "Character Map" at 15,65 491x437</span><span class="l"><em>[kqm1]</em> Pane "Character Grid"</span><span class="l"><em>[kqm3]</em> Edit "Characters to copy :" value=" "</span><span class="l"><em>[kqm4]</em> Button "Select"</span><span class="l"><em>[kqm5]</em> Button "Copy" (disabled)</span><span class="l"><em>[kqm6]</em> CheckBox "Advanced view" off</span><span class="l dim">...</span><span class="l cmd gap"><b>&gt;</b> set id=kqm3 value="hello"</span><span class="l">set "Characters to copy :"</span><span class="l chg"><b>~</b> <em>[kqm3]</em> Edit "Characters to copy :" value="hello"</span><span class="l chg"><b>~</b> <em>[kqm5]</em> Button "Copy"</span><span class="l dim">(set took 9 ms)</span></code></pre>
-          <figcaption>Read a window, fill a field: the reply lists what changed, so the assistant doesn't look again.</figcaption>
+          <figcaption>One call fills the field. The reply says what changed.</figcaption>
         </figure>
       </div>
     </section>
 
-    <section class="section intro" id="features" aria-labelledby="features-title">
-      <div class="wrap narrow">
-        <h2 id="features-title">Text, not screenshots</h2>
-        <p class="lead">Most computer-use agents work from screenshots. Every step sends the model a picture, clicks land on a guessed pixel, and each click takes over the pointer you are using. Windows already describes every window as a tree of named controls, for screen readers such as Narrator. oriel reads that tree, gives it to the assistant as text, acts on the controls directly, and answers each action with what changed.</p>
+    <section class="section" id="benchmark" aria-labelledby="bench-title">
+      <div class="wrap bench">
+        <div class="bench-head">
+          <h2 id="bench-title">30% faster.<br>38% cheaper.</h2>
+          <p>Same model, same 153 tasks from Microsoft's WindowsAgentArena, two runs each. Only the MCP server changed.</p>
+          <p class="fine">Claude Sonnet 5.5 in Claude Code. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/benchmarks.md">Method and every round</a></p>
+        </div>
+        <table class="bench-table">
+          <thead>
+            <tr>
+              <td></td>
+              <th scope="col" class="col-oriel">oriel</th>
+              <th scope="col">Cua Driver</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Median time per task</th>
+              <td class="col-oriel win">49 s</td>
+              <td>70 s</td>
+            </tr>
+            <tr>
+              <th scope="row">Model cost, all 153 tasks</th>
+              <td class="col-oriel win">$38</td>
+              <td>$61</td>
+            </tr>
+            <tr>
+              <th scope="row">Model turns per task</th>
+              <td class="col-oriel win">21.8</td>
+              <td>27.0</td>
+            </tr>
+            <tr>
+              <th scope="row">Tasks completed</th>
+              <td class="col-oriel">63%</td>
+              <td class="win">67%</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
-    <section class="section numbers" id="benchmarks" aria-labelledby="numbers-title">
+    <section class="section" id="how" aria-labelledby="how-title">
       <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">WindowsAgentArena, round 9: oriel against Cua Driver</p>
-          <h2 id="numbers-title">The same model, 30% faster and 38% cheaper</h2>
-          <p class="lead">153 everyday tasks from Microsoft's <a class="text-link" href="https://github.com/microsoft/WindowsAgentArena">WindowsAgentArena</a>, in a Windows 11 VM, scored by the benchmark's own scripts. Both sides ran Claude Sonnet 5.5 in Claude Code with the same prompt and turn limit; only the MCP server was swapped. Two runs each, averaged. Cua Driver completed 4 points more tasks.</p>
+        <h2 id="how-title">Text, not screenshots</h2>
+        <div class="how">
+          <div>
+            <h3>Reads windows as text</h3>
+            <p>Every control is one line with a short ref, taken from the accessibility tree that Narrator uses.</p>
+          </div>
+          <div>
+            <h3>Leaves your mouse alone</h3>
+            <p>Clicks, fills and selects go through UI Automation, so you can keep using the PC while it works.</p>
+          </div>
+          <div>
+            <h3>Says what changed</h3>
+            <p>Each action replies with the controls that appeared, changed or went away. No second look.</p>
+          </div>
         </div>
-        <ul class="cards cards-4 stats">
-          <li class="card stat">
-            <p class="stat-label">Time per task, median</p>
-            <p class="stat-delta">30% faster</p>
-            <div class="bars" role="img" aria-label="oriel 49 s, Cua Driver 70 s">
-              <div class="bar-row"><span class="bar-name">oriel</span><span class="bar bar-oriel" style="--w:70%"></span><span class="bar-val">49 s</span></div>
-              <div class="bar-row"><span class="bar-name">Cua Driver</span><span class="bar bar-cua" style="--w:100%"></span><span class="bar-val">70 s</span></div>
-            </div>
-          </li>
-          <li class="card stat">
-            <p class="stat-label">Model cost, all 153 tasks</p>
-            <p class="stat-delta">38% cheaper</p>
-            <div class="bars" role="img" aria-label="oriel $38, Cua Driver $61">
-              <div class="bar-row"><span class="bar-name">oriel</span><span class="bar bar-oriel" style="--w:62%"></span><span class="bar-val">$38</span></div>
-              <div class="bar-row"><span class="bar-name">Cua Driver</span><span class="bar bar-cua" style="--w:100%"></span><span class="bar-val">$61</span></div>
-            </div>
-          </li>
-          <li class="card stat">
-            <p class="stat-label">Model turns per task</p>
-            <p class="stat-delta">19% fewer turns</p>
-            <div class="bars" role="img" aria-label="oriel 21.8, Cua Driver 27.0">
-              <div class="bar-row"><span class="bar-name">oriel</span><span class="bar bar-oriel" style="--w:81%"></span><span class="bar-val">21.8</span></div>
-              <div class="bar-row"><span class="bar-name">Cua Driver</span><span class="bar bar-cua" style="--w:100%"></span><span class="bar-val">27.0</span></div>
-            </div>
-          </li>
-          <li class="card stat">
-            <p class="stat-label">Tasks completed</p>
-            <p class="stat-delta stat-delta-neutral">Cua Driver: 4 points more</p>
-            <div class="bars" role="img" aria-label="oriel 63%, Cua Driver 67%">
-              <div class="bar-row"><span class="bar-name">oriel</span><span class="bar bar-oriel" style="--w:63%"></span><span class="bar-val">63%</span></div>
-              <div class="bar-row"><span class="bar-name">Cua Driver</span><span class="bar bar-cua" style="--w:67%"></span><span class="bar-val">67%</span></div>
-            </div>
-          </li>
+      </div>
+    </section>
+
+    <section class="section" id="safety" aria-labelledby="safety-title">
+      <div class="wrap split">
+        <div>
+          <h2 id="safety-title">Careful by default</h2>
+          <p class="lead">It acts as you, and only in windows it is allowed to use. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists every limit.</p>
+        </div>
+        <ul class="checks">
+          <li>Never types into a password field</li>
+          <li>Stays out of sign-in, UAC prompts and password managers</li>
+          <li>No shell and no file tools</li>
+          <li>Only your own MCP clients can connect</li>
         </ul>
-        <p class="after-cards">Shorter bars are better for time, cost and turns; longer is better for tasks completed. The completion gap is close to the noise: a side's score moves by about 5 tasks between two identical runs, and Cua Driver has completed slightly more in each of the last four rounds. Cua Driver is the closest open-source alternative: also a Windows MCP server that reads the accessibility tree. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/benchmarks.md">Method, every round, per-call timings and the rules against tuning to the benchmark</a>.</p>
       </div>
     </section>
 
-    <section class="section compare" id="compare" aria-labelledby="compare-title">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="compare-title">How it compares</h2>
-          <p class="lead">Three ways to let an assistant use a Windows PC: oriel, Cua Driver, and agents that work from screenshots.</p>
-        </div>
-        <div class="table-wrap">
-          <table class="compare-table" role="table">
-            <thead role="rowgroup">
-              <tr role="row">
-                <td role="cell"></td>
-                <th scope="col" role="columnheader">oriel</th>
-                <th scope="col" role="columnheader">Cua Driver</th>
-                <th scope="col" role="columnheader">Screenshot-based agents</th>
-              </tr>
-            </thead>
-            <tbody role="rowgroup">
-              <tr role="row">
-                <th scope="row" role="rowheader">How it sees a window</th>
-                <td role="cell" data-label="oriel">The accessibility tree, as text</td>
-                <td role="cell" data-label="Cua Driver">The accessibility tree, as text, with screenshots on request</td>
-                <td role="cell" data-label="Screenshot-based agents">Screenshots, read by the model</td>
-              </tr>
-              <tr role="row">
-                <th scope="row" role="rowheader">How it acts</th>
-                <td role="cell" data-label="oriel">Accessibility actions on the control; real keys and mouse only for <code>keys</code>, <code>click</code> and <code>drag</code></td>
-                <td role="cell" data-label="Cua Driver">Accessibility actions on element tokens, plus keyboard and mouse tools</td>
-                <td role="cell" data-label="Screenshot-based agents">Mouse clicks at pixel positions, and typing</td>
-              </tr>
-              <tr role="row">
-                <th scope="row" role="rowheader">What an action changed</th>
-                <td role="cell" data-label="oriel">In the same reply, control by control</td>
-                <td role="cell" data-label="Cua Driver">Read the window again</td>
-                <td role="cell" data-label="Screenshot-based agents">A new screenshot, compared by eye</td>
-              </tr>
-              <tr role="row">
-                <th scope="row" role="rowheader">Canvases and games</th>
-                <td role="cell" data-label="oriel"><code>screenshot</code>, <code>click</code> and <code>drag</code>, or <span class="nw">oriel-vnc</span></td>
-                <td role="cell" data-label="Cua Driver">Screenshots and mouse</td>
-                <td role="cell" data-label="Screenshot-based agents">What they are built for</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="after-cards">Choose a screenshot-based agent if most of the work is in games, canvases or remote desktops, where there is no accessibility tree. Cua Driver is close to oriel per action and completed a few more benchmark tasks. oriel is for assistants working in everyday Windows apps, where it finishes tasks in less time and for less money.</p>
-      </div>
-    </section>
-
-    <section class="section feature" aria-labelledby="refs-title">
+    <section class="section" id="setup" aria-labelledby="setup-title">
       <div class="wrap split">
-        <div class="split-copy">
-          <p class="eyebrow">Refs and change reports</p>
-          <h2 id="refs-title">Every action says what changed</h2>
-          <p><code>tree</code> lists a window's named and actionable controls, one per line, each with a ref such as <code>kqm17</code>. The assistant acts on a ref directly, without searching again. Every action replies with what changed in the window, so the assistant rarely has to look twice.</p>
-          <ul class="ticks">
-            <li>oriel waits until the app has stopped reacting, using the window's own accessibility events rather than fixed sleeps, so the report shows the finished result.</li>
-            <li>An element keeps its ref while it exists, and a ref never moves to another element, so an old ref can't hit the wrong control.</li>
-            <li>A name that matches nothing comes back with the closest names, so the assistant can try again without a search.</li>
-          </ul>
-        </div>
-        <figure class="pane">
-          <pre class="term"><code><span class="l">invoked "Place order"</span><span class="l chg"><b>~</b> <em>[crh27]</em> RadioButton "Express delivery" selected</span><span class="l add"><b>+</b> <em>[crh42]</em> Text "Order placed: Ada Lovelace, Large, express, gift wrap, quantity 3"</span><span class="l del"><b>-</b> Text "No order yet"</span></code></pre>
-          <dl class="legend">
-            <div><dt class="add">+</dt><dd>new</dd></div>
-            <div><dt class="chg">~</dt><dd>changed</dd></div>
-            <div><dt class="del">-</dt><dd>gone</dd></div>
-            <div><dt class="add">+ window</dt><dd>a window opened, with its tree</dd></div>
-          </dl>
-        </figure>
-      </div>
-    </section>
-
-    <section class="section feature" aria-labelledby="background-title">
-      <div class="wrap split reverse">
-        <div class="split-copy">
-          <p class="eyebrow">Background actions</p>
-          <h2 id="background-title">In the background, so you can keep working</h2>
-          <p><code>invoke</code>, <code>set</code>, <code>select</code> and <code>scroll</code> act through UI Automation. They don't take keyboard focus or move the mouse, so you can keep working while the assistant does.</p>
-          <ul class="ticks">
-            <li><code>keys</code>, <code>click</code> and <code>drag</code> send real input, for things with no accessibility action: spreadsheet cells, canvases, drawing.</li>
-            <li>They bring the window to the front first, check it is the right one, and wait for a pause in your own typing and mouse use.</li>
-            <li>An action takes 5 to 20 ms and reading a window 20 to 60 ms, measured from another computer on the same network.</li>
-          </ul>
-        </div>
-        <div class="panel lanes">
-          <div class="lane">
-            <p class="lane-title">Element actions</p>
-            <ul class="tool-chips">
-              <li>invoke</li><li>set</li><li>select</li><li>scroll</li>
-            </ul>
-            <ul class="lane-facts">
-              <li>no keyboard focus taken</li>
-              <li>the mouse stays where you left it</li>
-              <li>works on a locked PC too</li>
-            </ul>
-          </div>
-          <div class="lane lane-real">
-            <p class="lane-title">Real input, when needed</p>
-            <ul class="tool-chips">
-              <li>keys</li><li>click</li><li>drag</li>
-            </ul>
-            <ul class="lane-facts">
-              <li>window brought to the front and checked</li>
-              <li>waits for a pause in your typing and mouse use</li>
-              <li>refused while the PC is locked</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section feature" aria-labelledby="safety-title">
-      <div class="wrap split">
-        <div class="split-copy">
-          <p class="eyebrow">Safety</p>
-          <h2 id="safety-title">Kept away from passwords, sign-in and terminals</h2>
-          <p>oriel works on your real desktop, so it is careful by default. In a window it is allowed to use, the assistant can do what you can; an allow-list keeps it to the apps a task needs.</p>
-          <ul class="ticks">
-            <li>Password fields can't be filled, read or typed into.</li>
-            <li>The lock screen, sign-in and UAC prompts, Windows credential dialogs and common password managers are off limits.</li>
-            <li>No shell by default: no tool runs commands or reads or writes files, <code>launch</code> refuses command interpreters, and open terminals are off limits.</li>
-            <li>The daemon listens on loopback only, and every connection proves it holds your per-user key, so only your own clients can use it. The key itself is never sent.</li>
-          </ul>
-        </div>
-        <div class="panel">
-          <p class="panel-title">Off limits by default</p>
-          <ul class="tool-chips quiet">
-            <li>lock screen</li><li>sign-in</li><li>UAC prompts</li><li>credential dialogs</li><li>password fields</li><li>open terminals</li><li>1Password</li><li>KeePass</li><li>KeePassXC</li><li>Bitwarden</li><li>Dashlane</li><li>LastPass</li><li>RoboForm</li><li>Enpass</li><li>NordPass</li><li>Keeper</li>
-          </ul>
-          <p class="panel-title">Your own rules, in <code>%LOCALAPPDATA%\oriel\config.json</code></p>
-          <pre class="term small-term"><code><span class="l dim">more windows to keep off limits:</span><span class="l">{"deny": ["MyBankApp"]}</span><span class="l dim gap">or only these processes:</span><span class="l">{"allow": ["notepad", "chrome"]}</span></code></pre>
-        </div>
-      </div>
-    </section>
-
-    <section class="section feature" aria-labelledby="exe-title">
-      <div class="wrap split reverse">
-        <div class="split-copy">
-          <p class="eyebrow">One file</p>
-          <h2 id="exe-title">One 180 KB exe, on the PC or over SSH</h2>
-          <p><code>oriel.exe</code> has no dependencies: it runs on the .NET Framework 4.8 that Windows includes, so there is nothing else to install. Use it on the PC itself, or from a Mac or Linux machine over SSH.</p>
-          <ul class="ticks">
-            <li>No admin rights, no service, no driver.</li>
-            <li>An SSH session has no desktop, so over SSH <code>oriel mcp</code> passes each call to oriel's daemon in your desktop session, and starts the daemon if it isn't running.</li>
-            <li>No SDK needed to build it yourself: the C# compiler that ships with Windows is enough.</li>
-          </ul>
-        </div>
-        <div class="panel flows">
-          <div class="flow">
-            <p class="flow-title">On the PC</p>
-            <ol class="flow-steps">
-              <li>MCP client</li>
-              <li><code>oriel.exe mcp</code></li>
-              <li>UI Automation</li>
-              <li>your apps</li>
-            </ol>
-          </div>
-          <div class="flow">
-            <p class="flow-title">From a Mac or Linux machine</p>
-            <ol class="flow-steps">
-              <li>MCP client</li>
-              <li><code>ssh</code> to the PC</li>
-              <li><code>oriel mcp</code></li>
-              <li>daemon on 127.0.0.1</li>
-              <li>your apps</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section feature" aria-labelledby="turns-title">
-      <div class="wrap split">
-        <div class="split-copy">
-          <p class="eyebrow">Launch, wait and batch</p>
-          <h2 id="turns-title">Fewer model turns per task</h2>
-          <p><code>launch</code> replies with the new window's tree. <code>wait</code> reacts to the window's own events instead of polling. <code>batch</code> runs a sequence of steps in one call, and its report covers the whole batch. In WindowsAgentArena round 9, tasks took 21.8 turns with oriel against 27.0 with Cua Driver.</p>
-          <ul class="ticks">
-            <li>In Claude Code the tools load up front instead of behind a tool search, which saves a turn at the start of a session.</li>
-            <li><code>screenshot</code> shows one window, for canvases, charts and games, and <code>screenshot=true</code> on an action adds a picture of the result without an extra call.</li>
-          </ul>
-        </div>
-        <figure class="pane">
-          <pre class="term"><code><span class="l cmd"><b>&gt;</b> batch</span><span class="l">{"window": "Calculator", "steps": [</span><span class="l in">{"action": "invoke", "Name": "Seven"},</span><span class="l in">{"action": "invoke", "Name": "Plus"},</span><span class="l in">{"action": "invoke", "Name": "Eight"},</span><span class="l in">{"action": "invoke", "Name": "Equals"}]}</span></code></pre>
-          <figcaption>Four presses, one call. After a step that opens a window or loads a page, add a <code>wait</code> step.</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section class="section" id="works-with" aria-labelledby="works-title">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="works-title">What it works with</h2>
-          <p class="lead">oriel is built on Windows UI Automation, the interface Narrator uses. Anything that exposes it can be read and acted on.</p>
-        </div>
-        <div class="cards cards-4 support">
-          <div class="card">
-            <h3>Windows</h3>
-            <ul class="dots">
-              <li>Windows 11: tested</li>
-              <li>Windows 10, version 1903 or later</li>
-              <li>The .NET Framework 4.8, which Windows includes</li>
-            </ul>
-            <p class="note"><strong>Not yet:</strong> Windows 10 isn't tested. On a locked PC, reading and element actions keep working, but <code>keys</code>, <code>focus</code>, <code>click</code> and <code>drag</code> are refused, and Windows suspends Store apps such as Calculator and Settings.</p>
-          </div>
-          <div class="card">
-            <h3>Apps</h3>
-            <ul class="dots">
-              <li>Anything that exposes UI Automation: most desktop apps (Win32, WPF, WinForms), Store apps, and web pages in browsers</li>
-              <li>Chromium browsers and Electron apps, through their accessibility tree</li>
-              <li>Exercised in WindowsAgentArena: Chrome, Edge, File Explorer, LibreOffice Calc and Writer, VS Code, VLC, Settings, Paint, Clock, Calculator and Notepad</li>
-            </ul>
-            <p class="note"><strong>Not yet:</strong> canvases and games have no accessibility tree, so <code>screenshot</code> shows them and <code>click</code> and <code>drag</code> act on them. Apps running as administrator need an oriel that also runs as administrator.</p>
-          </div>
-          <div class="card">
-            <h3>MCP clients</h3>
-            <ul class="dots">
-              <li>Any client that starts a stdio MCP server</li>
-              <li>Claude Code: most of the testing</li>
-              <li>Codex, Claude Desktop, Cursor and VS Code: configs that follow their documented formats</li>
-            </ul>
-            <p class="note"><strong>Not yet:</strong> testing with clients other than Claude Code.</p>
-          </div>
-          <div class="card">
-            <h3>Other computers</h3>
-            <ul class="dots">
-              <li>macOS, Linux, or anything else with a VNC server, through <strong>oriel-vnc</strong>, the second MCP server in the repo</li>
-              <li>Screenshots scaled for the model, clicks in screenshot coordinates, keys, typing and a zoom for small text</li>
-              <li>Runs next to the assistant; nothing is installed on those machines</li>
-            </ul>
-            <p class="note"><strong>Pixels, not text:</strong> on Windows apps, oriel.exe is faster and cheaper. oriel-vnc is for what the accessibility tree can't reach.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="install" aria-labelledby="install-title">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="install-title">Set up in three steps</h2>
-          <p class="lead">oriel is a stdio MCP server: your assistant starts <code>oriel.exe mcp</code> and talks to it. Install it once for your Windows account, with no admin rights, then add it to your MCP client.</p>
+        <div>
+          <h2 id="setup-title">Set up</h2>
+          <p class="lead">One exe, no admin rights. It works with any MCP client that starts a stdio server.</p>
+          <p class="aside">Need a Mac or Linux desktop too? <a class="text-link nw" href="https://github.com/YordiLorenzo/oriel/tree/main/vnc">oriel-vnc</a>, in the same repo, works with any screen that runs a VNC server.</p>
         </div>
         <ol class="steps">
-          <li class="step">
-            <h3>Download oriel.exe</h3>
-            <p>Get it from the latest release. To check the file, compare <code>Get-FileHash .\oriel.exe</code> with the release's <code>SHA256SUMS</code>.</p>
-            <p><a class="btn btn-primary btn-small" href="https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe">
-              <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Download oriel.exe
-            </a></p>
-          </li>
-          <li class="step">
-            <h3>Install it</h3>
-            <p>In PowerShell, in the download folder:</p>
+          <li>
+            <h3>Install</h3>
+            <p><a class="text-link" href="https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe">Download oriel.exe</a>, then run this in PowerShell in the download folder:</p>
             <pre class="code"><code>.\oriel.exe install</code></pre>
-            <p>It copies oriel to <code>%LOCALAPPDATA%\Programs\oriel</code> and starts it. Add <code class="nw">--autostart</code> to start it at sign-in.</p>
-            <p class="small">0.1.0 isn't code-signed yet, so SmartScreen may show “Windows protected your PC”. Click:</p>
-            <p class="chips"><span class="chip">More info</span> <span class="chip-arrow" aria-hidden="true">→</span> <span class="chip">Run anyway</span></p>
+            <p class="fine">Not signed yet: if SmartScreen stops it, choose More info, then Run anyway.</p>
           </li>
-          <li class="step">
-            <h3>Add it to Claude Code</h3>
-            <p>In the same PowerShell window, which fills in the path for you:</p>
-            <pre class="code"><code>claude mcp add <span class="nw">--scope</span> user oriel <span class="nw">--</span> "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" mcp</code></pre>
-            <p>Then ask Claude “Which windows are open?” It answers through oriel's <code>windows</code> tool.</p>
-          </li>
-        </ol>
-
-        <h3 class="configs-title">Other MCP clients</h3>
-        <p class="configs-lead">Every client needs the same two things: the full path to <code>oriel.exe</code> as the command, and <code>mcp</code> as the argument. Replace <code>&lt;you&gt;</code> with your Windows user name, or paste the path <code>install</code> printed. Restart the client after editing its file. Only Claude Code has been tested; these follow each client's documented format.</p>
-        <div class="configs">
-          <div class="config">
-            <h4>Codex <span class="config-path">%USERPROFILE%\.codex\config.toml</span></h4>
-            <pre class="code"><code>[mcp_servers.oriel]
+          <li>
+            <h3>Add it to your MCP client</h3>
+            <div class="tabs">
+              <input type="radio" name="client" id="tab-claude" checked>
+              <input type="radio" name="client" id="tab-codex">
+              <input type="radio" name="client" id="tab-desktop">
+              <input type="radio" name="client" id="tab-vscode">
+              <input type="radio" name="client" id="tab-ssh">
+              <div class="tab-list">
+                <label for="tab-claude">Claude Code</label>
+                <label for="tab-codex">Codex</label>
+                <label for="tab-desktop">Claude Desktop</label>
+                <label for="tab-vscode">VS Code</label>
+                <label for="tab-ssh">Over SSH</label>
+              </div>
+              <div class="tab-panel panel-claude">
+                <p>In the same PowerShell window:</p>
+                <pre class="code"><code>claude mcp add <span class="nw">--scope</span> user oriel -- "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" mcp</code></pre>
+              </div>
+              <div class="tab-panel panel-codex">
+                <p>In <code>%USERPROFILE%\.codex\config.toml</code>, with your Windows user name for <code>&lt;you&gt;</code>:</p>
+                <pre class="code"><code>[mcp_servers.oriel]
 command = 'C:\<wbr>Users\<wbr>&lt;you&gt;\<wbr>AppData\<wbr>Local\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe'
 args = ["mcp"]</code></pre>
-          </div>
-          <div class="config">
-            <h4>Claude Desktop, Cursor <span class="config-path">claude_desktop_config.json, .cursor\mcp.json</span></h4>
-            <pre class="code"><code>{
+              </div>
+              <div class="tab-panel panel-desktop">
+                <p>In <code>claude_desktop_config.json</code>, or <code>.cursor\mcp.json</code> for Cursor:</p>
+                <pre class="code"><code>{
   "mcpServers": {
     "oriel": {
       "command": "C:\\<wbr>Users\\<wbr>&lt;you&gt;\\<wbr>AppData\\<wbr>Local\\<wbr>Programs\\<wbr>oriel\\<wbr>oriel.exe",
@@ -630,10 +278,10 @@ args = ["mcp"]</code></pre>
     }
   }
 }</code></pre>
-          </div>
-          <div class="config">
-            <h4>VS Code <span class="config-path">.vscode\mcp.json</span></h4>
-            <pre class="code"><code>{
+              </div>
+              <div class="tab-panel panel-vscode">
+                <p>In <code>.vscode\mcp.json</code>:</p>
+                <pre class="code"><code>{
   "servers": {
     "oriel": {
       "type": "stdio",
@@ -642,80 +290,62 @@ args = ["mcp"]</code></pre>
     }
   }
 }</code></pre>
-          </div>
-          <div class="config">
-            <h4>From a Mac or Linux machine</h4>
-            <pre class="code"><code>claude mcp add <span class="nw">--scope</span> user oriel <span class="nw">--</span> ssh my-windows-pc 'C:\<wbr>Users\<wbr>&lt;you&gt;\<wbr>AppData\<wbr>Local\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe' mcp</code></pre>
-            <p class="small">The PC needs OpenSSH Server with key login. oriel passes each call to its daemon in your desktop session.</p>
-          </div>
-          <div class="config">
-            <h4>oriel-vnc, any desktop over VNC <span class="config-path">~/.config/oriel-vnc/hosts.json</span></h4>
-            <pre class="code"><code>claude mcp add <span class="nw">--scope</span> user oriel-vnc <span class="nw">--</span> uvx <span class="nw">--from</span> "git+https://<wbr>github.com/<wbr>YordiLorenzo/<wbr>oriel#subdirectory=vnc" oriel-vnc</code></pre>
-            <p class="small">Needs <a class="text-link" href="https://docs.astral.sh/uv/">uv</a>. List your machines in the host file; logins can come from an environment variable or a command. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/tree/main/vnc">Set-up and tools</a>.</p>
-          </div>
-        </div>
-        <p class="after-steps">To check it without a client: <code>&amp; "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" call windows</code>. To update, run <code>install</code> from the new <code>oriel.exe</code>. Everything oriel changes on your PC, and how to undo it, is in <a class="text-link" href="https://github.com/YordiLorenzo/oriel#what-oriel-changes-on-your-pc">What oriel changes on your PC</a>. Smart App Control, if it is on, blocks unsigned programs; you can <a class="text-link" href="https://github.com/YordiLorenzo/oriel#build-from-source">build oriel yourself</a> instead.</p>
+              </div>
+              <div class="tab-panel panel-ssh">
+                <p>On the Mac or Linux machine. The PC needs OpenSSH Server with key login.</p>
+                <pre class="code"><code>claude mcp add <span class="nw">--scope</span> user oriel -- ssh my-windows-pc 'C:\<wbr>Users\<wbr>&lt;you&gt;\<wbr>AppData\<wbr>Local\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe' mcp</code></pre>
+              </div>
+            </div>
+            <p class="fine">Tested with Claude Code. The other configs follow each client's documented format.</p>
+          </li>
+          <li>
+            <h3>Try it</h3>
+            <p>Ask your assistant: <q>Which windows are open?</q></p>
+          </li>
+        </ol>
       </div>
     </section>
 
     <section class="section" id="faq" aria-labelledby="faq-title">
-      <div class="wrap faq-layout">
+      <div class="wrap split split-faq">
         <div>
-          <h2 id="faq-title">Frequently asked questions</h2>
-          <p class="lead">Anything else? <a class="text-link" href="https://github.com/YordiLorenzo/oriel#faq">The README</a> has more answers, and you can always <a class="text-link" href="https://github.com/YordiLorenzo/oriel/issues">open an issue</a>.</p>
+          <h2 id="faq-title">Questions</h2>
+          <p class="lead">More in <a class="text-link" href="https://github.com/YordiLorenzo/oriel#faq">the README</a>, or <a class="text-link" href="https://github.com/YordiLorenzo/oriel/issues">open an issue</a>.</p>
         </div>
         <div class="faq">
           <details>
-            <summary>How does it compare with Cua Driver and screenshot-based agents?</summary>
-            <p>Screenshot-based agents read pictures of the screen and click at pixel positions. Cua Driver reads the accessibility tree as text too, with screenshots on request, and reads the window again to see what an action changed. oriel lists what changed in the same reply, element by element. In WindowsAgentArena round 9, with the same model, a task took a median of 49 s with oriel and 70 s with Cua Driver, and all 153 tasks cost $38 against $61. Cua Driver completed 4 points more tasks: 67% against 63%. The <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/benchmarks.md">benchmarks</a> have every round.</p>
+            <summary>How is it different from Cua Driver?</summary>
+            <p>Both read the accessibility tree. oriel answers every action with what changed, so the assistant doesn't read the window again. On WindowsAgentArena that made tasks 30% faster and 38% cheaper with the same model. Cua Driver completed 4 points more tasks: 67% against 63%.</p>
           </details>
           <details>
             <summary>Is it safe to let an assistant use my PC?</summary>
-            <p>Treat it like someone using your PC on your behalf: in the windows it is allowed to touch, it can do what you can. Keys, clicks and drags go only to a window that is verified to be in front, and wait for a pause in your own typing and mouse use. Nothing is typed into a password field, and text may only come before a key that can move focus, so <code>{TAB}secret</code> is refused. An allow-list in <code>config.json</code> keeps it to the apps you name. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists what oriel guarantees and what it doesn't.</p>
+            <p>In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts and password managers, and has no shell. An allow-list in <code>config.json</code> keeps it to the apps you name. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists what it guarantees.</p>
           </details>
           <details>
-            <summary>oriel.exe isn't code-signed. Can I trust it?</summary>
-            <p>Windows warns about 0.1.0 because it isn't signed yet. The source is open, every release lists the file's hash in <code>SHA256SUMS</code>, and you can <a class="text-link" href="https://github.com/YordiLorenzo/oriel#build-from-source">build oriel yourself</a> with the C# compiler that ships with Windows. Code signing is first on the <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/ROADMAP.md">roadmap</a>: the plan is to apply to the SignPath Foundation. oriel doesn't try to get around antivirus.</p>
-          </details>
-          <details>
-            <summary>Can I keep using the PC while the assistant works?</summary>
-            <p>For reading and element actions, yes: <code>invoke</code>, <code>set</code>, <code>select</code> and <code>scroll</code> don't take keyboard focus or move the mouse. <code>keys</code>, <code>click</code>, <code>drag</code> and <code>focus</code> bring a window to the front, so they interrupt you. They wait for a pause in your typing and mouse use, and are refused if you keep going.</p>
-          </details>
-          <details>
-            <summary>Which MCP clients does it work with?</summary>
-            <p>Any client that starts a stdio MCP server. Most of the testing used Claude Code. The <a class="text-link" href="#install">configs on this page</a> for Codex, Claude Desktop, Cursor and VS Code follow each client's documented format but aren't tested yet.</p>
+            <summary>It isn't code-signed. Can I trust it?</summary>
+            <p>The source is open, every release lists its hash in <code>SHA256SUMS</code>, and you can <a class="text-link" href="https://github.com/YordiLorenzo/oriel#build-from-source">build it yourself</a> with the C# compiler that ships with Windows. Code signing is first on the <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/ROADMAP.md">roadmap</a>.</p>
           </details>
           <details>
             <summary>Does it work on a Mac or on Linux?</summary>
-            <p><code>oriel.exe</code> runs on Windows only. From a Mac or a Linux machine, your assistant can use a Windows PC over SSH. To operate the Mac or Linux machine itself, use oriel-vnc, the second MCP server in the repo: it works with any desktop that runs a VNC server, through screenshots, clicks and keys.</p>
-          </details>
-          <details>
-            <summary>What can't it do?</summary>
-            <p>Canvases and games have no accessibility tree, so oriel can only look at them with <code>screenshot</code> and act with <code>click</code> and <code>drag</code>. Apps running as administrator are out of reach unless oriel runs elevated too; don't run it elevated without a reason. On a locked PC, keys, clicks, drags and bringing a window to the front are refused. It has no shell or file tools by default.</p>
-          </details>
-          <details>
-            <summary>What does it change on my PC?</summary>
-            <p>It needs no admin rights and installs for your Windows account only, with no service or driver. <code>oriel install</code> copies the exe to <code>%LOCALAPPDATA%\Programs\oriel</code>. The first time it runs, it makes <code>%LOCALAPPDATA%\oriel</code> for its per-user key and settings. <code class="nw">--autostart</code> adds a logon entry under <code>HKCU\...\Run</code>. When a client connects over SSH and the daemon isn't running, a one-time scheduled task starts it and is then deleted. While the daemon runs, it listens on <code>127.0.0.1</code> on a port of its own. <a class="text-link" href="https://github.com/YordiLorenzo/oriel#what-oriel-changes-on-your-pc">The full list</a> says how to undo each one.</p>
+            <p><code>oriel.exe</code> runs on Windows. From a Mac or Linux machine, your assistant can use a Windows PC over SSH. For the Mac or Linux desktop itself, use <a class="text-link nw" href="https://github.com/YordiLorenzo/oriel/tree/main/vnc">oriel-vnc</a>, the second MCP server in the repo.</p>
           </details>
           <details>
             <summary>Does it send anything anywhere?</summary>
-            <p>No. oriel makes no network connections other than between its own processes on <code>127.0.0.1</code>: no telemetry, no update checks. Your MCP client does send what oriel reads (window titles, control names, the text you ask it to read) to its model provider, as it does with anything else you show it.</p>
+            <p>No telemetry and no update checks. Your MCP client sends what oriel reads to its model provider, as it does with anything else you show it.</p>
           </details>
           <details>
             <summary>How do I remove it?</summary>
-            <p>In PowerShell:</p>
             <pre class="code"><code>&amp; "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" uninstall</code></pre>
-            <p>This stops the daemon, removes the logon entry if there is one, deletes the install folder and the settings folder, and lists what it removed. Then remove oriel from your MCP client's config.</p>
+            <p>It removes what it added and lists each item. Then remove oriel from your MCP client. <a class="text-link" href="https://github.com/YordiLorenzo/oriel#what-oriel-changes-on-your-pc">What oriel changes on your PC</a></p>
           </details>
         </div>
       </div>
     </section>
 
     <section class="section closing" aria-labelledby="closing-title">
-      <div class="wrap narrow center">
-        <img class="closing-icon" src="images/icon.png" width="120" height="120" loading="lazy" decoding="async" alt="">
-        <h2 id="closing-title">Let your assistant use your Windows apps</h2>
-        <p class="lead">Free and open source, for Windows 10 and 11. Download one exe, run <code>install</code>, and add it to your MCP client. No admin rights, no telemetry, and <code>uninstall</code> removes what it added.</p>
+      <div class="wrap center">
+        <img class="closing-icon" src="images/icon.png" width="96" height="96" decoding="async" alt="">
+        <h2 id="closing-title">Let your assistant use Windows</h2>
         <div class="actions">
           <a class="btn btn-primary" href="https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -734,21 +364,37 @@ args = ["mcp"]</code></pre>
     <div class="wrap">
       <div class="footer-top">
         <a class="brand" href="./" aria-label="oriel, home">
-          <img src="images/icon-144.png" alt="" width="32" height="32" loading="lazy">
+          <img src="images/icon-144.png" alt="" width="28" height="28" loading="lazy">
           <span class="wordmark" aria-hidden="true">oriel</span>
         </a>
         <ul class="footer-links">
-          <li><a href="https://github.com/YordiLorenzo/oriel">Source on GitHub</a></li>
+          <li><a href="https://github.com/YordiLorenzo/oriel">Source</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel/releases">Releases</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel/blob/main/CHANGELOG.md">Changelog</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">Security</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel/issues">Report a problem</a></li>
         </ul>
       </div>
-      <p>oriel is open source under the <a href="https://github.com/YordiLorenzo/oriel/blob/main/LICENSE">Apache License 2.0</a>, maintained by <a href="https://github.com/YordiLorenzo">YordiLorenzo</a>. Please report security problems privately, as <a href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> describes, not in a public issue.</p>
-      <p>oriel is not affiliated with or endorsed by Microsoft, Anthropic, Cua or the makers of the other tools named here. Windows, Claude, Cua and the other names are trademarks of their owners and appear here only to say what oriel works with or is compared to.</p>
-      <p>Headings are set in Fraunces, under the <a href="fonts/OFL.txt">SIL Open Font License</a>. This page was last updated on <time datetime="2026-10-26">26 October 2026</time>.</p>
+      <p>Apache License 2.0. Not affiliated with Microsoft, Anthropic or Cua; their names are trademarks of their owners. Headings in Fraunces (<a href="fonts/OFL.txt">SIL Open Font License</a>).</p>
     </div>
   </footer>
+
+  <script>
+    // Copy buttons on code blocks, added only when the clipboard is available.
+    if (navigator.clipboard) {
+      for (const pre of document.querySelectorAll(".code")) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "copy";
+        button.textContent = "Copy";
+        button.addEventListener("click", async () => {
+          await navigator.clipboard.writeText(pre.querySelector("code").textContent);
+          button.textContent = "Copied";
+          setTimeout(() => { button.textContent = "Copy"; }, 1500);
+        });
+        pre.append(button);
+      }
+    }
+  </script>
 </body>
 </html>
