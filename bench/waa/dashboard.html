@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAA Live Results</title>
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --text: #1d1d1f; --muted: #6e6e73; --line: #e3e3e0;
+  --pass: #1f9d55; --pass-bg: #e6f6ec; --fail: #d64545; --fail-bg: #fdecec; --part: #c98a00; --part-bg: #fff5d6;
+  --run: #2f6fdf; --run-bg: #e8f0fd; --pend: #b9b9b5; --accent: #2f6fdf;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111113; --panel: #1b1b1f; --text: #ececf0; --muted: #9a9aa3; --line: #2c2c33;
+    --pass: #3ccf7a; --pass-bg: #12301f; --fail: #ff6b6b; --fail-bg: #3a1717; --part: #f0b429; --part-bg: #3a2e0c;
+    --run: #6aa1ff; --run-bg: #16264a; --pend: #55555c; --accent: #6aa1ff;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; }
+header { padding: 20px 24px 8px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+h1 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+.sub { color: var(--muted); font-size: 13px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; padding: 8px 24px 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.card h2 { font-size: 13px; margin: 0 0 6px; color: var(--muted); font-weight: 600; display: flex; justify-content: space-between; }
+.big { font-size: 28px; font-weight: 650; letter-spacing: -0.02em; }
+.big small { font-size: 14px; color: var(--muted); font-weight: 500; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin: 8px 0 6px; display: flex; }
+.bar i { display: block; height: 100%; }
+.meta { color: var(--muted); font-size: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+.live { color: var(--run); font-size: 12px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--run); margin-right: 6px; animation: pulse 1.4s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+.controls { display: flex; gap: 8px; padding: 0 24px 12px; flex-wrap: wrap; }
+select, input { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font: inherit; }
+input { flex: 1; min-width: 160px; }
+.wrap { padding: 0 24px 40px; overflow-x: auto; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { position: sticky; top: 0; background: var(--panel); font-size: 12px; color: var(--muted); font-weight: 600; z-index: 1; }
+tr.task { cursor: pointer; }
+tr.task:hover td { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+td.dom { color: var(--muted); font-size: 12px; white-space: nowrap; }
+td.ins { max-width: 560px; }
+td.cell { width: 150px; white-space: nowrap; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.p-pass { background: var(--pass-bg); color: var(--pass); }
+.p-fail { background: var(--fail-bg); color: var(--fail); }
+.p-part { background: var(--part-bg); color: var(--part); }
+.p-run { background: var(--run-bg); color: var(--run); }
+.p-pend { color: var(--pend); }
+.small { color: var(--muted); font-size: 11px; margin-left: 4px; }
+.tag { font-size: 10px; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; color: var(--muted); margin-left: 6px; }
+tr.detail td { background: color-mix(in srgb, var(--text) 3%, var(--panel)); }
+.details { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.details h3 { font-size: 12px; margin: 0 0 4px; }
+.details pre { white-space: pre-wrap; word-break: break-word; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0; color: var(--text); max-height: 260px; overflow: auto; }
+.domtable td, .domtable th { padding: 6px 10px; }
+.section { padding: 0 24px 16px; }
+.section h2 { font-size: 14px; margin: 8px 0; }
+@media (max-width: 640px) {
+  header, .cards, .controls, .wrap, .section { padding-left: 16px; padding-right: 16px; }
+  td.ins { max-width: 220px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>WindowsAgentArena: live results</h1>
+  <span class="sub" id="sub">loading…</span>
+</header>
+<div class="cards" id="cards"></div>
+<div class="section"><h2>By app <span class="sub">passed of finished tasks, per tool layer</span></h2><div class="wrap" style="padding:0"><table class="domtable" id="domains"></table></div></div>
+<div class="controls">
+  <select id="fdomain"><option value="">All apps</option></select>
+  <select id="fstatus">
+    <option value="">All tasks</option>
+    <option value="differs">Layers disagree</option>
+    <option value="anyfail">Failed in any layer</option>
+    <option value="running">Running now</option>
+    <option value="done">Done in every started layer</option>
+  </select>
+  <input id="fsearch" placeholder="Search instructions…">
+</div>
+<div class="wrap"><table id="tasks"></table></div>
+<script>
+const open = new Set();
+let D = null;
+
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function fmtS(s) { if (s == null) return ""; return s < 90 ? Math.round(s) + "s" : (s / 60).toFixed(1) + "m"; }
+
+function cellState(layer, id) {
+  const st = D.state[layer];
+  const r = st.rows[id];
+  if (r) return r.score >= 1 ? "pass" : r.score > 0 ? "part" : "fail";
+  if (st.running.some(r => r.task === id)) return "run";
+  return "pend";
+}
+
+function pill(layer, id) {
+  const st = D.state[layer], r = st.rows[id], s = cellState(layer, id);
+  if (s === "run") { const run = st.running.find(x => x.task === id); return `<span class="pill p-run"><span class="dot"></span>${fmtS(run.since_s)}</span><span class="small">${run.calls} calls</span>`; }
+  if (s === "pend") return `<span class="pill p-pend">·</span>`;
+  const label = s === "pass" ? "pass" : s === "part" ? r.score.toFixed(2) : "fail";
+  return `<span class="pill p-${s}">${label}</span><span class="small">${fmtS(r.wall_s)} · ${r.turns ?? "?"}t</span>`;
+}
+
+function renderCards() {
+  const total = D.tasks.length;
+  document.getElementById("cards").innerHTML = D.layers.map(l => {
+    const st = D.state[l];
+    const pct = st.done ? (100 * st.score / st.done).toFixed(1) : "–";
+    let pass = 0, fail = 0;
+    for (const r of Object.values(st.rows)) { if (r.score >= 1) pass++; else fail++; }
+    const live = st.running.length === 1 ? `<div class="live"><span class="dot"></span>${esc(D.tasks.find(t => t.id === st.running[0].task)?.instruction || st.running[0].task)}</div>`
+      : st.running.length ? `<div class="live"><span class="dot"></span>${st.running.length} tasks running in parallel</div>` : "";
+    const status = st.alive ? "running" : st.done ? (st.done >= total ? "finished" : "stopped") : "not started";
+    return `<div class="card"><h2><span>${esc(l)}</span><span>${status}</span></h2>
+      <div class="big">${pct}${st.done ? "%" : ""} <small>${st.score} of ${st.done} passed · ${st.done} of ${total} done</small></div>
+      <div class="bar"><i style="width:${100*pass/total}%;background:var(--pass)"></i><i style="width:${100*fail/total}%;background:var(--fail)"></i></div>
+      <div class="meta"><span>dev ${st.halves.dev[0]}/${st.halves.dev[1]}</span><span>held-out ${st.halves.holdout[0]}/${st.halves.holdout[1]}</span></div>
+      <div class="meta"><span>$${st.cost.toFixed(2)}</span><span>median ${fmtS(st.median_s) || "–"}/task</span>${st.eta_min != null ? `<span>~${st.eta_min} min left</span>` : ""}</div>${live}</div>`;
+  }).join("");
+}
+
+function renderDomains() {
+  const doms = [...new Set(D.tasks.map(t => t.domain))];
+  let h = `<tr><th>App</th><th>Tasks</th>${D.layers.map(l => `<th>${esc(l)}</th>`).join("")}</tr>`;
+  for (const d of doms) {
+    const ids = D.tasks.filter(t => t.domain === d).map(t => t.id);
+    h += `<tr><td>${esc(d)}</td><td>${ids.length}</td>` + D.layers.map(l => {
+      const rows = ids.map(i => D.state[l].rows[i]).filter(Boolean);
+      if (!rows.length) return `<td class="small">not reached yet</td>`;
+      const s = rows.reduce((a, r) => a + (r.score || 0), 0);
+      const left = ids.length - rows.length;
+      return `<td>${s.toFixed(s % 1 ? 1 : 0)} of ${rows.length} passed <span class="small">${Math.round(100 * s / rows.length)}%${left ? ` · ${left} to go` : " · all done"}</span></td>`;
+    }).join("") + `</tr>`;
+  }
+  document.getElementById("domains").innerHTML = h;
+}
+
+function renderTasks() {
+  const fd = document.getElementById("fdomain").value, fs = document.getElementById("fstatus").value;
+  const q = document.getElementById("fsearch").value.toLowerCase();
+  const started = D.layers.filter(l => D.state[l].done || D.state[l].running.length);
+  let h = `<tr><th>App</th><th>Task</th>${D.layers.map(l => `<th>${esc(l)}</th>`).join("")}</tr>`;
+  for (const t of D.tasks) {
+    if (fd && t.domain !== fd) continue;
+    if (q && !t.instruction.toLowerCase().includes(q)) continue;
+    const states = D.layers.map(l => cellState(l, t.id));
+    const doneStates = states.filter(s => s === "pass" || s === "fail" || s === "part");
+    if (fs === "differs" && new Set(doneStates).size < 2) continue;
+    if (fs === "anyfail" && !states.includes("fail") && !states.includes("part")) continue;
+    if (fs === "running" && !states.includes("run")) continue;
+    if (fs === "done" && (!started.length || started.some(l => !D.state[l].rows[t.id]))) continue;
+    h += `<tr class="task" data-id="${t.id}"><td class="dom">${esc(t.domain)}</td><td class="ins">${esc(t.instruction)}${t.infeasible ? '<span class="tag">infeasible</span>' : ""}${t.split === "holdout" ? '<span class="tag">held-out</span>' : ""}</td>` +
+      D.layers.map(l => `<td class="cell">${pill(l, t.id)}</td>`).join("") + `</tr>`;
+    if (open.has(t.id)) {
+      h += `<tr class="detail"><td></td><td colspan="${D.layers.length + 1}"><div class="details">` + D.layers.map(l => {
+        const st = D.state[l], r = st.rows[t.id];
+        if (r) return `<div><h3>${esc(l)}: score ${r.score} · ${r.turns ?? "?"} turns · ${r.calls} tool calls · ${fmtS(r.wall_s)} · $${(r.cost_usd || 0).toFixed(2)}${r.infeasible_claimed ? " · claimed infeasible" : ""}${r.subtype && r.subtype !== "success" ? " · " + esc(r.subtype) : ""}</h3><pre>${esc(r.reply)}</pre></div>`;
+        const run = st.running.find(x => x.task === t.id);
+        if (run) return `<div><h3>${esc(l)}: running, ${run.calls} tool calls so far</h3><pre>${esc(run.last.join("\n"))}</pre></div>`;
+        return `<div><h3>${esc(l)}</h3><pre class="small">not run yet</pre></div>`;
+      }).join("") + `<div><h3>task id</h3><pre>${esc(t.id)}</pre></div></div></td></tr>`;
+    }
+  }
+  document.getElementById("tasks").innerHTML = h;
+}
+
+function render() {
+  const total = D.tasks.length;
+  document.getElementById("sub").textContent = `${total} tasks · updated ${D.updated} · click a task for the agent's reply`;
+  const sel = document.getElementById("fdomain");
+  if (sel.options.length === 1) for (const d of new Set(D.tasks.map(t => t.domain))) sel.add(new Option(d, d));
+  renderCards(); renderDomains(); renderTasks();
+}
+
+function load() {
+  const s = document.createElement("script");
+  s.src = "dashboard-data.js?t=" + Date.now();
+  s.onload = () => { D = window.DASH; render(); s.remove(); };
+  s.onerror = () => s.remove();
+  document.head.appendChild(s);
+}
+
+document.getElementById("tasks").addEventListener("click", e => {
+  const tr = e.target.closest("tr.task"); if (!tr) return;
+  const id = tr.dataset.id; open.has(id) ? open.delete(id) : open.add(id); renderTasks();
+});
+for (const id of ["fdomain", "fstatus", "fsearch"]) document.getElementById(id).addEventListener("input", () => D && renderTasks());
+load();
+setInterval(load, 5000);
+</script>
+</body>
+</html>

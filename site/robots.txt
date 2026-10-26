@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yordilorenzo.github.io/oriel/sitemap.xml

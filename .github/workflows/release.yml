@@ -1,0 +1,81 @@
+name: release
+
+# On a version tag (v0.1.0): build oriel.exe with that version, smoke-test it and draft a GitHub release with oriel.exe
+# and SHA256SUMS. Someone publishes the draft by hand. The asset is always named oriel.exe, so
+# releases/latest/download/oriel.exe points at the newest published release.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The tag must match the top heading of CHANGELOG.md ("## 0.1.0 - unreleased", "## 0.1.0 - 2026-11-02" or
+      # "## [0.1.0]"), and that section becomes the release notes.
+      - name: Check the tag against CHANGELOG.md and write the notes
+        id: changelog
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          top=$(awk '{ sub(/\r$/, "") } /^## / { v = $2; gsub(/^\[|\]$/, "", v); sub(/^v/, "", v); print v; exit }' CHANGELOG.md)
+          if [ "$top" != "$version" ]; then
+            echo "::error::The tag is $GITHUB_REF_NAME, but the top heading of CHANGELOG.md is version '$top'."
+            exit 1
+          fi
+          notes="$RUNNER_TEMP/notes.md"
+          awk '{ sub(/\r$/, "") } /^## / { if (found) exit; found = 1; next } found { print }' CHANGELOG.md > "$notes"
+          cat >> "$notes" <<'EOF'
+
+          ## Install
+
+          Download `oriel.exe` below and run `.\oriel.exe install` in a terminal. It installs oriel for your Windows
+          account only, without admin rights, and prints the MCP command for your agent. Add `--autostart` to start its
+          daemon at every logon. `oriel uninstall` removes it again.
+
+          To check the download, compare `(Get-FileHash oriel.exe).Hash` with `SHA256SUMS`.
+
+          This build isn't code-signed yet, so Windows may warn about it, and Smart App Control blocks it.
+
+          EOF
+          echo "All changes: [CHANGELOG.md]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/CHANGELOG.md)" >> "$notes"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "notes=$notes" >> "$GITHUB_OUTPUT"
+
+      - name: Build with the .NET Framework compiler
+        shell: powershell
+        env:
+          VERSION: ${{ steps.changelog.outputs.version }}
+        run: powershell -ExecutionPolicy Bypass -File build\build.ps1 -Version $env:VERSION
+
+      # build.yml's smoke test, after checking that the version reached the exe.
+      - name: Smoke test
+        shell: powershell
+        env:
+          VERSION: ${{ steps.changelog.outputs.version }}
+        run: |
+          $printed = dist\oriel.exe version
+          if ($printed -ne "oriel $env:VERSION") { throw "oriel version printed '$printed', not 'oriel $env:VERSION'" }
+          $product = (Get-Item dist\oriel.exe).VersionInfo.ProductVersion
+          if ($product -ne $env:VERSION) { throw "the exe's product version is '$product', not '$env:VERSION'" }
+          dist\oriel.exe call windows
+
+      - name: Write SHA256SUMS
+        shell: powershell
+        run: |
+          $hash = (Get-FileHash dist\oriel.exe -Algorithm SHA256).Hash.ToLower()
+          [IO.File]::WriteAllText("$PWD\dist\SHA256SUMS", "$hash  oriel.exe`n")
+          Get-Content dist\SHA256SUMS
+
+      - name: Draft the release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.changelog.outputs.version }}
+          NOTES: ${{ steps.changelog.outputs.notes }}
+        run: gh release create "$GITHUB_REF_NAME" dist/oriel.exe dist/SHA256SUMS --draft --title "oriel $VERSION" --notes-file "$NOTES"

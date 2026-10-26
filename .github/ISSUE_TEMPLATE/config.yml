@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions
+    url: https://github.com/YordiLorenzo/oriel#faq
+    about: The FAQ in the README answers the common ones, such as what works while the PC is locked and how to stop oriel starting at sign-in.
+  - name: Security problem
+    url: https://github.com/YordiLorenzo/oriel/security/advisories/new
+    about: Report it privately, not in a public issue.

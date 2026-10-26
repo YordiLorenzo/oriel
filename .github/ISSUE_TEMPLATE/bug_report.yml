@@ -1,0 +1,83 @@
+name: Bug report
+description: Something in oriel doesn't work the way it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check the open issues first, in case someone has reported it already. One problem per report helps.
+        For a security problem, follow [SECURITY.md](https://github.com/YordiLorenzo/oriel/blob/HEAD/SECURITY.md) instead, so the report stays private.
+
+  - type: input
+    id: oriel-version
+    attributes:
+      label: oriel version
+      description: The output of `oriel version`.
+      placeholder: oriel 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: windows-version
+    attributes:
+      label: Windows version
+      description: Press Win+R, type `winver` and press Enter. Copy the version and the OS build.
+      placeholder: Windows 11 25H2, OS build 26200.6584
+    validations:
+      required: true
+
+  - type: dropdown
+    id: client
+    attributes:
+      label: MCP client
+      options:
+        - Claude Code
+        - Codex
+        - Cursor
+        - Another client (write which one below)
+        - None (oriel call from a terminal)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Where the client runs
+      options:
+        - On the same Windows PC
+        - On another computer, over SSH
+    validations:
+      required: true
+
+  - type: input
+    id: app
+    attributes:
+      label: App
+      description: The app or web page it happened in, with its version if you know it.
+      placeholder: LibreOffice Calc 24.8, or a page in Chrome 141
+    validations:
+      required: false
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: >-
+        What you or the assistant did, what you expected, and what oriel did instead. Paste the tool call and oriel's
+        reply if you have them. `oriel call` reproduces most calls from a terminal, for example
+        `oriel call tree --Window "Character Map"`.
+      placeholder: |
+        invoke with window "Settings" and name "Bluetooth" replied "no element named Bluetooth".
+        The Bluetooth item is visible in the window, and tree lists it as [kq12] ListItem "Bluetooth & devices".
+    validations:
+      required: true
+
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: |
+        Whether the PC was locked, whether the app runs as administrator, your `config.json` if you have one, or what you already tried.
+        Replies and trees hold window titles and text from your screen, and paths can include your Windows user name. Read them first and remove anything you don't want to share.
+    validations:
+      required: false

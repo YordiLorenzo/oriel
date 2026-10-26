@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Oriel test form</title>
+<style>body{font:16px system-ui;margin:24px;max-width:720px} label{display:block;margin:10px 0 4px} #list li{padding:6px}</style></head>
+<body>
+<h1>Order form</h1>
+<form id="order" onsubmit="event.preventDefault(); submitOrder();">
+  <label for="name">Full name</label><input id="name" name="name" autocomplete="off">
+  <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="off">
+  <label for="pw">Password</label><input id="pw" name="pw" type="password" autocomplete="off">
+  <label for="size">Size</label>
+  <select id="size" name="size"><option>Small</option><option>Medium</option><option>Large</option><option>Extra large</option></select>
+  <fieldset><legend>Delivery</legend>
+    <label><input type="radio" name="delivery" value="standard" checked> Standard delivery</label>
+    <label><input type="radio" name="delivery" value="express"> Express delivery</label>
+  </fieldset>
+  <label><input type="checkbox" id="gift" name="gift"> Gift wrap</label>
+  <label for="qty">Quantity</label><input id="qty" name="qty" type="range" min="1" max="10" value="1" oninput="qtyOut.value=this.value"><output id="qtyOut">1</output>
+  <label for="notes">Notes</label><textarea id="notes" name="notes" rows="3"></textarea>
+  <p><button type="submit">Place order</button> <button type="button" onclick="document.getElementById('order').reset(); result.textContent='Cleared';">Clear form</button></p>
+</form>
+<p id="result" role="status" aria-live="polite">No order yet</p>
+<h2>Catalogue</h2>
+<ol id="list"></ol>
+<p><a href="page2.html">Go to page two</a></p>
+<script>
+const items = []; for (let i = 1; i <= 120; i++) items.push('<li>Catalogue item ' + i + '</li>');
+document.getElementById('list').innerHTML = items.join('');
+function submitOrder() {
+  const f = new FormData(document.getElementById('order'));
+  document.getElementById('result').textContent = 'Order placed: ' + f.get('name') + ', ' + f.get('size') + ', ' + f.get('delivery') +
+    (f.get('gift') ? ', gift wrap' : '') + ', quantity ' + f.get('qty');
+}
+</script>
+</body></html>

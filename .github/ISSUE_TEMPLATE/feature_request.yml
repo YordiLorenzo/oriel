@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest something oriel could do.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check the open issues and [ROADMAP.md](https://github.com/YordiLorenzo/oriel/blob/HEAD/ROADMAP.md) first, in case it is already there.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What you want to do
+      description: What you or your assistant are trying to do on the PC, and what gets in the way today.
+      placeholder: My assistant fills in a form in an app, but the app's date picker has no accessibility action, so it can't set a date.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: How oriel could help
+      description: What you would like oriel to do. A tree or a tool reply that shows the problem is welcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you use now
+      description: Any workaround or other tool you use for this today.
+    validations:
+      required: false
+
+  - type: input
+    id: setup
+    attributes:
+      label: Your setup
+      description: MCP client, app and Windows version, if they matter for this request.
+      placeholder: Claude Code over SSH, Windows 11
+    validations:
+      required: false

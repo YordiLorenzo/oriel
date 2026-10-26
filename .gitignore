@@ -1,0 +1,12 @@
+dist/
+build/obj/
+*.exe
+__pycache__/
+bench/waa/traces/
+bench/waa/run-*.log
+bench/waa/pilot/traces-*/
+bench/waa/dashboard-data.js
+bench/waa/dashboard-data.js.tmp
+bench/waa/pilot/*-partial/*/
+bench/waa/logs/
+bench/waa/dashboard-data.js.*.tmp

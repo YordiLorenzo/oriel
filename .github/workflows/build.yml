@@ -1,0 +1,28 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build with the .NET Framework compiler
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File build\build.ps1
+      - name: Smoke test
+        shell: powershell
+        run: |
+          dist\oriel.exe version
+          dist\oriel.exe call windows
+      - uses: actions/upload-artifact@v7
+        with:
+          name: oriel
+          path: dist/oriel.exe
+  vnc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check and install oriel-vnc
+        run: |
+          python3 -m py_compile vnc/oriel_vnc.py
+          python3 -m pip install ./vnc
+          command -v oriel-vnc
