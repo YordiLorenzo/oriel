@@ -1,8 +1,8 @@
 name: stats
 
 # Once a day, saves the download count of each release file and this repository's views, clones and referrers as CSV
-# files in the private repository YordiLorenzo/oriel-stats. GitHub keeps traffic for 14 days only and shows it to admins
-# only, so the history goes to a private repository and not to this public one.
+# files in the private repository YordiLorenzo/oriel-stats. GitHub keeps traffic for 14 days only and shows it only to
+# people with push access, so the history goes to a private repository and not to this public one.
 #
 # It needs two fine-grained personal access tokens, saved as secrets of this repository. One token cannot do both jobs:
 # a token has one set of permissions for every repository it can reach, and write access to this repository would let
