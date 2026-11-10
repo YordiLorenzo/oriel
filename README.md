@@ -15,10 +15,10 @@ It reads each window as text through the accessibility tree, presses, fills and 
 Automation so those actions don't move your mouse, and replies to every action with what changed. One exe under
 200 KB, no admin rights, free and open source.
 
-On Microsoft's WindowsAgentArena (round 9, October 2026), with the same model and only the MCP server swapped, tasks
-took a median 49 s with oriel against 70 s with Cua Driver 0.38.0 (mean 74 s against 90 s), at the model cost Claude
-Code reported of $38 against $61 for the 153 tasks. Cua Driver completed 4 points more tasks: 67% against 63%. It ran
-without 4 of its 63 tools, `run_script` among them ([details](#how-it-compares)).
+On Microsoft's WindowsAgentArena (round 9, October 2026), the same model ran with only the MCP server swapped. Tasks
+took a median 49 s with oriel against 70 s with Cua Driver 0.38.0 (mean 74 s against 90 s). The model cost Claude
+Code reported was $38 against $61 per run of 153 tasks. Cua Driver completed 4 points more tasks: 67% against 63%. It
+ran without 4 of its 63 tools, `run_script` among them ([details](#how-it-compares)).
 
 oriel isn't code-signed yet, so SmartScreen warns and Smart App Control, where it is on, blocks it
 ([what to expect](#windows-warns-about-orielexe)). Tested on Windows 11 with Claude Code.
@@ -61,8 +61,8 @@ oriel needs no admin rights and installs no service or driver. `oriel uninstall`
    ```
 
    This copies oriel to `%LOCALAPPDATA%\Programs\oriel` and starts it. Add `--autostart` if you want it running from
-   the moment you sign in. It ends by printing the config for Claude Code, Claude Desktop, Cursor, Codex and SSH, with
-   your real path filled in, ready to paste.
+   the moment you sign in. From release 0.1.1, it ends by printing the config for Claude Code, Claude Desktop, Cursor,
+   Codex and SSH, with your real path filled in, ready to paste.
 3. Add it to Claude Code, in the same PowerShell window:
 
    ```powershell
@@ -139,8 +139,8 @@ twice.
 - **Every control on one line.** `tree` lists a window's named and actionable controls, each with a ref such as
   `kqm17` that later calls use directly, without searching again.
 - **Milliseconds per call.** An action takes 5 to 20 ms and reading a window 20 to 60 ms
-  ([measured](docs/benchmarks.md)). oriel turns off UI Automation's AutoSetFocus, which otherwise stalls every action
-  for 2 seconds on a locked or busy desktop.
+  ([measured](docs/benchmarks.md#1-latency-per-call-benchlatencypy) over SSH, 21 and 22 Oct 2026). oriel turns off
+  UI Automation's AutoSetFocus, which otherwise stalls every action for 2 seconds on a locked or busy desktop.
 - **Search and wait.** `find` looks for controls by name, including off-screen ones. `wait` returns as soon as a
   window or control appears, driven by the app's own events instead of fixed sleeps.
 
@@ -212,10 +212,10 @@ Every tool and its options: [docs/tools.md](docs/tools.md). How it is built and 
 Every client needs the same two things: the full path to the installed `oriel.exe` as the command, and `mcp` as the
 argument.
 
-`oriel install` ends by printing the Claude Code line, the Codex and the Claude Desktop/Cursor blocks and the SSH line
-below with your real path filled in and the backslashes already doubled where JSON and TOML need it, so you can paste
-them as they are. It doesn't print the VS Code or oriel-vnc blocks. If you skipped that, replace `<you>` below with
-your Windows user name. Restart the client after editing its file.
+From release 0.1.1, `oriel install` ends by printing the Claude Code line, the Codex and the Claude Desktop/Cursor
+blocks and the SSH line below with your real path filled in and the backslashes already doubled where JSON and TOML
+need it, so you can paste them as they are. It doesn't print the VS Code or oriel-vnc blocks. With 0.1.0, or without
+that output, replace `<you>` below with your Windows user name. Restart the client after editing its file.
 
 | Client | Command or config file |
 |---|---|
@@ -307,25 +307,26 @@ the MCP server was swapped. Two runs each, averaged over the 153 tasks scored in
 | | oriel | Cua Driver 0.38.0 | Difference |
 |---|---|---|---|
 | Time per task, median (mean) | **49 s** (74 s) | 70 s (90 s) | 30% less time with oriel (median) |
-| Model cost for all 153 tasks, as Claude Code reported it | **$38** | $61 | 38% lower with oriel |
+| Model cost per run of 153 tasks, as Claude Code reported it | **$38** | $61 | 38% lower with oriel |
 | Model turns per task | **21.8** | 27.0 | 19% fewer with oriel |
 | Tasks completed | 96.2 (63%) | **102.7 (67%)** | Cua Driver 4 points more |
 
 - **Time, cost and turns:** each gap is larger than the gap between either layer's own two runs. The benchmark
   doesn't show which of oriel's features made the difference.
 - **Completion:** Cua Driver completed 4.2 points more. Its own two identical runs differed by 6.5 points, so the gap
-  is within run-to-run variation, but Cua Driver was also ahead in rounds 5, 6 and 8.
+  is within run-to-run variation, but Cua Driver was also ahead in every round since round 5
+  ([every round](docs/benchmarks.md#every-round)).
 - **Cua Driver's version and tools:** round 9 ran Cua Driver 0.38.0 without 4 of its 63 tools. `run_script` runs
   JavaScript over Cua Driver's own tools in a sandbox with no file, network or process access; it was hidden because
   oriel has no script tool. `install_ffmpeg` and `install_extension` install software, and `check_for_update` checks
-  GitHub for a newer driver. The newest Cua Driver, 0.46.1, has not run on WindowsAgentArena.
+  GitHub for a newer driver. Cua Driver 0.46.1, the newest on 10 Nov 2026, has not run on WindowsAgentArena.
 - **Cost** is the figure Claude Code reported, worked out from its list prices: an estimate, not a bill.
 
 Every run, the 95% intervals and the earlier rounds: [bench/waa/RESULTS.md](bench/waa/RESULTS.md). Before you quote
 a number, read [what this does not show](docs/benchmarks.md#what-this-does-not-show).
 
-Per call, on 10 Nov 2026, against the newest Cua Driver (unlocked Windows 11 PC, median of 5 runs,
-[bench/headtohead/RESULTS.md](bench/headtohead/RESULTS.md)):
+Per call, on 10 Nov 2026, against Cua Driver 0.46.1, the newest release that day (unlocked Windows 11 PC, median of
+5 runs, [bench/headtohead/RESULTS.md](bench/headtohead/RESULTS.md)):
 
 | Call | oriel 0.1.0 | Cua Driver 0.46.1 |
 |---|---|---|
@@ -363,7 +364,8 @@ configs under [Set up your MCP client](#set-up-your-mcp-client) follow each clie
 
 On Windows it is a research preview on the Pro, Max and Ultra plans, it works from screenshots, and it hides your
 other windows while it works ([docs](https://code.claude.com/docs/en/desktop), read 10 Nov 2026). The Claude Code CLI
-has none on Windows. oriel was never measured against it.
+has none on Windows. oriel works from the Claude Code CLI, reads windows as text, and its element actions don't move
+your mouse or take the focus. oriel was never measured against it.
 
 ### Was oriel tuned to the benchmark?
 
