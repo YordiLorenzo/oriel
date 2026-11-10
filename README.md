@@ -321,7 +321,8 @@ the MCP server was swapped. Two runs each, averaged over the 153 tasks scored in
   GitHub for a newer driver. The newest Cua Driver, 0.46.1, has not run on WindowsAgentArena.
 - **Cost** is the figure Claude Code reported, worked out from its list prices: an estimate, not a bill.
 
-Every run, the 95% intervals and the earlier rounds: [bench/waa/RESULTS.md](bench/waa/RESULTS.md).
+Every run, the 95% intervals and the earlier rounds: [bench/waa/RESULTS.md](bench/waa/RESULTS.md). Before you quote
+a number, read [what this does not show](docs/benchmarks.md#what-this-does-not-show).
 
 Per call, on 10 Nov 2026, against the newest Cua Driver (unlocked Windows 11 PC, median of 5 runs,
 [bench/headtohead/RESULTS.md](bench/headtohead/RESULTS.md)):
