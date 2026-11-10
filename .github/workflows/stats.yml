@@ -1,19 +1,22 @@
 name: stats
 
-# Once a day, saves the download count of each release file and, when the TRAFFIC_TOKEN secret is set, the
-# repository's views, clones and referrers. GitHub shows traffic for the last 14 days only, so this keeps the history
-# as CSV files on the branch "stats". That branch has no shared history with main, so main stays clean.
+# Once a day, saves the download count of each release file and this repository's views, clones and referrers as CSV
+# files in the private repository YordiLorenzo/oriel-stats. GitHub keeps traffic for 14 days only and shows it to admins
+# only, so the history goes to a private repository and not to this public one.
 #
-# TRAFFIC_TOKEN is a fine-grained personal access token for this repository only, with the repository permission
-# "Administration: Read-only". The traffic API needs it; GITHUB_TOKEN cannot read traffic. Add it with
-#   gh secret set TRAFFIC_TOKEN --repo YordiLorenzo/oriel
+# It needs two fine-grained personal access tokens, saved as secrets of this repository. One token cannot do both jobs:
+# a token has one set of permissions for every repository it can reach, and write access to this repository would let
+# it change releases.
+#   TRAFFIC_TOKEN  repository YordiLorenzo/oriel only, "Administration: Read-only" (GITHUB_TOKEN cannot read traffic)
+#   STATS_TOKEN    repository YordiLorenzo/oriel-stats only, "Contents: Read and write"
+# Until both are set, each run prints a notice and saves nothing. The download totals stay public in the releases API.
 on:
   schedule:
     - cron: '17 4 * * *'  # 04:17 UTC each day; GitHub delays runs that start on the hour
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: stats
@@ -25,27 +28,25 @@ defaults:
 
 jobs:
   save:
-    name: Save counts to the stats branch
+    name: Save counts to YordiLorenzo/oriel-stats
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
-
-      # The first run starts the branch with no history.
-      - name: Switch to the stats branch
-        run: |
-          if git ls-remote --exit-code --heads origin stats > /dev/null; then
-            git fetch --depth=1 origin stats
-            git switch --create stats FETCH_HEAD
-          else
-            git switch --orphan stats
-          fi
-
       - name: Save the counts
         env:
           GH_TOKEN: ${{ github.token }}
           TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+          STATS_TOKEN: ${{ secrets.STATS_TOKEN }}
+          STATS_REPO: YordiLorenzo/oriel-stats
         run: |
+          if [ -z "$TRAFFIC_TOKEN" ] || [ -z "$STATS_TOKEN" ]; then
+            echo "::notice::TRAFFIC_TOKEN and STATS_TOKEN are not both set, so nothing was saved. See the top of stats.yml."
+            exit 0
+          fi
+
+          git clone --quiet --depth=1 "https://x-access-token:${STATS_TOKEN}@github.com/${STATS_REPO}.git" stats
+          cd stats
+
           TODAY=$(date -u +%F)
           export TODAY
 
@@ -64,12 +65,7 @@ jobs:
             --jq '.[] | select(.draft | not) | {tag: .tag_name, file: .assets[]} | [env.TODAY, .tag, .file.name, .file.download_count] | @csv' |
             upsert downloads.csv date,release,file,downloads_total 3
 
-          if [ -z "$TRAFFIC_TOKEN" ]; then
-            echo "::notice::TRAFFIC_TOKEN is not set, so only download counts were saved."
-            exit 0
-          fi
           export GH_TOKEN="$TRAFFIC_TOKEN"
-
           # Views and clones per UTC day for the last 14 days. The newest day can be partial; the next run replaces it.
           gh api "repos/$GITHUB_REPOSITORY/traffic/views" --jq '.views[] | [.timestamp[:10], .count, .uniques] | @csv' |
             upsert views.csv date,views,unique_visitors 1
@@ -80,15 +76,11 @@ jobs:
             --jq '.[] | [env.TODAY, .referrer, .count, .uniques] | @csv' |
             upsert referrers.csv date,referrer,views_last_14_days,unique_visitors_last_14_days 2
 
-      # Runs after a failed traffic call too, so that day's download counts are kept. The job still shows the failure.
-      - name: Commit and push
-        if: ${{ !cancelled() }}
-        run: |
           git add -- *.csv
           if git diff --cached --quiet; then
             echo "Nothing changed since the last run."
             exit 0
           fi
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
-            commit --quiet --message "Stats for $(date -u +%F)"
-          git push origin stats
+            commit --quiet --message "Stats for $TODAY"
+          git push --quiet origin HEAD
