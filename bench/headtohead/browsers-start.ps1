@@ -7,6 +7,7 @@ param(
     [string]$Dir = $(if ($env:ORIEL_BENCH_DIR) { $env:ORIEL_BENCH_DIR } else { 'C:\oriel-bench' }),
     [string]$Url = 'https://en.wikipedia.org/wiki/Microsoft_Windows'
 )
+# Start-Process joins -ArgumentList with spaces and drops outer quotes, so each path carries its own quotes.
 # Keep a page behind other windows rendering and exposing its tree.
 $flags = @('--no-first-run', '--no-default-browser-check', '--disable-backgrounding-occluded-windows',
     '--disable-renderer-backgrounding', '--disable-background-timer-throttling')
@@ -14,5 +15,5 @@ $chrome = @("$env:ProgramFiles\Google\Chrome\Application\chrome.exe", "${env:Pro
     Where-Object { Test-Path $_ } | Select-Object -First 1
 $edge = @("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe", "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe") |
     Where-Object { Test-Path $_ } | Select-Object -First 1
-Start-Process $chrome -ArgumentList (@("--user-data-dir=$Dir\browsers\chrome", '--guest') + $flags + $Url)
-Start-Process $edge -ArgumentList (@("--user-data-dir=$Dir\browsers\edge", '--guest', '--disable-features=msImplicitSignin') + $flags + $Url)
+Start-Process $chrome -ArgumentList (@("--user-data-dir=`"$Dir\browsers\chrome`"", '--guest') + $flags + $Url)
+Start-Process $edge -ArgumentList (@("--user-data-dir=`"$Dir\browsers\edge`"", '--guest', '--disable-features=msImplicitSignin') + $flags + $Url)
