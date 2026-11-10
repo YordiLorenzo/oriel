@@ -1,5 +1,42 @@
 # Windows computer-use head-to-head
 
+## 2026-11-10, second run: agent-desktop 1.2.0 added
+
+The same tasks, PC (TOASTER) and MacBook as the run below, a few hours later, with [agent-desktop 1.2.0](https://github.com/vercel-labs/agent-desktop/releases/tag/v1.2.0) added (vercel-labs, released 2026-11-05, the first release with an MCP server). oriel 0.1.0 and Cua Driver 0.46.1 ran again in the same session, so the three columns share one set of conditions. 5 runs per task; the table shows the median wall time per MCP call. Rows: `results-2026-11-10b.json`; printed tables: `results-2026-11-10b.txt`.
+
+**What is different from the first 2026-11-10 run:**
+- **agent-desktop 1.2.0:** the x86_64 Windows archive, SHA-256 checked against the release's `checksums.txt`; the exe is unsigned. It ran as `agent-desktop mcp` with no flags, the setup its [MCP guide](https://github.com/vercel-labs/agent-desktop/blob/v1.2.0/apps/docs/content/docs/guides/mcp.mdx) gives. Its actions are headless by default (UI Automation patterns, no pointer or focus change), and without a session it shows no cursor overlay. Its state folder was in the benchmark folder (`AGENT_DESKTOP_HOME`).
+- **agent-desktop's settings:** the loop from its [quick start](https://github.com/vercel-labs/agent-desktop/blob/v1.2.0/README.md): `snapshot -i` (interactive elements, each with a ref), then `set-value` and `click` on refs. On Character Map a pilot gave 140 to 153 ms for the full tree, `-i` and `-i --compact` alike, so the table uses `-i`. Browser windows were read twice: with `-i`, and as the skeleton its docs give for dense windows (`-i --compact --skeleton`, [Skeleton and drill-down](https://github.com/vercel-labs/agent-desktop/blob/v1.2.0/apps/docs/content/docs/skeleton-and-drill-down.mdx)). `-i --max-depth 6` took 2.44 s in the pilot, no faster than the skeleton.
+- **Browsers:** Chrome and Edge as guests, each in a new profile folder, on the same Wikipedia page (`browsers-start.ps1`). In the first run Edge signed its new profile in to the owner's Windows account by itself. This time it did the same within a minute with `--inprivate` and with `--guest`, so Edge also gets `--disable-features=msImplicitSignin`. After the run `browsers-check.ps1` counted 0 accounts in both bench profiles and 1 in each of the three Edge profiles that had signed in (the negative control), and the owner's own Edge `Local State` had the same hash and time before and after.
+- **Cua Driver's daemon was warmed by one run first**, as the first run's pilot did. See "Not used" below.
+
+| Task | oriel 0.1.0 | Cua Driver 0.46.1 | agent-desktop 1.2.0 |
+|---|---|---|---|
+| List windows | **2 ms** | 31 ms | 44 ms |
+| Launch Character Map | **193 ms** (waits for the window) | 605 ms | 251 ms (named the window 5 of 5 times) |
+| Launch + return its tree, one call | **294 ms** | 2 calls | 2 calls |
+| Character Map tree | **21 ms** | 37 ms (+ 30 ms list_windows to find the window) | 143 ms |
+| Fill a field, by ref/token | **2 ms** | 3 ms | 174 ms |
+| Fill a field, by name | 15 ms | n/a | n/a (find, then act: not timed) |
+| Press a button, by ref/token | **2 ms** | 6 ms | 187 ms |
+| Press + report what changed | **44 ms** | needs a second get_window_state | needs a new snapshot (click lists the open windows only) |
+| Chrome window tree | **101 ms**, 9.1 KB* | 218 ms, 25.9 KB* | 3,058 ms, 131.6 KB, partial*; skeleton 2,402 ms, 16.4 KB |
+| Edge window tree | **104 ms**, 1.3 KB* | 226 ms, 26.6 KB* | 3,066 ms, 137.6 KB, partial*; skeleton 2,418 ms, 22.4 KB |
+| Correct outcome (field = "abc" + char) | 10/10 | 5/5 | 5/5 |
+
+\* Not like-for-like: each tool stops at its own default limit. oriel stops at depth 12 and 400 elements, which on Edge leaves out the page; Cua stops at 250 elements or depth 25; agent-desktop's snapshot stops at its 3 s observation deadline ([`--timeout-ms` 3000](https://github.com/vercel-labs/agent-desktop/blob/v1.2.0/apps/docs/content/docs/commands/observation.mdx)) and returns what it read, marked `complete: false`. agent-desktop answers in JSON, the other two in text.
+
+**Reading it:**
+- **oriel is fastest on every row.** Cua Driver is second on trees and actions.
+- **agent-desktop launches faster than Cua Driver** (251 against 605 ms), but takes 143 to 187 ms per Character Map call, against 2 to 37 ms for the other two. This run did not measure where its time goes. Its docs list work each call does: the MCP server hands each call to the CLI ([MCP guide](https://github.com/vercel-labs/agent-desktop/blob/v1.2.0/apps/docs/content/docs/guides/mcp.mdx), "Tool arguments become CLI arguments"), every CLI call runs in its own process ([1.1.0 changelog](https://github.com/vercel-labs/agent-desktop/blob/v1.2.0/CHANGELOG.md)), a ref acts only when exactly one live element in the whole window still matches it ([Windows skill](https://github.com/vercel-labs/agent-desktop/blob/v1.2.0/skills/agent-desktop-windows/SKILL.md)), and `set-value` reads the value back. A call that does no UI work, `desktop_version`, took 13 ms in the pilot.
+- **On the browser pages agent-desktop takes 2.4 to 3.1 s per tree.** `-i` alone ran into the 3 s deadline on every read. The skeleton shows 3 levels and still took 2.4 s; its docs say that off macOS it reads the whole window to check the refs ([Skeleton and drill-down](https://github.com/vercel-labs/agent-desktop/blob/v1.2.0/apps/docs/content/docs/skeleton-and-drill-down.mdx)).
+- **agent-desktop's `set-value` sent one injected key press each time:** the watcher's keyboard hook counted 2 injected key events (down and up) per `set-value` call, and 0 for its launch, snapshot and click, and for oriel and Cua Driver. Its result lists only `ValuePattern.SetValue`. Which key it was is not recorded.
+- **Same-day check:** Cua Driver 0.46.1 is within 4 ms of the first 2026-11-10 run on every row. oriel is within 2 ms, except the browser trees (Chrome 101 against 109 ms, Edge 104 against 107 ms, in new guest windows on the same page).
+- **Not used: the first combined run**, started 30 s after a fresh Cua Driver daemon. In it Cua Driver took 1.1 to 22 times as long per row (list windows 109 ms, fill 67 ms, press 90 ms), and agent-desktop's Character Map calls 90 to 115 ms longer. oriel, which ran before Cua's first call, matched. Then agent-desktop alone (Cua Driver stopped), oriel alone, Cua Driver alone after a warm-up run, and all three again gave the table above, with total CPU under 15% throughout. The cause is not known. All five sets are in the JSON.
+- **Not run this round:** Terminator and Windows-MCP.
+
+**How it ran:** `get-competitors.ps1 -Dir D:\agent-tools\hth-2026-11-10b -Tools oriel,cua,agent-desktop`; then in the desktop session `browsers-start.ps1`, `bench-start.ps1 -Tools cua`, `relay-start.ps1` (Cua daemon, port 3018) and `relay-start.ps1 -Tool agent-desktop` (port 3020), each with `-Dir D:\agent-tools\hth-2026-11-10b`; `browsers-check.ps1` with the same `-Dir` over SSH before and after. On the Mac, an SSH tunnel for 23018 and 23020, one warm-up run (`--runs 1 --tools cua`), then `ORIEL_BENCH_SSH=toaster ORIEL_BENCH_DIR='D:\agent-tools\hth-2026-11-10b' uv run --script headtohead.py --runs 5 --tools oriel,cua,agent-desktop`. A watcher in the desktop session saw no keyboard, mouse or controller input from a person.
+
 ## 2026-11-10: oriel 0.1.0 against Cua Driver 0.46.1
 
 The 2026-10-21 tasks again, for oriel and Cua Driver only, on the same PC (TOASTER) and from the same MacBook on the LAN. 5 runs per task; the table shows the median wall time per MCP call. Rows: `results-2026-11-10.json`; printed tables: `results-2026-11-10.txt`.
