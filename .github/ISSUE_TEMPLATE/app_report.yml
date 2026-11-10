@@ -7,6 +7,7 @@ body:
       value: |
         oriel reads what an app tells UI Automation. Some apps draw their own controls and tell it little or nothing, and some controls have no action oriel can use. What oriel printed for the window shows which case it is, and whether oriel or the app needs the fix.
         Please check the [issues labelled app support](https://github.com/YordiLorenzo/oriel/issues?q=label%3A%22app%20support%22) first, in case the app is there already. One app per report helps.
+        In the commands below, `oriel` stands for `& "$env:LOCALAPPDATA\Programs\oriel\oriel.exe"` in PowerShell.
 
   - type: input
     id: app
