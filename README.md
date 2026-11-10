@@ -20,8 +20,8 @@ took a median 49 s with oriel against 70 s with Cua Driver 0.38.0 (mean 74 s aga
 Code reported of $38 against $61 for the 153 tasks. Cua Driver completed 4 points more tasks: 67% against 63%. It ran
 without 4 of its 63 tools, `run_script` among them ([details](#how-it-compares)).
 
-oriel isn't code-signed yet, so Windows warns about it ([what to expect](#windows-warns-about-orielexe)). Tested on
-Windows 11 with Claude Code.
+oriel isn't code-signed yet, so SmartScreen warns and Smart App Control, where it is on, blocks it
+([what to expect](#windows-warns-about-orielexe)). Tested on Windows 11 with Claude Code.
 
 [Download for Windows](https://github.com/YordiLorenzo/oriel/releases/latest) · [Install](#install) ·
 [Set up your MCP client](#set-up-your-mcp-client) · [How it compares](#how-it-compares) ·
