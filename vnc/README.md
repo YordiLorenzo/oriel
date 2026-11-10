@@ -1,5 +1,7 @@
 # oriel-vnc
 
+<!-- mcp-name: io.github.YordiLorenzo/oriel-vnc -->
+
 **oriel-vnc is an MCP server that lets an AI assistant operate any computer that runs a VNC server, through
 screenshots, clicks and keys.**
 

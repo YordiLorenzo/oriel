@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.YordiLorenzo/oriel-vnc",
+  "title": "oriel-vnc",
+  "description": "Operates any desktop with a VNC server (macOS, Linux, Windows) through screenshots, clicks and keys.",
+  "repository": {
+    "url": "https://github.com/YordiLorenzo/oriel",
+    "source": "github",
+    "subfolder": "vnc"
+  },
+  "websiteUrl": "https://yordilorenzo.github.io/oriel/",
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "oriel-vnc",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ORIEL_VNC_HOSTS",
+          "description": "Path to the hosts file that lists each machine's VNC address and login. Default: ~/.config/oriel-vnc/hosts.json",
+          "isRequired": false,
+          "format": "filepath"
+        }
+      ]
+    }
+  ]
+}
