@@ -326,7 +326,7 @@ Every run, the 95% intervals and the earlier rounds: [bench/waa/RESULTS.md](benc
 a number, read [what this does not show](docs/benchmarks.md#what-this-does-not-show).
 
 Per call, on 10 Nov 2026, against Cua Driver 0.46.1, the newest release that day (unlocked Windows 11 PC, median of
-5 runs, [bench/headtohead/RESULTS.md](bench/headtohead/RESULTS.md)):
+5 runs, [bench/headtohead/RESULTS.md](bench/headtohead/RESULTS.md#2026-11-10-oriel-010-against-cua-driver-0461)):
 
 | Call | oriel 0.1.0 | Cua Driver 0.46.1 |
 |---|---|---|

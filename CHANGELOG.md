@@ -31,7 +31,10 @@ New ways to install and to check a download. The tools work as in 0.1.0.
 - **Code of conduct:** Contributor Covenant 3.0, with reports through the same private form as security problems.
 - **Preview card:** says Windows 11 and "Lets Claude Code use your Windows apps." instead of Windows 10 and 11 and the old tagline. Its HTML source is in `docs/images/source`.
 - **Download page:** `site/download/` sends visitors on to the latest `oriel.exe` and can count the click with GoatCounter, which sets no cookies.
-- **Demo kit** in `demo/`: a small Windows Forms sign-up app, the prompt and session settings for Claude Code, a screen recording script, and a trace check that fails on any `keys`, `click`, `drag`, window or shell call.
+- **Demo kit** in `demo/`: a small Windows Forms sign-up app, the prompt and session settings for Claude Code, a screen recording script, and a trace check that fails on any `keys`, `click`, `drag`, window or shell call, or on a tool from another MCP server.
+- **Head-to-head, second run on 10 Nov 2026:** agent-desktop 1.2.0 beside oriel 0.1.0 and Cua Driver 0.46.1 in one session, with the browsers as guests in new profiles and a check that no browser account was signed in.
+- **Round 9 chart:** `bench/waa/chart.py` draws `docs/images/benchmark-round9.png` from `stats.py`: time, cost and turns as oriel's difference from Cua Driver with 95% intervals, and each layer's two completion runs.
+- **Site:** the hero line, install with the plugin from 0.1.1, two first prompts that act, the Windows warnings, round 9 with its caveat and the 10 Nov per-call table, and five answer pages (Claude Code computer use on Windows, oriel and Cua Driver, oriel and Windows-MCP, a Windows PC from a Mac over SSH, testing your Windows app), all in `sitemap.xml` and `llms.txt`.
 - **docs/tools.md:** two Windows Forms limits found while building the demo: a ListBox shows `find` only its visible rows, and an app built without a target framework attribute offers `select` no combo box items.
 
 ## 0.1.0 - 2026-10-26
