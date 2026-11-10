@@ -1,15 +1,15 @@
 # Start mcp-relay.ps1 (next to this script) for a stdio MCP server on loopback port -Port, in the desktop session: run
 # it from a PowerShell window on the PC's desktop. -Dir is the benchmark folder that get-competitors.ps1 filled.
 # -Tool cua (default, port 3018): the relayed "cua-driver mcp" talks to the daemon that bench-start.ps1 started; with
-# -Direct it is bare "cua-driver mcp", which on Windows owns its runtime (Cua Driver 0.46 and later). Cua Driver's
+# -Direct (default port 3019) it is bare "cua-driver mcp", which on Windows owns its runtime (Cua Driver 0.46 and later). Cua Driver's
 # telemetry and its update check are off for the relayed processes only.
 # -Tool agent-desktop (port 3020): "agent-desktop mcp", with its state root in -Dir\agent-desktop\state, so its
 # snapshots stay in the benchmark folder.
 param(
     [string]$Dir = $(if ($env:ORIEL_BENCH_DIR) { $env:ORIEL_BENCH_DIR } else { 'C:\oriel-bench' }),
     [ValidateSet('cua', 'agent-desktop')][string]$Tool = 'cua',
-    [int]$Port = $(if ($Tool -eq 'agent-desktop') { 3020 } else { 3018 }),
-    [switch]$Direct
+    [switch]$Direct,
+    [int]$Port = $(if ($Tool -eq 'agent-desktop') { 3020 } elseif ($Direct) { 3019 } else { 3018 })
 )
 if ($Tool -eq 'agent-desktop') {
     $env:AGENT_DESKTOP_HOME = "$Dir\agent-desktop\state"
