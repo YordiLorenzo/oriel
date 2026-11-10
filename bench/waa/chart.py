@@ -112,10 +112,12 @@ def main():
     layers = [("oriel", ORIEL, oriel_runs), ("Cua Driver", CUA, cua_runs)]
     gap, gap_lo, gap_hi = (pct(v) for v in everything["diff"]["completed"])
     fig.text(0.04, 0.375, "Tasks completed: each layer's two runs", fontsize=11, fontweight="bold")
-    fig.text(0.04, 0.347, f"Gap between the layers: {abs(gap):.1f} points (95% interval {min(abs(gap_lo), abs(gap_hi)):.1f} to "
-             f"{max(abs(gap_lo), abs(gap_hi)):.1f}). Gap between one layer's own two runs: oriel "
+    # Said from the leader's side; the bounds keep their signs, so an interval that contains 0 still shows it.
+    leader, lead, lead_lo, lead_hi = ("Cua Driver", -gap, -gap_hi, -gap_lo) if gap < 0 else ("oriel", gap, gap_lo, gap_hi)
+    fig.text(0.04, 0.358, f"Gap between the layers: {leader} {lead:.1f} points ahead (95% interval {lead_lo:.1f} to "
+             f"{lead_hi:.1f}).\nGap between one layer's own two runs: oriel "
              f"{abs(pct(oriel_runs['diff']['completed'][0])):.1f}, Cua Driver {abs(pct(cua_runs['diff']['completed'][0])):.1f}.",
-             fontsize=9, color=INK2)
+             fontsize=9, color=INK2, va="top", linespacing=1.5)
     values = [pct(r[k]["completed"]) for _, _, r in layers for k in ("cua", "oriel")]  # "cua" is run 1, "oriel" run 2
     bottom.set_xlim(min(values) - 3, max(values) + 3)
     bottom.set_ylim(1.6, -0.6)
