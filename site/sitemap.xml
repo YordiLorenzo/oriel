@@ -2,6 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://yordilorenzo.github.io/oriel/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-11-10</lastmod>
+  </url>
+  <url>
+    <loc>https://yordilorenzo.github.io/oriel/claude-code-computer-use-windows/</loc>
+    <lastmod>2026-11-10</lastmod>
+  </url>
+  <url>
+    <loc>https://yordilorenzo.github.io/oriel/oriel-vs-cua-driver/</loc>
+    <lastmod>2026-11-10</lastmod>
+  </url>
+  <url>
+    <loc>https://yordilorenzo.github.io/oriel/oriel-vs-windows-mcp/</loc>
+    <lastmod>2026-11-10</lastmod>
+  </url>
+  <url>
+    <loc>https://yordilorenzo.github.io/oriel/windows-from-mac-over-ssh/</loc>
+    <lastmod>2026-11-10</lastmod>
+  </url>
+  <url>
+    <loc>https://yordilorenzo.github.io/oriel/test-windows-app-claude-code/</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
 </urlset>
