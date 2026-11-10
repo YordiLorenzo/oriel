@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": ["mcp__oriel__*"],
+    "deny": [
+      "Bash", "PowerShell", "Monitor",
+      "mcp__oriel__keys", "mcp__oriel__click", "mcp__oriel__drag",
+      "mcp__oriel__focus", "mcp__oriel__window", "mcp__oriel__launch", "mcp__oriel__close"
+    ]
+  }
+}
