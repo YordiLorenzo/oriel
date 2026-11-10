@@ -28,11 +28,11 @@ The 2026-10-21 tasks again, for oriel and Cua Driver only, on the same PC (TOAST
 
 **Reading it:**
 - **oriel is still faster on every row**, but by less than on 2026-10-21.
-- **The old Cua gaps came from the conditions, not the version.** Cua 0.38.0, run in the same session, gives the same numbers as 0.46.1 within a few ms. So listing windows (501 ms then, 30-40 ms now) and launching (902 ms then, about 610 ms now) changed with the PC's state. The known difference is the lock (locked then, unlocked now); this is an inference, since the open windows differ too.
+- **The old Cua gaps came from the conditions, not the version.** Cua 0.38.0, run in the same session, is within 15 ms of 0.46.1 on every row. So listing windows (501 ms then, 30-40 ms now) and launching (902 ms then, about 610 ms now) changed with the PC's state. The known difference is the lock (locked then, unlocked now); this is an inference, since the open windows differ too.
 - **Per action both take a few ms** (oriel 2 ms, Cua 3-5 ms). The gaps left: listing windows (1 against 30 ms, and Cua needs it to find a window), launching (192 against 604 ms), and the one-call launch + tree and act + report that Cua has no match for.
 - **Not run this round:** Terminator and Windows-MCP.
 
-**How it ran:** `get-competitors.ps1 -Tools oriel,cua`, then `bench-start.ps1 -Tools cua`, `relay-start.ps1` (daemon, port 3018) and `relay-start.ps1 -Port 3019 -Direct` (bare mcp) in the desktop session; on the Mac, an SSH tunnel for 23018 and 23019, then `ORIEL_BENCH_SSH=toaster ORIEL_BENCH_DIR='D:\agent-tools\hth-2026-11-10' uv run --script headtohead.py --runs 5 --tools oriel,cua,cua-direct`.
+**How it ran:** `get-competitors.ps1 -Dir D:\agent-tools\hth-2026-11-10 -Tools oriel,cua`, then `bench-start.ps1 -Dir D:\agent-tools\hth-2026-11-10 -Tools cua`, `relay-start.ps1 -Dir D:\agent-tools\hth-2026-11-10` (daemon, port 3018) and `relay-start.ps1 -Dir D:\agent-tools\hth-2026-11-10 -Port 3019 -Direct` (bare mcp) in the desktop session; on the Mac, an SSH tunnel for 23018 and 23019, then `ORIEL_BENCH_SSH=toaster ORIEL_BENCH_DIR='D:\agent-tools\hth-2026-11-10' uv run --script headtohead.py --runs 5 --tools oriel,cua,cua-direct`. `headtohead.py` turns bare mcp's agent cursor off; the cursor-on rows came from the same command, run before that call was in the harness. The 0.38.0 control: the daemon and its relay stopped, then `bench-start.ps1 -Dir D:\agent-tools -Tools cua` and `relay-start.ps1 -Dir D:\agent-tools` (the 2026-10-21 copy), then `--tools cua`.
 
 ## 2026-10-21: four servers, PC locked
 
