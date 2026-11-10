@@ -34,7 +34,7 @@ oriel has one maintainer, who holds every role.
 
 | Role | What it covers | Members |
 |---|---|---|
-| Committers | Change the source without another review | [YordiLorenzo](https://github.com/YordiLorenzo) |
+| Authors | Change the source without another review | [YordiLorenzo](https://github.com/YordiLorenzo) |
 | Reviewers | Review every pull request from someone without write access before it is merged | [YordiLorenzo](https://github.com/YordiLorenzo) |
 | Approvers | Approve each signing request in SignPath | [YordiLorenzo](https://github.com/YordiLorenzo) |
 
