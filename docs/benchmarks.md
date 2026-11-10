@@ -8,7 +8,7 @@ The scripts, and how to run them on your own PC, are in [bench/README.md](../ben
 
 | Benchmark | What it measures | Result |
 |---|---|---|
-| [3. WindowsAgentArena](#3-windowsagentarena-benchwaa) | Whole tasks: Microsoft's 153 scored tasks in a Windows 11 VM, the same model on both sides, only the MCP server swapped | With oriel, 30% less time per task (median), 38% lower model cost, 19% fewer model turns. Cua Driver 0.38.0 completed 4 points more tasks (67% against 63%). The 95% confidence intervals of all four differences exclude zero. |
+| [3. WindowsAgentArena](#3-windowsagentarena-benchwaa) | Whole tasks: Microsoft's 153 scored tasks in a Windows 11 VM, the same model on both sides, only the MCP server swapped | With oriel, 30% less time per task (median), 38% lower model cost, 19% fewer model turns. All three hold at 95% confidence. Cua Driver 0.38.0 completed 4 points more tasks (67% against 63%), less than the 6.5 points between its own two runs. |
 | [2. Head-to-head](#2-head-to-head-benchheadtohead) | Single calls through four Windows MCP servers on the same PC | oriel was fastest on every call measured, for example listing windows in 6 ms (Cua Driver 501 ms) and launching an app in 203 ms (Cua Driver 902 ms). |
 | [1. Latency per call](#1-latency-per-call-benchlatencypy) | oriel's own time per call, over SSH | Most calls take 5 to 60 ms. |
 | [4. Agent task suite](#4-agent-task-suite-benchtasks) | 18 tasks written alongside oriel | oriel passed 36 of 36 runs, Cua Driver 16 of 18. WindowsAgentArena is the larger, external test. |
@@ -113,9 +113,9 @@ Latest: round 9 (oriel v12), two runs per layer, 153 of WAA's 154 tasks (one Chr
 | Model cost per run | -38% (-$22.95) | -42% to -33% | -37% (-$20.35) | -41% to -33% |
 | Turns per task | -19% (-5.2) | -26% to -12% | -19% (-5.1) | -26% to -12% |
 
-- **Time, cost and turns:** oriel's lower figures hold in every interval, with or without the infeasible tasks.
-- **Completion:** Cua Driver's lead holds too. Its interval, 0.3 to 8.2 points in Cua Driver's favour, does not reach zero. On these tasks with this model, Cua Driver 0.38.0 without `run_script` completed more tasks than oriel v12.
-- **What the intervals cover:** which tasks happen to be in the benchmark, and the variation between the two runs of each task. They do not cover another model, another prompt, a newer Cua Driver or real hardware.
+- **Time, cost and turns:** oriel's lower figures hold in every interval, with or without the infeasible tasks. Each gap is also larger than the gap between either layer's own two runs (at most 15% for time, 2% for cost, 4% for turns).
+- **Completion:** on these tasks with this model, Cua Driver 0.38.0 without `run_script` completed more tasks than oriel v12. Its interval, 0.3 to 8.2 points in Cua Driver's favour, does not reach zero. But the same method puts Cua Driver's own second run 6.5 points above its first (95% interval 1.2 to 12.3), with the same set-up. The completion gap between the layers, 4.2 points, is smaller than that. The run 2 against run 1 table is in [bench/waa/RESULTS.md](../bench/waa/RESULTS.md).
+- **What the intervals cover:** which tasks happen to be in the benchmark, and the variation between the two runs of each task. They do not cover a cause that moves a whole run, another model, another prompt, a newer Cua Driver or real hardware.
 
 The first measurement, rounds 4 and 5 (mean of 4 runs per layer, 154 tasks):
 

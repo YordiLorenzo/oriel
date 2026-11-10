@@ -11,7 +11,7 @@ Claude Sonnet 5.5 through Claude Code, the same prompt and a 50-turn limit for e
   - `run_script` runs a JavaScript program over Cua Driver's own tools in one call (loops, branches, retries), in a sandbox with no file, network or process access. It is on by default. It was hidden because oriel has no script tool, so scripting was kept out of the comparison; scripting was measured only for oriel, as oriel + shell in round 3. Cua Driver with `run_script` was not measured in any round.
   - `install_ffmpeg` and `install_extension` install software in the test VM.
   - `check_for_update` checks GitHub for a newer driver; no task needs it, and the version under test stays fixed.
-  - In round 1, Cua's first 9 tasks ran before the last three were added to the list; `run_script` was hidden from the start.
+  - All four were hidden in every round.
 - **Newer Cua Driver:** on 2026-11-10 the newest release is [0.46.1](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.46.1), published that day. GitHub labels both releases "Pre-release"; Cua's release notes say that label only stops the repository's "Latest" pointer from switching between its separate products, and a plain version number is a stable release. Versions after 0.38.0 were not measured.
 - **Cost:** each row's `cost_usd` is the `total_cost_usd` that Claude Code reports. Claude Code computes it from the token counts with its list-price table, so it is an estimate, not a bill ([Claude Code docs](https://code.claude.com/docs/en/agent-sdk/cost-tracking)).
 
@@ -57,7 +57,17 @@ Run-to-run agreement: oriel gave the same result on 136 of 153 tasks, Cua on 131
 | model cost per run | -$22.95 (-38%) | -42% to -33% | -$20.35 (-37%) | -41% to -33% |
 | turns per task, mean | -5.2 (-19%) | -26% to -12% | -5.1 (-19%) | -26% to -12% |
 
-No interval reaches zero. oriel's lower time, cost and turns hold, and so does Cua Driver's higher completion: 0.3 to 8.2 points in its favour. The intervals cover which tasks are in the benchmark and the variation between each task's two runs; they do not cover another model, prompt, Cua Driver version or real hardware. Swapping the layers' input files (`--oriel results-cua-r9-t1.jsonl results-cua-r9-t2.jsonl --cua results-oriel-v12-t1.jsonl results-oriel-v12-t2.jsonl`) flips the sign of every difference.
+No interval reaches zero. The same method also finds a gap between Cua Driver's own two runs, which had the same set-up (the third table `stats.py` prints):
+
+| run 2 minus run 1, 153 tasks | oriel | 95% interval | Cua Driver | 95% interval |
+|---|---|---|---|---|
+| completion rate | 0.7 points | -4.6 to 5.9 | 6.5 points | 1.2 to 12.3 |
+| time per task, median | 1% | -13% to 14% | -15% | -31% to -3% |
+| time per task, mean | 3% | -9% to 16% | 6% | -6% to 20% |
+| model cost | -1% | -6% to 5% | 2% | -5% to 9% |
+| turns per task, mean | -3% | -12% to 7% | -4% | -13% to 6% |
+
+So the completion gap between the layers, 4.2 points, is smaller than the gap between Cua Driver's two runs, 6.5 points. The time, cost and turns gaps between the layers are larger than the gap between either layer's two runs. The intervals do not cover a cause that moves a whole run, another model, prompt, Cua Driver version or real hardware. Swapping the layers' input files (`--oriel results-cua-r9-t1.jsonl results-cua-r9-t2.jsonl --cua results-oriel-v12-t1.jsonl results-oriel-v12-t2.jsonl`) flips the sign of every difference.
 
 ## Round 8: oriel v11 vs Cua, two runs each, fresh VMs
 

@@ -6,7 +6,8 @@
 Only tasks scored in all four runs are compared. A task's completion is the mean of its two runs, as in RESULTS.md.
 Each resample draws that many tasks with replacement and keeps both runs of both layers for each task drawn, so the
 pairing by task stays. The interval is the 2.5th to 97.5th percentile of the resampled differences. The feasible
-columns leave out the tasks that tasks.json marks infeasible. RESULTS.md shows the second table this prints.
+columns leave out the tasks that tasks.json marks infeasible. The third table compares each layer's run 2 with its run 1
+in the same way. RESULTS.md shows the second and third tables this prints.
 """
 import argparse
 import json
@@ -65,6 +66,30 @@ def compare(oriel_paths=ORIEL, cua_paths=CUA, reps=10000, seed=1):
     return len(info), bootstrap(shared, oriel, cua, reps, seed), bootstrap(feasible, oriel, cua, reps, seed)
 
 
+def run_to_run(oriel_paths=ORIEL, cua_paths=CUA, reps=10000, seed=1):
+    """Run 2 minus run 1 of each layer on the same tasks: what this method finds between two runs of one set-up."""
+    oriel, cua = [load(p) for p in oriel_paths], [load(p) for p in cua_paths]
+    shared = sorted(set.intersection(*(set(run) for run in oriel + cua)))
+    return [bootstrap(shared, runs[1:], runs[:1], reps, seed) for runs in (oriel, cua)]
+
+
+def run_to_run_table(o, c):
+    names = {"completed": "completion rate", "median_s": "time per task, median", "mean_s": "time per task, mean",
+             "cost_run": "model cost", "turns": "turns per task, mean"}
+    out = [f"| run 2 minus run 1, {o['n']} tasks | oriel | 95% interval | Cua Driver | 95% interval |", "|---|---|---|---|---|"]
+    for k, name in names.items():
+        cells = []
+        for r in (o, c):
+            if k == "completed":
+                d, lo, hi = r["diff"][k]
+                cells += [f"{100 * d / r['n']:.1f} points", f"{100 * lo / r['n']:.1f} to {100 * hi / r['n']:.1f}"]
+            else:
+                p, plo, phi = r["rel"][k]
+                cells += [f"{p:.0f}%", f"{plo:.0f}% to {phi:.0f}%"]
+        out.append(f"| {name} | " + " | ".join(cells) + " |")
+    return out
+
+
 def levels_table(everything, feasible):
     out = ["| | oriel, all | Cua Driver, all | oriel, feasible | Cua Driver, feasible |", "|---|---|---|---|---|"]
     names = {"completed": ("tasks completed (mean of 2 runs)", "{:.1f}"), "median_s": ("time per task, median (s)", "{:.0f}"),
@@ -110,7 +135,8 @@ def main():
     print(f"{everything['n']} of {total} tasks compared (scored in all four runs), {feasible['n']} of them feasible. "
           f"Bootstrap over tasks, {args.reps} resamples, seed {args.seed}.\n")
     print("\n".join(levels_table(everything, feasible)) + "\n")
-    print("\n".join(difference_table(everything, feasible)))
+    print("\n".join(difference_table(everything, feasible)) + "\n")
+    print("\n".join(run_to_run_table(*run_to_run(args.oriel, args.cua, args.reps, args.seed))))
 
 
 if __name__ == "__main__":
