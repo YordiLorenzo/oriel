@@ -1,0 +1,13 @@
+{
+  "name": "oriel",
+  "version": "0.1.0",
+  "description": "Adds the oriel MCP server: Claude reads each window on your Windows PC as text through UI Automation and acts on its controls. Windows only. It runs %LOCALAPPDATA%\\Programs\\oriel\\oriel.exe, which oriel install puts there.",
+  "author": {
+    "name": "YordiLorenzo",
+    "url": "https://github.com/YordiLorenzo"
+  },
+  "homepage": "https://yordilorenzo.github.io/oriel/",
+  "repository": "https://github.com/YordiLorenzo/oriel",
+  "license": "Apache-2.0",
+  "keywords": ["windows", "ui-automation", "computer-use", "accessibility", "mcp"]
+}

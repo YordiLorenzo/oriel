@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "oriel": {
+      "type": "stdio",
+      "command": "${LOCALAPPDATA}\\Programs\\oriel\\oriel.exe",
+      "args": ["mcp"]
+    }
+  }
+}
