@@ -17,6 +17,13 @@ $dl = "$Dir\downloads"
 New-Item -ItemType Directory -Force $dl | Out-Null
 
 # The hash a checksum list gives for the file whose name ends in $Suffix ("<sha256>  <name>" lines).
+# Windows PowerShell does not stop on a failed native command, so a failed download would leave an older cached file
+# to be checked and used.
+function Fetch([string]$Out, [string]$Url, [switch]$Slow) {
+    $rate = if ($Slow) { @('--limit-rate', '18M') } else { @() }
+    & curl.exe -sSfL @rate -o $Out $Url
+    if ($LASTEXITCODE -ne 0) { throw "download failed ($LASTEXITCODE): $Url" }
+}
 function Expected([string]$List, [string]$Suffix) {
     ((Get-Content $List) | Where-Object { $_ -match "$([regex]::Escape($Suffix))$" }) -split '\s+' | Select-Object -First 1
 }
@@ -30,8 +37,8 @@ function Check([string]$Name, [string]$File, [string]$Want) {
 if ($Tools -contains 'oriel') {
     $rel = "https://github.com/YordiLorenzo/oriel/releases/download/v$OrielVersion"
     New-Item -ItemType Directory -Force "$Dir\oriel" | Out-Null
-    & curl.exe -sSfL -o "$dl\oriel-SHA256SUMS" "$rel/SHA256SUMS"
-    & curl.exe -sSfL -o "$dl\oriel.exe" "$rel/oriel.exe"
+    Fetch "$dl\oriel-SHA256SUMS" "$rel/SHA256SUMS"
+    Fetch "$dl\oriel.exe" "$rel/oriel.exe"
     Check 'oriel' "$dl\oriel.exe" (Expected "$dl\oriel-SHA256SUMS" 'oriel.exe')
     Copy-Item -Force "$dl\oriel.exe" "$Dir\oriel\oriel.exe"
 }
@@ -39,14 +46,14 @@ if ($Tools -contains 'cua') {
     $rel = "https://github.com/trycua/cua/releases/download/cua-driver-rs-v$CuaVersion"
     $zip = "cua-driver-rs-$CuaVersion-windows-x86_64-binary.zip"
     New-Item -ItemType Directory -Force "$Dir\cua-driver" | Out-Null
-    & curl.exe -sSfL -o "$dl\cua-checksums.txt" "$rel/checksums.txt"
-    & curl.exe -sSfL --limit-rate 18M -o "$dl\$zip" "$rel/$zip"
+    Fetch "$dl\cua-checksums.txt" "$rel/checksums.txt"
+    Fetch "$dl\$zip" "$rel/$zip" -Slow
     Check 'cua' "$dl\$zip" (Expected "$dl\cua-checksums.txt" $zip)
     Expand-Archive -Force "$dl\$zip" "$Dir\cua-driver"
 }
 if ($Tools -contains 'terminator') {
     New-Item -ItemType Directory -Force "$Dir\terminator" | Out-Null
-    & curl.exe -sSfL --limit-rate 18M -o "$dl\terminator.tgz" 'https://registry.npmjs.org/terminator-mcp-win32-x64-msvc/-/terminator-mcp-win32-x64-msvc-0.24.28.tgz'
+    Fetch "$dl\terminator.tgz" 'https://registry.npmjs.org/terminator-mcp-win32-x64-msvc/-/terminator-mcp-win32-x64-msvc-0.24.28.tgz' -Slow
     $sha512 = [Convert]::ToBase64String([Security.Cryptography.SHA512]::Create().ComputeHash([IO.File]::ReadAllBytes("$dl\terminator.tgz")))
     "terminator sha512 got sha512-$sha512"
     if ("sha512-$sha512" -ne 'sha512-eI69rpT1zkh42x1vgiOervgr9XrnCiuDNrhm6MxZYKk9kL2gRRStYmkhy10yJtO4trxrpzKzi00GgBLnfJieKQ==') { throw 'terminator integrity mismatch' }
@@ -56,8 +63,8 @@ if ($Tools -contains 'agent-desktop') {
     $rel = "https://github.com/vercel-labs/agent-desktop/releases/download/v$AgentDesktopVersion"
     $tgz = "agent-desktop-v$AgentDesktopVersion-x86_64-pc-windows-msvc.tar.gz"
     New-Item -ItemType Directory -Force "$Dir\agent-desktop" | Out-Null
-    & curl.exe -sSfL -o "$dl\agent-desktop-checksums.txt" "$rel/checksums.txt"
-    & curl.exe -sSfL --limit-rate 18M -o "$dl\$tgz" "$rel/$tgz"
+    Fetch "$dl\agent-desktop-checksums.txt" "$rel/checksums.txt"
+    Fetch "$dl\$tgz" "$rel/$tgz" -Slow
     Check 'agent-desktop' "$dl\$tgz" (Expected "$dl\agent-desktop-checksums.txt" $tgz)
     & tar.exe -xzf "$dl\$tgz" -C "$Dir\agent-desktop"
 }
