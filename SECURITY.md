@@ -114,7 +114,7 @@ plain text in `hosts.json`. Reports about oriel-vnc follow the same process as a
 ## Downloads
 
 Release builds aren't code-signed yet, so Windows may show a SmartScreen warning, and Smart App Control, where it is
-on, blocks them. The [code signing policy](docs/code-signing.md) says how signing will work once SignPath Foundation
+on, blocks them. The [code signing policy](docs/code-signing.md) says how signing will work if SignPath Foundation
 accepts oriel.
 
 Download oriel only from this repository's [Releases page](https://github.com/YordiLorenzo/oriel/releases), and check

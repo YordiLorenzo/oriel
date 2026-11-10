@@ -11,7 +11,7 @@ thread in [Discussions](https://github.com/YordiLorenzo/oriel/discussions/catego
    [code signing policy](docs/code-signing.md) says what will be signed and who approves it.
 2. **Windows 10.** oriel is meant to run on Windows 10 1903 and later, but has only been tested on Windows 11. Testing
    on Windows 10 22H2 comes first.
-3. **More MCP clients, tested.** Most testing used Claude Code. Claude Desktop, through the `.mcpb` bundle that
+3. **More MCP clients, tested.** Only Claude Code is tested so far. Claude Desktop, through the `.mcpb` bundle that
    releases carry from 0.1.1, and the Codex CLI come next, then Cursor, VS Code and others. Each gets "tested" in the
    README only once it passes.
 4. **LibreOffice.** In recent WindowsAgentArena rounds, Cua Driver completed more LibreOffice Writer and Calc tasks
@@ -38,6 +38,6 @@ thread in [Discussions](https://github.com/YordiLorenzo/oriel/discussions/catego
 - **Native macOS or Linux support in oriel.exe.** It is built on Windows UI Automation. Other systems are reachable
   through oriel-vnc, with screenshots.
 - **Remote access without SSH.** The daemon listens on loopback only; remote use goes through SSH.
-- **A Glama listing, for now.** Glama checks each server by starting it in a Linux container. oriel.exe needs Windows
-  to start: under Mono and under Wine it exits before it reads a request (tested 2026-11-10). oriel gets listed there
+- **A Glama listing, for now.** Glama builds each server from a Dockerfile and starts it on Linux. oriel.exe needs
+  Windows to start: under Mono and under Wine it exits before it reads a request (tested 2026-11-10). oriel gets listed there
   only if Glama offers a way for Windows-only servers.
