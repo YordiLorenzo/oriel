@@ -149,14 +149,17 @@ public static class Program
     {
         var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var escaped = exe.Replace("\\", "\\\\");  // JSON and TOML strings; a Windows path holds no quote characters
-        // Over SSH, cmd.exe (OpenSSH's default shell on Windows) runs the command, and a path with a space needs its quotes.
-        var remote = exe.Contains(" ") ? "\"" + exe + "\"" : exe;
+        // PowerShell expands $ inside double quotes; single quotes are literal, with a ' written twice.
+        var ps = "'" + exe.Replace("'", "''") + "'";
+        // Over SSH, cmd.exe (OpenSSH's default shell on Windows) runs the command; inside double quotes it takes a space,
+        // & or ^ in the path literally.
+        var remote = "\"" + exe + "\"";
         var host = System.Net.Dns.GetHostName().ToLowerInvariant();
         // The SSH line goes to a Mac or Linux shell: single quotes keep the backslashes, and a ' in a user name becomes '\''.
         Func<string, string> sh = s => "'" + s.Replace("'", "'\\''") + "'";
         return "\nTo add oriel to your MCP client, paste one of these:\n" +
-            "\nClaude Code on this PC, in PowerShell or cmd:\n" +
-            "claude mcp add --scope user oriel -- \"" + exe + "\" mcp\n" +
+            "\nClaude Code on this PC, in PowerShell:\n" +
+            "claude mcp add --scope user oriel -- " + ps + " mcp\n" +
             "\nClaude Desktop (Settings > Developer > Edit Config) or Cursor (" + Path.Combine(profile, ".cursor", "mcp.json") + "):\n" +
             "{\n  \"mcpServers\": {\n    \"oriel\": { \"command\": \"" + escaped + "\", \"args\": [\"mcp\"] }\n  }\n}\n" +
             "\nCodex (" + Path.Combine(profile, ".codex", "config.toml") + "):\n" +
