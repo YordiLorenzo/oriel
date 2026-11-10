@@ -2,16 +2,18 @@
 # requires-python = ">=3.11"
 # dependencies = ["mcp>=2.3", "httpx"]
 # ///
-"""Head-to-head: the same Windows UI tasks through four computer-use MCP servers on one Windows PC, timed from here.
+"""Head-to-head: the same Windows UI tasks through computer-use MCP servers on one Windows PC, timed from here.
 
     ORIEL_BENCH_SSH=<the PC's ssh name> uv run --script headtohead.py [--runs 5]
-        [--tools oriel,cua,terminator,windows-mcp] [--json out.json]
+        [--tools oriel,cua,cua-direct,terminator,windows-mcp] [--json out.json]
 
 Every tool runs in the PC's desktop session and every MCP client runs here, over the LAN: oriel through `ssh <PC>
-oriel.exe mcp` (oriel.exe in $ORIEL_BENCH_DIR\\oriel, default C:\\oriel-bench), Cua Driver 0.38.0 through a loopback
-relay to its stdio MCP (its daemon refuses the SSH session's pipe client), Terminator 0.24.28 and Windows-MCP 0.8.8
-over Streamable HTTP through an SSH tunnel. The tunnels (local 23017 -> 3017 Terminator, 23018 -> 3018 Cua relay,
-28765 -> 8765 Windows-MCP) must be up. A Windows-MCP server behind a bearer token gets it from $WINDOWS_MCP_TOKEN.
+oriel.exe mcp` (oriel.exe in $ORIEL_BENCH_DIR\\oriel, default C:\\oriel-bench); Cua Driver through a loopback relay
+to its stdio MCP (its daemon refuses the SSH session's pipe client): "cua" is `cua-driver mcp --socket` to the daemon
+(as on 2026-10-21), "cua-direct" is bare `cua-driver mcp`, which on Windows owns its runtime (Cua Driver 0.46 and
+later); Terminator 0.24.28 and Windows-MCP 0.8.8 over Streamable HTTP through an SSH tunnel. The tunnels (local 23017
+-> 3017 Terminator, 23018 -> 3018 Cua relay, 23019 -> 3019 Cua direct relay, 28765 -> 8765 Windows-MCP) must be up.
+A Windows-MCP server behind a bearer token gets it from $WINDOWS_MCP_TOKEN. Which versions ran is in RESULTS.md.
 
 Tasks on Character Map (launched fresh per run, closed with taskkill outside the timing): launch it, read its tree,
 fill "Characters to copy", press Select; then read the trees of an open Chrome and an open Edge window (read only).
@@ -48,6 +50,11 @@ def text(res) -> str:
     return "\n".join(c.text for c in res.content if getattr(c, "type", "") == "text")
 
 
+def other_blocks(res) -> int:
+    """Content blocks that aren't text (a screenshot would show here): they cost time but not chars."""
+    return sum(getattr(c, "type", "") != "text" for c in res.content)
+
+
 class Timer:
     def __init__(self):
         self.rows = []
@@ -56,12 +63,13 @@ class Timer:
         start = time.perf_counter()
         try:
             res = await session.call_tool(name, args)
-            out, failed = text(res), res.is_error
+            out, failed, blocks = text(res), res.is_error, other_blocks(res)
         except Exception as e:  # a tool that crashes or times out still gets a row
-            out, failed = f"{type(e).__name__}: {e}", True
+            out, failed, blocks = f"{type(e).__name__}: {e}", True, 0
         ms = (time.perf_counter() - start) * 1000
         good = not failed and (ok is None or ok(out))
-        self.rows.append({"tool": tool, "op": op, "ms": round(ms, 1), "ok": good, "chars": len(out), "out": out[:300]})
+        self.rows.append({"tool": tool, "op": op, "ms": round(ms, 1), "ok": good, "chars": len(out), "blocks": blocks,
+                          "out": out[:300]})
         return out, good
 
 
@@ -90,6 +98,14 @@ async def wait_window(check: ClientSession, title: str, seconds: float = 10):
     """Untimed: wait until the launched window has its controls, so every tool starts the next task alike."""
     res = await check.call_tool("wait", {"window": title, "name": "Select", "timeout": seconds})
     return not res.is_error
+
+
+async def warm_browsers(check: ClientSession):
+    """Untimed: Chrome and Edge build a page's accessibility tree only once a UIA client asks, so the first tool to read
+    one would otherwise get the browser frame alone. The referee reads both first, so every tool sees the same page."""
+    for window in ("Google Chrome", "msedge"):
+        await check.call_tool("tree", {"window": window})
+    await asyncio.sleep(2)
 
 
 async def run_oriel(s, t, check, runs):
@@ -128,29 +144,29 @@ def cua_window(out: str, title: str):
     return None, None
 
 
-async def run_cua(s, t, check, runs):
+async def run_cua(s, t, check, runs, tool="cua"):
     for _ in range(runs):
         kill_charmap()
-        await t.call(s, "cua", "launch", "launch_app", {"path": r"C:\Windows\System32\charmap.exe"})
+        await t.call(s, tool, "launch", "launch_app", {"path": r"C:\Windows\System32\charmap.exe"})
         await wait_window(check, "Character Map")
-        out, _ = await t.call(s, "cua", "list windows (charmap)", "list_windows", {"app": "charmap"}, lambda o: "window_id" in o)
+        out, _ = await t.call(s, tool, "list windows (charmap)", "list_windows", {"app": "charmap"}, lambda o: "window_id" in o)
         pid, wid = cua_window(out, "Character Map")
-        out, _ = await t.call(s, "cua", "tree charmap", "get_window_state", {"pid": pid, "window_id": wid, "include_screenshot": False},
+        out, _ = await t.call(s, tool, "tree charmap", "get_window_state", {"pid": pid, "window_id": wid, "include_screenshot": False},
                               lambda o: "Select" in o)
         snap = re.search(r"snapshot_id=(\S+)", out)
         edit = re.search(r"\[(\d+)\] Edit \"Characters to copy", out)
         button = re.search(r"\[(\d+)\] Button \"Select\"", out)
         if snap and edit and button:
-            await t.call(s, "cua", "fill field", "set_value", {"element_token": f"{snap.group(1)}:{edit.group(1)}", "value": "abc"})
-            await t.call(s, "cua", "press button", "click", {"element_token": f"{snap.group(1)}:{button.group(1)}"})
-            await verify(check, t, "cua")
+            await t.call(s, tool, "fill field", "set_value", {"element_token": f"{snap.group(1)}:{edit.group(1)}", "value": "abc"})
+            await t.call(s, tool, "press button", "click", {"element_token": f"{snap.group(1)}:{button.group(1)}"})
+            await verify(check, t, tool)
     for _ in range(runs):
         for op, app, title in (("tree chrome", "chrome", "Google Chrome"), ("tree edge", "msedge", "Microsoft")):
-            out, _ = await t.call(s, "cua", f"list windows ({app})", "list_windows", {"app": app}, lambda o: "window_id" in o)
+            out, _ = await t.call(s, tool, f"list windows ({app})", "list_windows", {"app": app}, lambda o: "window_id" in o)
             pid, wid = cua_window(out, title)
-            await t.call(s, "cua", op, "get_window_state", {"pid": pid, "window_id": wid, "include_screenshot": False},
+            await t.call(s, tool, op, "get_window_state", {"pid": pid, "window_id": wid, "include_screenshot": False},
                          lambda o: "Address" in o)
-        await t.call(s, "cua", "list windows", "list_windows", {}, lambda o: "chrome" in o)
+        await t.call(s, tool, "list windows", "list_windows", {}, lambda o: "chrome" in o)
 
 
 async def run_terminator(s, t, check, runs):
@@ -202,6 +218,7 @@ async def main():
     async with stdio_client(ORIEL_MCP) as (cr, cw):
         async with ClientSession(cr, cw) as check:  # the referee: waits for windows and reads outcomes
             await check.initialize()
+            await warm_browsers(check)
             for tool in args.tools.split(","):
                 print(f"== {tool}", file=sys.stderr)
                 try:
@@ -210,11 +227,14 @@ async def main():
                             async with ClientSession(r, w) as s:
                                 await s.initialize()
                                 await run_oriel(s, t, check, args.runs)
-                    elif tool == "cua":
-                        async with stdio_client(StdioServerParameters(command="nc", args=["127.0.0.1", "23018"])) as (r, w):
+                    elif tool in ("cua", "cua-direct"):
+                        port = {"cua": "23018", "cua-direct": "23019"}[tool]
+                        async with stdio_client(StdioServerParameters(command="nc", args=["127.0.0.1", port])) as (r, w):
                             async with ClientSession(r, w) as s:
                                 await s.initialize()
-                                await run_cua(s, t, check, args.runs)
+                                if tool == "cua-direct":  # the daemon runs with --no-overlay; bare mcp has no such flag
+                                    await s.call_tool("set_agent_cursor_enabled", {"enabled": False})
+                                await run_cua(s, t, check, args.runs, tool)
                     else:
                         url = {"terminator": "http://127.0.0.1:23017/mcp", "windows-mcp": "http://127.0.0.1:28765/mcp"}[tool]
                         token = os.environ.get("WINDOWS_MCP_TOKEN") if tool == "windows-mcp" else None
@@ -231,7 +251,7 @@ async def main():
                     print(f"   {tool} aborted: {type(e).__name__}: {e}", file=sys.stderr)
             kill_charmap()
 
-    print(f"{'tool':<12} {'operation':<32} {'n':>3} {'ok':>3} {'p50 ms':>8} {'p90 ms':>8} {'chars':>7}")
+    print(f"{'tool':<12} {'operation':<32} {'n':>3} {'ok':>3} {'p50 ms':>8} {'p90 ms':>8} {'chars':>7} {'images':>6}")
     seen = []
     for r in t.rows:
         if (r["tool"], r["op"]) not in seen:
@@ -241,7 +261,7 @@ async def main():
         ms = sorted(r["ms"] for r in rows)
         p90 = ms[min(len(ms) - 1, round(0.9 * (len(ms) - 1)))]
         print(f"{tool:<12} {op:<32} {len(rows):>3} {sum(r['ok'] for r in rows):>3} {statistics.median(ms):>8.0f} {p90:>8.0f}"
-              f" {statistics.median(r['chars'] for r in rows):>7.0f}")
+              f" {statistics.median(r['chars'] for r in rows):>7.0f} {max(r.get('blocks', 0) for r in rows):>6}")
     if args.json:
         with open(args.json, "w") as f:
             json.dump(t.rows, f, indent=1)
