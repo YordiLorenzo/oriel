@@ -7,8 +7,10 @@ With no argument it reads the newest session under ~/.claude/projects ($CLAUDE_C
 with a folder, the newest session in it. It also reads the session's subagents (<session>/subagents/**/*.jsonl).
 
 It fails (exit 1) when the session made any of these calls:
-  - keys, click or drag, from oriel or any other MCP server: they send real keyboard or mouse input;
+  - oriel's keys, click or drag: they send real keyboard or mouse input;
   - any other oriel tool that is not a read or an element action (focus, window, launch, close), including inside a batch;
+  - any tool of another MCP server: the demo session has only oriel, and other servers type and click under other
+    names (Type, Shortcut, Move, vnc_key, browser_press_key);
   - a shell (Bash, PowerShell, Monitor): a command can send keys or clicks too, for example `oriel call keys`;
 and when it finds no element action at all (the wrong session, or a check that compared nothing).
 Reads and element actions pass: status, windows, tree, find, text, wait, screenshot; invoke, set, select, scroll.
@@ -50,10 +52,10 @@ def problem(name, args):
     if not name.startswith("mcp__"):
         return None
     server, _, tool = name[len("mcp__"):].rpartition("__")
-    if tool.lower().rsplit("_", 1)[-1] in INPUT:
-        return "sends real keyboard or mouse input"
     if "oriel" not in server:
-        return None
+        return "a tool of another MCP server, not oriel"
+    if tool in INPUT:
+        return "sends real keyboard or mouse input"
     if tool == "batch":
         steps = args.get("steps") if isinstance(args, dict) else None
         if not isinstance(steps, list):
@@ -114,7 +116,7 @@ def main():
     if actions == 0:
         print("FAIL: no oriel element action in this session; is it the right file?")
         return 1
-    print("PASS: element actions only (no keys, click, drag, shell or window calls)")
+    print("PASS: element actions only (no keys, click, drag, window, shell or other MCP server calls)")
     return 0
 
 

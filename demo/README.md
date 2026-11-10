@@ -10,9 +10,9 @@ Caption: **real time; element actions only**
 |---|---|
 | `SignUpApp.cs`, `build.ps1` | The app under test: name, email, plan, terms, a status line and a members list. It has one deliberate bug: the duplicate email check is case-sensitive. `build.ps1` compiles it with the C# compiler that comes with Windows, to `bin\oriel-demo.exe`. |
 | `PROMPT.md` | The prompt to paste into Claude Code. |
-| `claude-settings.json` | Settings for the Claude Code session: oriel's read and element tools run without a permission prompt; `keys`, `click`, `drag`, `focus`, `window`, `launch`, `close` and the shells are removed. |
+| `claude-settings.json` | Settings for the Claude Code session: oriel's read and element tools run without a permission prompt; `keys`, `click`, `drag`, `focus`, `window`, `launch`, `close` and the shells are removed. A `batch` can still hold `keys` or window steps, because permission rules can't look inside it, so `check-trace.py` is the proof. |
 | `record.ps1` | Records the whole screen with ffmpeg (gdigrab), mouse pointer included, no sound. It doesn't install ffmpeg. |
-| `check-trace.py` | Reads the Claude Code session and fails if any `keys`, `click`, `drag`, window or shell call is in it. |
+| `check-trace.py` | Reads the Claude Code session and fails if any `keys`, `click`, `drag`, window or shell call, or any call to another MCP server, is in it. |
 
 Checked on Windows 11 with oriel 0.1.0 (2026-11-10): every control the prompt needs answers to invoke, set, select
 and scroll, with the foreground window and the mouse pointer unchanged. Windows 10 is untested.
@@ -64,8 +64,9 @@ and scroll, with the foreground window and the mouse pointer unchanged. Windows 
    Accept the folder trust question. `/mcp` should list oriel as connected.
 
 5. **Rehearse once**, without recording. Paste the prompt from [PROMPT.md](PROMPT.md). It should end with the table
-   in under 90 s, and check 4 should fail. Check its trace (step 7). Record a 5 s test clip
-   (`record.ps1 -Seconds 5`) and play it: if a window shows black, record with OBS Studio's Display Capture instead.
+   in under 90 s, and check 4 should fail. Check its trace (step 7). Record a 5 s test clip with the
+   command from step 6 plus `-Seconds 5` (run it through `powershell -ExecutionPolicy Bypass -File`, as there: Windows
+   blocks a plain `.\record.ps1` by default) and play it: if a window shows black, record with OBS Studio's Display Capture instead.
    Then close and reopen the app, `/exit`, and start `claude` again as in step 4, so the take is a new session.
 
 6. **Record the take.** In a second PowerShell window:
