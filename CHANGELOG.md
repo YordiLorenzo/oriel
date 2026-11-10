@@ -36,6 +36,7 @@ New ways to install and to check a download. The tools work as in 0.1.0.
 - **Round 9 chart:** `bench/waa/chart.py` draws `docs/images/benchmark-round9.png` from `stats.py`: time, cost and turns as oriel's difference from Cua Driver with 95% intervals, and each layer's two completion runs.
 - **Site:** the hero line, install with the plugin from 0.1.1, two first prompts that act, the Windows warnings, round 9 with its caveat and the 10 Nov per-call table, and five answer pages (Claude Code computer use on Windows, oriel and Cua Driver, oriel and Windows-MCP, a Windows PC from a Mac over SSH, testing your Windows app), all in `sitemap.xml` and `llms.txt`.
 - **docs/tools.md:** two Windows Forms limits found while building the demo: a ListBox shows `find` only its visible rows, and an app built without a target framework attribute offers `select` no combo box items.
+- **README banner:** says "Lets Claude Code use your Windows apps." and Windows 11 instead of the old tagline, in the preview card's look at the same 1600 x 500. Its HTML source is `docs/images/source/banner.html`.
 
 ## 0.1.0 - 2026-10-26
 

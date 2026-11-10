@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.png" alt="oriel" width="100%">
+  <img src="docs/images/banner.png" alt="oriel: lets Claude Code use your Windows apps. Free and open source, Windows 11, MCP server." width="100%">
 </p>
 
 <p align="center">
