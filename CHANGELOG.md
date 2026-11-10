@@ -2,6 +2,37 @@
 
 All notable changes to oriel are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## 0.1.1 - unreleased
+
+New ways to install and to check a download. The tools work as in 0.1.0.
+
+### Added
+
+- **Claude Code plugin:** `claude plugin install oriel --marketplace YordiLorenzo/oriel` adds oriel to Claude Code on Windows (Claude Code 2.1.292 or later). It starts the `oriel.exe` that `oriel install` put in `%LOCALAPPDATA%\Programs\oriel`, so run `oriel install` first.
+- **Claude Desktop bundle:** each release has `oriel-<version>-win-x64.mcpb`, an MCP bundle for Claude Desktop, with its hash in `SHA256SUMS`. Open it with Claude Desktop to add oriel as an extension. It isn't tested in Claude Desktop yet.
+- **MCP Registry:** each published release is registered in the official MCP Registry as `io.github.YordiLorenzo/oriel`, titled "oriel for Windows". `io.github.ParadoxInfinite/oriel` is a different project.
+- **Build provenance:** `oriel.exe` and the bundle carry a GitHub build provenance attestation. `gh attestation verify oriel.exe -R YordiLorenzo/oriel` checks that this repository's release workflow built the file.
+- **`oriel install` prints your config:** it ends with ready-to-paste config for your real path: the `claude mcp add` line, the `mcpServers` JSON for Claude Desktop and Cursor, the TOML for Codex and the SSH line for a Mac or Linux machine (a `'` in the user name or path is quoted for that shell), then a link to Discussions to say whether it worked.
+- **oriel-vnc release workflow:** a `vnc-v*` tag checks the version, builds oriel-vnc, publishes it to PyPI through trusted publishing and lists it in the MCP Registry as `io.github.YordiLorenzo/oriel-vnc`. The package has PyPI metadata, and its README uses absolute links so they work on PyPI. It isn't on PyPI yet.
+
+### Changed
+
+- The exe's CompanyName and LegalCopyright properties are filled in. They were empty.
+- The release workflow starts only on `v<digit>` tags, so a `vnc-v*` tag no longer starts the `oriel.exe` release.
+
+### Docs, benchmarks and repository
+
+- **README:** opens with the gap it fills (the Claude Code CLI has no computer use on Windows), then install with the plugin from 0.1.1, two first prompts that act, every Windows warning including Smart App Control, round 9 with its caveats and the per-call table of 10 Nov 2026. SECURITY.md, CONTRIBUTING.md and ROADMAP.md follow it.
+- **Code signing policy:** [docs/code-signing.md](docs/code-signing.md) says what will be signed, who approves it and what oriel sends over the network, for the SignPath Foundation application.
+- **WindowsAgentArena:** `bench/waa/stats.py` gives bootstrap 95% intervals for round 9 and compares each layer's own two runs. Cua Driver's two runs differed by 6.5 points, more than its 4.2-point lead. RESULTS.md and docs/benchmarks.md state Cua Driver's version, the 4 of its 63 tools that were hidden and that cost is Claude Code's list-price estimate.
+- **Head-to-head, 10 Nov 2026:** oriel 0.1.0 against Cua Driver 0.46.1 on an unlocked PC, with a same-day 0.38.0 control. oriel took less time on every call, by less than on 21 Oct (list windows 1 ms against 30 ms). The harness fetches a chosen Cua Driver version, starts only the tools asked for, turns Cua's telemetry and update check off and adds a direct-mode Cua relay.
+- **winget and Scoop manifests** for oriel 0.1.0 in `packaging/`, not submitted yet. The Scoop uninstall runs `oriel.exe` from its app folder, because through the Scoop shim `oriel uninstall` stops itself.
+- **Issue forms:** a new form for an app oriel can't read (it asks for the window list and the tree), Claude Desktop and VS Code in the bug report's client list, questions sent to Discussions, and a note that `oriel` in the commands means the full path, because install doesn't add it to PATH.
+- **Code of conduct:** Contributor Covenant 3.0, with reports through the same private form as security problems.
+- **Preview card:** says Windows 11 and "Lets Claude Code use your Windows apps." instead of Windows 10 and 11 and the old tagline. Its HTML source is in `docs/images/source`.
+- **Download page:** `site/download/` sends visitors on to the latest `oriel.exe` and can count the click with GoatCounter, which sets no cookies.
+- **Demo kit** in `demo/`: a small Windows Forms sign-up app, the prompt and session settings for Claude Code, a screen recording script, and a trace check that fails on any `keys`, `click`, `drag`, window or shell call.
+
 ## 0.1.0 - 2026-10-26
 
 First release.
