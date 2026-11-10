@@ -6,7 +6,7 @@ name: release
 # The exe asset is always named oriel.exe, so releases/latest/download/oriel.exe points at the newest published release.
 on:
   push:
-    tags: ['v*']
+    tags: ['v[0-9]*']  # not vnc-v*, which vnc-release.yml handles
 
 permissions:
   contents: write
