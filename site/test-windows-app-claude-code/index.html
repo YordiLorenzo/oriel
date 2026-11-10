@@ -119,7 +119,7 @@
 
 <h2>2. Ask Claude to run the test</h2>
 <p>Name the build command, the exe and what to check. For example, for a WinForms or WPF app:</p>
-<pre class="code" data-copy="prompt-test-app"><code>Build the app with dotnet build. Start bin\Debug\net8.0-windows\OrderForm.exe with oriel's launch tool, type Ada Lovelace in the Name field, press Save and tell me what the status bar says. Then clear the name, press Save again and tell me whether the form refuses it.</code></pre>
+<pre class="code" data-copy="prompt-test-app"><code>Build the app with dotnet build. Start the built OrderForm.exe, by its full path under bin\Debug\net8.0-windows, with oriel's launch tool, type Ada Lovelace in the Name field, press Save and tell me what the status bar says. Then clear the name, press Save again and tell me whether the form refuses it.</code></pre>
 <p>Claude Code builds with its own shell. oriel only works through windows: <code>launch</code> replies with the new window's tree, so Claude sees the form's fields at once, and each <code>set</code> and <code>invoke</code> replies with what changed (<code>+</code> new, <code>~</code> changed, <code>-</code> gone). A dialog that opens comes back with its tree.</p>
 <p>A real reply, from Character Map:</p>
 <pre class="code"><code>&gt; set id=kqm3 value="hello"
@@ -151,7 +151,7 @@ set "Characters to copy :"
 </aside>
 
 <h2>Try oriel</h2>
-<p>Free and open source, one exe under 200 KB, no admin rights. Tested with Claude Code on Windows 11.</p>
+<p>Free and open source, one exe under 200&nbsp;KB, no admin rights. Tested with Claude Code on Windows 11.</p>
 <div class="actions">
   <a class="btn btn-primary" href="../download/">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>

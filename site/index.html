@@ -13,7 +13,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="oriel">
   <meta property="og:title" content="oriel for Windows: an MCP server that lets Claude Code use your Windows apps">
-  <meta property="og:description" content="Free and open source. On WindowsAgentArena, with the same model, tasks took a median 49 s with oriel against 70 s with Cua Driver 0.38.0. Cua Driver completed 4 points more tasks.">
+  <meta property="og:description" content="Free and open source. On WindowsAgentArena, same model: a median 49 s a task with oriel, 70 s with Cua Driver 0.38.0, which ran without 4 of its 63 tools and completed 4 points more.">
   <meta property="og:url" content="https://yordilorenzo.github.io/oriel/">
   <meta property="og:image" content="https://yordilorenzo.github.io/oriel/social-preview.png">
   <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
   <meta property="og:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel, the line &quot;Lets Claude Code use your Windows apps.&quot; and Free and open source, Windows 11, MCP server.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="oriel for Windows: an MCP server that lets Claude Code use your Windows apps">
-  <meta name="twitter:description" content="Free and open source. On WindowsAgentArena, with the same model, tasks took a median 49 s with oriel against 70 s with Cua Driver 0.38.0. Cua Driver completed 4 points more tasks.">
+  <meta name="twitter:description" content="Free and open source. On WindowsAgentArena, same model: a median 49 s a task with oriel, 70 s with Cua Driver 0.38.0, which ran without 4 of its 63 tools and completed 4 points more.">
   <meta name="twitter:image" content="https://yordilorenzo.github.io/oriel/social-preview.png">
   <meta name="twitter:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel, the line &quot;Lets Claude Code use your Windows apps.&quot; and Free and open source, Windows 11, MCP server.">
 
@@ -87,7 +87,7 @@
           {
             "@type": "Question",
             "name": "Is it safe to let Claude use my PC?",
-            "acceptedAnswer": { "@type": "Answer", "text": "In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts, password managers and terminals, and has no shell. An allow-list in config.json keeps it to the apps you name. It is not a sandbox. SECURITY.md lists what it guarantees and where that stops." }
+            "acceptedAnswer": { "@type": "Answer", "text": "In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts, password managers and terminals, and has no shell by default. An allow-list in config.json keeps it to the apps you name. It is not a sandbox. SECURITY.md lists what it guarantees and where that stops." }
           },
           {
             "@type": "Question",
@@ -293,8 +293,8 @@ args = ["mcp"]</code></pre>
             <tbody>
               <tr>
                 <th scope="row">Median time per task</th>
-                <td class="col-oriel win">49 s</td>
-                <td>70 s</td>
+                <td class="col-oriel win">49&nbsp;s</td>
+                <td>70&nbsp;s</td>
               </tr>
               <tr>
                 <th scope="row">Model cost, all 153 tasks</th>
@@ -326,28 +326,28 @@ args = ["mcp"]</code></pre>
             <tbody>
               <tr>
                 <th scope="row">List windows</th>
-                <td class="col-oriel win">1 ms</td>
-                <td>30 ms</td>
+                <td class="col-oriel win">1&nbsp;ms</td>
+                <td>30&nbsp;ms</td>
               </tr>
               <tr>
                 <th scope="row">Launch an app</th>
-                <td class="col-oriel win">192 ms</td>
-                <td>604 ms</td>
+                <td class="col-oriel win">192&nbsp;ms</td>
+                <td>604&nbsp;ms</td>
               </tr>
               <tr>
                 <th scope="row">Read a window</th>
-                <td class="col-oriel win">20 ms</td>
-                <td>37 ms</td>
+                <td class="col-oriel win">20&nbsp;ms</td>
+                <td>37&nbsp;ms</td>
               </tr>
               <tr>
                 <th scope="row">Fill a field</th>
-                <td class="col-oriel win">2 ms</td>
-                <td>3 ms</td>
+                <td class="col-oriel win">2&nbsp;ms</td>
+                <td>3&nbsp;ms</td>
               </tr>
               <tr>
                 <th scope="row">Press a button</th>
-                <td class="col-oriel win">2 ms</td>
-                <td>5 ms</td>
+                <td class="col-oriel win">2&nbsp;ms</td>
+                <td>5&nbsp;ms</td>
               </tr>
               <tr>
                 <th scope="row">Calls to press and see what changed</th>
@@ -356,7 +356,7 @@ args = ["mcp"]</code></pre>
               </tr>
             </tbody>
           </table>
-          <p class="fine">10 Nov 2026, oriel 0.1.0 on one unlocked Windows 11 PC, median of 5 runs. Press and change report together took oriel 42 ms. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/bench/headtohead/RESULTS.md">Per-call results</a></p>
+          <p class="fine">10 Nov 2026, oriel 0.1.0 on one unlocked Windows 11 PC, median of 5 runs. Press and change report together took oriel 42&nbsp;ms. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/bench/headtohead/RESULTS.md#2026-11-10-oriel-010-against-cua-driver-0461">Per-call results</a></p>
         </div>
       </div>
     </section>
@@ -420,7 +420,7 @@ args = ["mcp"]</code></pre>
           </details>
           <details>
             <summary>How is it different from Cua Driver?</summary>
-            <p>Both read the accessibility tree. oriel answers every action with what changed in the same reply; Cua Driver needs a second call to read the window. On WindowsAgentArena round 9 (October 2026), with the same model, tasks took a median 49 s against 70 s, at the model cost Claude Code reported of $38 against $61. Cua Driver 0.38.0 completed 4 points more tasks: 67% against 63%. Its own two runs differed by 6.5 points. It ran without 4 of its 63 tools, <code>run_script</code> among them. <a class="text-link" href="oriel-vs-cua-driver/">The full comparison</a></p>
+            <p>Both read the accessibility tree. oriel answers every action with what changed in the same reply; Cua Driver needs a second call to read the window. On WindowsAgentArena round 9 (October 2026), with the same model, tasks took a median 49&nbsp;s against 70&nbsp;s, at the model cost Claude Code reported of $38 against $61. Cua Driver 0.38.0 completed 4 points more tasks: 67% against 63%. Its own two runs differed by 6.5 points. It ran without 4 of its 63 tools, <code>run_script</code> among them. <a class="text-link" href="oriel-vs-cua-driver/">The full comparison</a></p>
           </details>
           <details>
             <summary>Which clients and Windows versions does it work with?</summary>
@@ -428,7 +428,7 @@ args = ["mcp"]</code></pre>
           </details>
           <details>
             <summary>Is it safe to let Claude use my PC?</summary>
-            <p>In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts, password managers and terminals, and has no shell. An allow-list in <code>config.json</code> keeps it to the apps you name. It is not a sandbox. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists what it guarantees and where that stops.</p>
+            <p>In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts, password managers and terminals, and has no shell by default. An allow-list in <code>config.json</code> keeps it to the apps you name. It is not a sandbox. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists what it guarantees and where that stops.</p>
           </details>
           <details>
             <summary>It isn't code-signed. Can I trust it?</summary>
