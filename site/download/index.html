@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Download oriel</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0b0f1e">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="../favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="../icon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <link rel="stylesheet" href="../style.css?v=6a7dc9bd">
+  <!-- Without JavaScript. Inside noscript only, or the browser would start the download a second time. -->
+  <noscript><meta http-equiv="refresh" content="0; url=https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe"></noscript>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="../" aria-label="oriel, home">
+        <img src="../images/icon-144.png" alt="" width="36" height="36">
+        <span class="wordmark" aria-hidden="true">oriel</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main" class="wrap lost">
+    <div>
+      <h1>Downloading oriel.exe</h1>
+      <p class="lead">If the download does not start, use the button. Then run <code>.\oriel.exe install</code> in PowerShell in the download folder.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe">Download oriel.exe</a>
+        <a class="btn btn-secondary" href="../#setup">Setup steps</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- The site's download links point here, so each download can be counted before GitHub serves oriel.exe.
+       Last in body: a redirect that starts earlier stops the page from being drawn, and the download leaves it shown. -->
+  <script>
+    (function () {
+      // The GoatCounter code: 'oriel' for https://oriel.goatcounter.com. While it is empty, this page sends nothing.
+      var goatcounter = '';
+      if (goatcounter && navigator.sendBeacon) {
+        // The fields count.js sends (https://www.goatcounter.com/help/pixel), without loading count.js, so the
+        // download never waits for it.
+        var e = encodeURIComponent;
+        navigator.sendBeacon('https://' + goatcounter + '.goatcounter.com/count' +
+          '?p=' + e(location.pathname + location.search) + '&t=' + e(document.title) + '&r=' + e(document.referrer) +
+          '&q=' + e(location.search) + '&s=' + screen.width + '&b=' + (navigator.webdriver ? 153 : 0));
+      }
+      location.replace('https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe');
+    })();
+  </script>
+</body>
+</html>

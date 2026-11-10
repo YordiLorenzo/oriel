@@ -1,0 +1,94 @@
+name: stats
+
+# Once a day, saves the download count of each release file and, when the TRAFFIC_TOKEN secret is set, the
+# repository's views, clones and referrers. GitHub shows traffic for the last 14 days only, so this keeps the history
+# as CSV files on the branch "stats". That branch has no shared history with main, so main stays clean.
+#
+# TRAFFIC_TOKEN is a fine-grained personal access token for this repository only, with the repository permission
+# "Administration: Read-only". The traffic API needs it; GITHUB_TOKEN cannot read traffic. Add it with
+#   gh secret set TRAFFIC_TOKEN --repo YordiLorenzo/oriel
+on:
+  schedule:
+    - cron: '17 4 * * *'  # 04:17 UTC each day; GitHub delays runs that start on the hour
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stats
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  save:
+    name: Save counts to the stats branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      # The first run starts the branch with no history.
+      - name: Switch to the stats branch
+        run: |
+          if git ls-remote --exit-code --heads origin stats > /dev/null; then
+            git fetch --depth=1 origin stats
+            git switch --create stats FETCH_HEAD
+          else
+            git switch --orphan stats
+          fi
+
+      - name: Save the counts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+        run: |
+          TODAY=$(date -u +%F)
+          export TODAY
+
+          # upsert FILE HEADER KEYS: merges the CSV rows on stdin into FILE. A new row replaces the old row with the same
+          # first KEYS columns, so a second run on one day, or a day that GitHub reports again, adds no duplicate.
+          upsert() {
+            { cat; if [ -f "$1" ]; then tail -n +2 "$1"; fi; } |
+              awk -F, -v keys="$3" '{ key = $1; for (i = 2; i <= keys; i++) key = key FS $i } !seen[key]++' |
+              sort > rows.tmp
+            { echo "$2"; cat rows.tmp; } > "$1"
+            rm rows.tmp
+          }
+
+          # Total downloads so far of each file of each published release. Drafts from release.yml are left out.
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases" \
+            --jq '.[] | select(.draft | not) | {tag: .tag_name, file: .assets[]} | [env.TODAY, .tag, .file.name, .file.download_count] | @csv' |
+            upsert downloads.csv date,release,file,downloads_total 3
+
+          if [ -z "$TRAFFIC_TOKEN" ]; then
+            echo "::notice::TRAFFIC_TOKEN is not set, so only download counts were saved."
+            exit 0
+          fi
+          export GH_TOKEN="$TRAFFIC_TOKEN"
+
+          # Views and clones per UTC day for the last 14 days. The newest day can be partial; the next run replaces it.
+          gh api "repos/$GITHUB_REPOSITORY/traffic/views" --jq '.views[] | [.timestamp[:10], .count, .uniques] | @csv' |
+            upsert views.csv date,views,unique_visitors 1
+          gh api "repos/$GITHUB_REPOSITORY/traffic/clones" --jq '.clones[] | [.timestamp[:10], .count, .uniques] | @csv' |
+            upsert clones.csv date,clones,unique_cloners 1
+          # The top 10 referring sites, each counted over the 14 days up to that date.
+          gh api "repos/$GITHUB_REPOSITORY/traffic/popular/referrers" \
+            --jq '.[] | [env.TODAY, .referrer, .count, .uniques] | @csv' |
+            upsert referrers.csv date,referrer,views_last_14_days,unique_visitors_last_14_days 2
+
+      # Runs after a failed traffic call too, so that day's download counts are kept. The job still shows the failure.
+      - name: Commit and push
+        if: ${{ !cancelled() }}
+        run: |
+          git add -- *.csv
+          if git diff --cached --quiet; then
+            echo "Nothing changed since the last run."
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit --quiet --message "Stats for $(date -u +%F)"
+          git push origin stats
