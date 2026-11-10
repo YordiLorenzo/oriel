@@ -9,7 +9,7 @@ The scripts, and how to run them on your own PC, are in [bench/README.md](../ben
 | Benchmark | What it measures | Result |
 |---|---|---|
 | [3. WindowsAgentArena](#3-windowsagentarena-benchwaa) | Whole tasks: Microsoft's 153 scored tasks in a Windows 11 VM, the same model on both sides, only the MCP server swapped | Round 9 (October 2026), oriel v12 against Cua Driver 0.38.0 without 4 of its 63 tools (`run_script` among them): a median 49 s per task against 70 s, 21.8 model turns against 27.0, and $38 against $61 per run in model cost as Claude Code estimates it. Each of these gaps holds at 95% confidence and is larger than either layer's own run-to-run gap. Cua Driver completed more tasks: 67% against 63%. Its own two runs differed by 6.5 points. |
-| [2. Head-to-head](#2-head-to-head-benchheadtohead) | Single MCP calls on the same PC | 2026-11-10, oriel 0.1.0 against Cua Driver 0.46.1: oriel took less time on every call measured. Listing windows 1 ms against 30 ms, launching an app 192 ms against 604 ms, an action 2 ms against 3 to 5 ms. |
+| [2. Head-to-head](#2-head-to-head-benchheadtohead) | Single MCP calls on the same PC | 2026-11-10, oriel 0.1.0 against Cua Driver 0.46.1 and agent-desktop 1.2.0: oriel took less time on every call measured. Listing windows 2 ms against 31 and 44 ms, launching an app 193 ms against 605 and 251 ms, an action 2 ms against 3 to 6 and 174 to 187 ms. |
 | [1. Latency per call](#1-latency-per-call-benchlatencypy) | oriel's own time per call, over SSH (2026-10-21/22, PC locked) | Most calls take 5 to 60 ms. |
 | [4. Agent task suite](#4-agent-task-suite-benchtasks) | 18 tasks written alongside oriel (2026-10-21/22, PC locked) | oriel passed 36 of 36 runs, Cua Driver 0.38.0 16 of 18. WindowsAgentArena is the larger, external test. |
 
@@ -25,7 +25,7 @@ Read these before you quote a number from this page.
 - **The current Cua Driver on whole tasks.** WindowsAgentArena ran Cua Driver 0.38.0 (released 2026-10-21). The newest on 2026-11-10 is 0.46.1. Only the per-call test (section 2) ran 0.46.1; no WindowsAgentArena round has.
 - **Money spent.** Model cost is the `total_cost_usd` that Claude Code reports: its list-price estimate from the token counts, not a bill. The runs used one Claude account, which hit its usage limit in rounds 7 and 9; the tasks it cut short were rerun.
 - **Other set-ups.** One model (Claude Sonnet 5.5 in Claude Code), one prompt, nested VMs on one droplet. Not other models, other clients or real hardware.
-- **Other tools.** oriel was not measured against Claude Desktop's or ChatGPT's computer use, or against agent-desktop 1.2.0 (on Windows since 2026-11-05).
+- **Other tools.** oriel was not measured against Claude Desktop's or ChatGPT's computer use. agent-desktop 1.2.0 ran only in the per-call test (section 2), not on WindowsAgentArena.
 
 ## 1. Latency per call (`bench/latency.py`)
 
@@ -48,7 +48,25 @@ oriel's daemon as it stood on 2026-10-21/22, PC locked, reached over SSH the way
 
 The same tasks through each MCP server on the same PC. Each server ran in the desktop session, and each client ran on the Mac with that tool's speed settings (no screenshots, highlighting or post-action diffs). The tables give the median wall time per MCP call. Rows, method and the browser trees: [bench/headtohead/RESULTS.md](../bench/headtohead/RESULTS.md).
 
-### 2026-11-10: oriel 0.1.0 against Cua Driver 0.46.1 (current)
+### 2026-11-10, second run: agent-desktop 1.2.0 added (current)
+
+agent-desktop 1.2.0 (vercel-labs, released 2026-11-05, its first release with an MCP server) beside oriel 0.1.0 and Cua Driver 0.46.1, all three in one session on the same PC, unlocked and idle. 5 runs per task. agent-desktop ran as `agent-desktop mcp` with its default headless actions and the `snapshot -i` loop from its quick start.
+
+| Task | oriel 0.1.0 | Cua Driver 0.46.1 | agent-desktop 1.2.0 |
+|---|---|---|---|
+| List windows | **2 ms** | 31 ms | 44 ms |
+| Launch Character Map | **193 ms** | 605 ms | 251 ms |
+| Launch + return its tree | **294 ms**, 1 call | 2 calls | 2 calls |
+| Character Map tree | **21 ms** | 37 ms (+ 30 ms list_windows) | 143 ms |
+| Fill a field (ref / token) | **2 ms** | 3 ms | 174 ms |
+| Press a button (ref / token) | **2 ms** | 6 ms | 187 ms |
+| Press + report what changed | **44 ms**, 1 call | 2 calls | 2 calls |
+| Correct outcome | 10/10 | 5/5 | 5/5 |
+
+- **agent-desktop** launches faster than Cua Driver, but each Character Map call takes 143 to 187 ms against 2 to 37 ms. On the browser pages each tree took 2.4 s (its skeleton) to 3.1 s (`-i`, which stops at its 3 s deadline and returns a partial tree), against about 0.1 s for oriel and 0.2 s for Cua Driver. Each tool stops at its own default limit, so those trees are not the same size.
+- **Cua Driver 0.46.1** was within 4 ms of the first run below on every row.
+
+### 2026-11-10: oriel 0.1.0 against Cua Driver 0.46.1 (first run)
 
 Cua Driver 0.46.1 was the newest release that day. The PC was unlocked and idle. 5 runs per task. Terminator and Windows-MCP were not run again.
 
@@ -72,7 +90,7 @@ Cua Driver ran through its daemon (`serve --no-overlay`, then `mcp --socket`). B
 
 ### 2026-10-21: four servers, PC locked (history)
 
-Kept as history. Cua Driver's figures here came from a locked PC and differ from the same version's figures on an unlocked PC (above), so use the 2026-11-10 table for Cua Driver. Terminator and Windows-MCP were measured only on this day. 5 runs per task (3 for Windows-MCP); medians:
+Kept as history. Cua Driver's figures here came from a locked PC and differ from the same version's figures on an unlocked PC (above), so use the 2026-11-10 tables for Cua Driver. Terminator and Windows-MCP were measured only on this day. 5 runs per task (3 for Windows-MCP); medians:
 
 | Task | oriel | Cua Driver 0.38.0 | Terminator 0.24.28 | Windows-MCP 0.8.8 |
 |---|---|---|---|---|
@@ -148,6 +166,8 @@ Latest: round 9 (oriel v12, October 2026), two runs per layer, 153 of WAA's 154 
 - **v12 against v11 (round 8):** 96.2 against 94.2 tasks, 21.8 against 22.5 turns, a median 49 s against 51 s per task, and the same cost ($38 per run). Typing `=SUM(A1:A3)` no longer needs escaping, and a window name that matches nothing lists the open windows.
 
 ### How sure the round 9 differences are
+
+![WindowsAgentArena round 9, 153 tasks, two runs per tool layer. oriel's difference from Cua Driver with 95% intervals: time per task 30% lower (20% to 36%), model cost 38% lower (33% to 42%), turns per task 19% lower (12% to 26%). Tasks completed: oriel 62.6% and 63.2% in its two runs, Cua Driver 63.9% and 70.4%.](images/benchmark-round9.png)
 
 `bench/waa/stats.py` draws the 153 tasks with replacement 10,000 times (seed 1). Each task drawn keeps both runs of both layers, so every draw compares the two layers on the same tasks. The 95% interval is the middle 95% of the 10,000 differences. The feasible columns leave out the 13 tasks that `tasks.json` marks infeasible. A negative difference means oriel is lower.
 

@@ -37,6 +37,9 @@ New ways to install and to check a download. The tools work as in 0.1.0.
 - **Site:** the hero line, install with the plugin from 0.1.1, two first prompts that act, the Windows warnings, round 9 with its caveat and the 10 Nov per-call table, and five answer pages (Claude Code computer use on Windows, oriel and Cua Driver, oriel and Windows-MCP, a Windows PC from a Mac over SSH, testing your Windows app), all in `sitemap.xml` and `llms.txt`.
 - **docs/tools.md:** two Windows Forms limits found while building the demo: a ListBox shows `find` only its visible rows, and an app built without a target framework attribute offers `select` no combo box items.
 - **README banner:** says "Lets Claude Code use your Windows apps." and Windows 11 instead of the old tagline, in the preview card's look at the same 1600 x 500. Its HTML source is `docs/images/source/banner.html`.
+- **docs/benchmarks.md, round 9 chart:** shown under "How sure the round 9 differences are", with alt text that gives its figures.
+- **docs/benchmarks.md, head-to-head:** the second 10 Nov run, with agent-desktop 1.2.0, is the current table and the summary row; "What this does not show" says agent-desktop ran only in the per-call test.
+- **README, per call:** the table is from the second 10 Nov run and adds agent-desktop 1.2.0 (list windows 2 ms against 31 and 44 ms, fill and press 2 ms against 3 to 6 and 174 to 187 ms).
 
 ## 0.1.0 - 2026-10-26
 

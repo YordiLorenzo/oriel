@@ -325,23 +325,24 @@ the MCP server was swapped. Two runs each, averaged over the 153 tasks scored in
 Every run, the 95% intervals and the earlier rounds: [bench/waa/RESULTS.md](bench/waa/RESULTS.md). Before you quote
 a number, read [what this does not show](docs/benchmarks.md#what-this-does-not-show).
 
-Per call, on 10 Nov 2026, against Cua Driver 0.46.1, the newest release that day (unlocked Windows 11 PC, median of
-5 runs, [bench/headtohead/RESULTS.md](bench/headtohead/RESULTS.md#2026-11-10-oriel-010-against-cua-driver-0461)):
+Per call, on 10 Nov 2026, against Cua Driver 0.46.1, the newest release that day, and agent-desktop 1.2.0 (released
+5 Nov 2026), all three in one session (unlocked Windows 11 PC, median of 5 runs,
+[bench/headtohead/RESULTS.md](bench/headtohead/RESULTS.md#2026-11-10-second-run-agent-desktop-120-added)):
 
-| Call | oriel 0.1.0 | Cua Driver 0.46.1 |
-|---|---|---|
-| List windows | **1 ms** | 30 ms |
-| Launch an app | **192 ms** | 604 ms |
-| Read a window | **20 ms** | 37 ms |
-| Fill a field | **2 ms** | 3 ms |
-| Press a button | **2 ms** | 5 ms |
-| Press, and see what changed | **42 ms**, one call | a second call |
+| Call | oriel 0.1.0 | Cua Driver 0.46.1 | agent-desktop 1.2.0 |
+|---|---|---|---|
+| List windows | **2 ms** | 31 ms | 44 ms |
+| Launch an app | **193 ms** | 605 ms | 251 ms |
+| Read a window | **21 ms** | 37 ms | 143 ms |
+| Fill a field | **2 ms** | 3 ms | 174 ms |
+| Press a button | **2 ms** | 6 ms | 187 ms |
+| Press, and see what changed | **44 ms**, one call | a second call | a second call |
 
 Choose a screenshot-based agent if most of the work is in games, canvases or remote desktops, where there is no
 accessibility tree. If completion is what you need most, Cua Driver is a fair choice. Choose oriel if your assistant
 works in everyday Windows apps and you want each task done in less time and fewer turns.
 
-Method, every round, the per-call timings of all four servers measured and the rules against tuning to the benchmark:
+Method, every round, the per-call timings of all five servers measured and the rules against tuning to the benchmark:
 [docs/benchmarks.md](docs/benchmarks.md). What comes next: [ROADMAP.md](ROADMAP.md).
 
 ## FAQ
