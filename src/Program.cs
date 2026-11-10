@@ -152,6 +152,8 @@ public static class Program
         // Over SSH, cmd.exe (OpenSSH's default shell on Windows) runs the command, and a path with a space needs its quotes.
         var remote = exe.Contains(" ") ? "\"" + exe + "\"" : exe;
         var host = System.Net.Dns.GetHostName().ToLowerInvariant();
+        // The SSH line goes to a Mac or Linux shell: single quotes keep the backslashes, and a ' in a user name becomes '\''.
+        Func<string, string> sh = s => "'" + s.Replace("'", "'\\''") + "'";
         return "\nTo add oriel to your MCP client, paste one of these:\n" +
             "\nClaude Code on this PC, in PowerShell or cmd:\n" +
             "claude mcp add --scope user oriel -- \"" + exe + "\" mcp\n" +
@@ -161,7 +163,7 @@ public static class Program
             "[mcp_servers.oriel]\ncommand = \"" + escaped + "\"\nargs = [\"mcp\"]\n" +
             "\nClaude Code on a Mac or Linux machine, over SSH (this PC needs OpenSSH Server on, with key login; if \"" + host +
             "\" isn't found there, use this PC's IP address):\n" +
-            "claude mcp add --scope user oriel -- ssh '" + Environment.UserName + "@" + host + "' '" + remote + "' mcp\n" +
+            "claude mcp add --scope user oriel -- ssh " + sh(Environment.UserName + "@" + host) + " " + sh(remote) + " mcp\n" +
             "\nRestart Claude Desktop, Cursor or Codex after you edit its file.\n" +
             "Did it work? Say so at https://github.com/YordiLorenzo/oriel/discussions";
     }
