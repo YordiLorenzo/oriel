@@ -135,7 +135,7 @@ def main():
     bottom.set_xlabel(f"Tasks completed, % of {n}", fontsize=8.5, color=MUTED, labelpad=6)
 
     fig.text(0.04, 0.035, "Claude Sonnet 5.5 in Claude Code, 50-turn limit. oriel v12; Cua Driver 0.38.0 without 4 of its 63 tools "
-             "(run_script and 3 that install software).\nCost is Claude Code's list-price estimate. Intervals: bootstrap over "
+             "(run_script, 2 that install software, check_for_update).\nCost is Claude Code's list-price estimate. Intervals: bootstrap over "
              "tasks, 10,000 draws, bench/waa/stats.py. Rows: bench/waa/results-*.jsonl.", fontsize=7.5, color=MUTED,
              linespacing=1.5)
     fig.savefig(out, dpi=DPI, facecolor=SURFACE, metadata={"Software": None})
