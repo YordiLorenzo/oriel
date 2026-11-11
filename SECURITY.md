@@ -126,6 +126,8 @@ Other programs and web pages on the same PC are **not trusted**.
 
 - **The assistant acts as you.** Anything you can do in an allowed window, it can do: send an email, delete a file in
   Explorer (to the Recycle Bin), change a setting. Use the allow-list to keep it to the apps a task needs.
+- **`launch` trusts Windows' own handlers for folders.** A folder counts as File Explorer. If you set another
+  program to open folders, `launch` doesn't check it.
 - **`launch` still starts any program,** including one the assistant downloaded through a browser. The shell rule
   keeps it from running commands and scripts through Windows' own interpreters, not from running a program it got
   from the web. An allow-list limits `launch` to the programs you name.

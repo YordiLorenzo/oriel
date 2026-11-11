@@ -742,12 +742,22 @@ public static class Engine
         {
             if (command.IndexOf('"', 1) > 0) cut = command.IndexOf('"', 1) + 1;
         }
-        else  // unquoted, as CreateProcess reads it: the first start up to a blank that names a file (C:\Program Files\x.exe %1)
+        else
+        {
+            // Unquoted, CreateProcess tries each start up to a blank as the program, with .exe added when it has no file
+            // type (C:\Program Files\x.exe %1 tries C:\Program.exe first): each one that exists counts.
+            bool picked = false;
             for (int i = command.IndexOfAny(blanks); i > 0; i = command.IndexOfAny(blanks, i + 1))
             {
-                var found = Locate(command.Substring(0, i), dir);
-                if (found != null && File.Exists(found)) { cut = i; break; }
+                var start = command.Substring(0, i);
+                if (Path.GetExtension(start).Length == 0) start += ".exe";
+                var found = Locate(start, dir);
+                if (found == null || !File.Exists(found)) continue;
+                string other;
+                Runs(root, found, dir, false, depth + 1, out other);
+                if (!picked) { cut = i; picked = true; }  // the first one that exists is the one it runs
             }
+        }
         string file;
         var program = Runs(root, command.Substring(0, cut), dir, false, depth + 1, out file);
         CheckWords(root, command.Substring(cut), dir.Split('|')[0] + "|" + FolderOf(file), depth + 1);
