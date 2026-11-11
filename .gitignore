@@ -1,6 +1,8 @@
 dist/
 build/obj/
 *.exe
+# The release's oriel.exe, which .github/workflows/plugin.yml puts into the Claude Code plugin
+!plugins/oriel/oriel.exe
 __pycache__/
 bench/waa/traces/
 bench/waa/run-*.log
