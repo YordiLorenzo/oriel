@@ -2,7 +2,7 @@
 
 Every tool replies with text and ends with `(<action> took N ms)`. Errors come back as tool errors whose text says what to do next. For example, a missed name lists the closest elements.
 
-The tools carry `_meta: {"anthropic/alwaysLoad": true}`, so Claude Code loads them up front instead of behind a tool search, which saves a model turn at the start of a session. The server's instructions are fixed text: window titles and page content, which apps and web pages control, only ever come back as tool results.
+The tools carry `_meta: {"anthropic/alwaysLoad": true}`, so Claude Code loads them up front instead of behind a tool search, which saves a model turn at the start of a session. Each tool also carries [MCP tool annotations](https://modelcontextprotocol.io/specification/2025-11-25/schema#toolannotations): a `title`; `readOnlyHint` true for the seven reading tools; `destructiveHint` true for the tools that can change or lose data in an app (`invoke`, `set`, `select`, `keys`, `click`, `drag`, `close`, `launch`, `batch`); `idempotentHint` true where a repeat changes nothing more (the reading tools, `set`, `window`, `focus`); and `openWorldHint` true for every tool, because each one reaches whatever app is open, web pages and signed-in accounts included. The server's instructions are fixed text: window titles and page content, which apps and web pages control, only ever come back as tool results.
 
 **Windows** are named by part of their title, their process name (`chrome`, `notepad`), or their handle, as `windows` lists them. **Elements** are named by ref (`kqm17`, from `tree` or `find`) or by window plus name. The best name match wins: exact before partial, enabled and on-screen first.
 

@@ -32,17 +32,22 @@ public static class Mcp
         "hides known extensions: an item shown as 'draft' may be draft.txt, and renaming it means setting 'final', not " +
         "'final.txt' (that gives final.txt.txt).";
 
+    // What a tool does to the PC, sent as its MCP annotations. Changes: it changes something, loses no data, and a
+    // repeat adds to the first call.
+    [Flags] enum Hint { Changes = 0, ReadOnly = 1, Destructive = 2, Idempotent = 4 }
+
     class Tool
     {
-        public string Name, Description, Action;
+        public string Name, Title, Description, Action;
+        public Hint Hint;
         public string[] Required;
         public Dictionary<string, string> Props;   // argument name -> JSON type
         public Dictionary<string, string> Option;  // argument name -> engine option name
     }
 
-    static Tool T(string name, string action, string description, string props, string required)
+    static Tool T(string name, string action, string title, Hint hint, string description, string props, string required)
     {
-        var t = new Tool { Name = name, Action = action, Description = description, Props = new Dictionary<string, string>(), Option = new Dictionary<string, string>() };
+        var t = new Tool { Name = name, Action = action, Title = title, Hint = hint, Description = description, Props = new Dictionary<string, string>(), Option = new Dictionary<string, string>() };
         t.Required = required == "" ? new string[0] : required.Split(',');
         // "window:string=Window,depth:integer=Depth": argument, JSON type, engine option.
         if (props != "")
@@ -56,55 +61,59 @@ public static class Mcp
     }
 
     static readonly Tool[] Tools = {
-        T("status", "status", "Whether the PC is locked, seconds since the user last touched it, and the foreground window.", "", ""),
-        T("windows", "windows", "Visible windows, front first, dialogs included: [handle] process \"title\".", "", ""),
-        T("tree", "tree", "Named or actionable on-screen elements of one window, indented by nesting: [ref] type \"name\", " +
+        T("status", "status", "PC status", Hint.ReadOnly, "Whether the PC is locked, seconds since the user last touched it, and the foreground window.", "", ""),
+        T("windows", "windows", "List windows", Hint.ReadOnly, "Visible windows, front first, dialogs included: [handle] process \"title\".", "", ""),
+        T("tree", "tree", "Read a window's controls", Hint.ReadOnly, "Named or actionable on-screen elements of one window, indented by nesting: [ref] type \"name\", " +
           "value, state (on/off, selected, collapsed, disabled) and actions in {} when they differ from the type's usual one. " +
           "window = part of the title, a process name (chrome, notepad) or a handle.",
           "window:string=Window,depth:integer=Depth,max_elements:integer=Max", "window"),
-        T("find", "find", "Elements of a window whose name contains `name` (case-insensitive); type narrows it (Button, Edit, ...).",
+        T("find", "find", "Find controls", Hint.ReadOnly, "Elements of a window whose name contains `name` (case-insensitive); type narrows it (Button, Edit, ...).",
           "window:string=Window,name:string=Name,type:string=Type", "window"),
-        T("invoke", "invoke", "Press, toggle, select or expand an element: id = a ref from tree/find (e.g. kqm17), or window + name " +
+        T("invoke", "invoke", "Press a control", Hint.Destructive, "Press, toggle, select or expand an element: id = a ref from tree/find (e.g. kqm17), or window + name " +
           "(best match: exact and enabled first; a miss lists the closest names). Replies with what changed once the window " +
           "settles (about 40 ms; changes=false skips that).",
           "id:string=Id,window:string=Window,name:string=Name,type:string=Type,changes:boolean=Changes,screenshot:boolean=Screenshot", ""),
-        T("set", "set", "Fill a text field (replaces its content; \"\" clears it), by ref id or window + name. Refuses password " +
+        T("set", "set", "Fill a field", Hint.Destructive | Hint.Idempotent, "Fill a text field (replaces its content; \"\" clears it), by ref id or window + name. Refuses password " +
           "fields. Read the field with text first if it may hold the user's text. Replies with what changed (changes=false skips).",
           "value:string=Value,id:string=Id,window:string=Window,name:string=Name,type:string=Type,changes:boolean=Changes,screenshot:boolean=Screenshot", "value"),
-        T("text", "text", "Text of a document or field, by ref id or window + name (the first document/edit of the window when " +
+        T("text", "text", "Read text", Hint.ReadOnly, "Text of a document or field, by ref id or window + name (the first document/edit of the window when " +
           "only window is given).", "id:string=Id,window:string=Window,name:string=Name,type:string=Type", ""),
-        T("wait", "wait", "Wait until a window matching `window` appears, or with `name`, until an element whose name contains " +
+        T("wait", "wait", "Wait for a window or control", Hint.ReadOnly, "Wait until a window matching `window` appears, or with `name`, until an element whose name contains " +
           "`name` appears in it (reacts to the window's own events; default timeout 10 s). With neither, pause `timeout` " +
           "seconds (default 3) and list the open windows.",
           "window:string=Window,name:string=Name,type:string=Type,timeout:number=Timeout", ""),
-        T("scroll", "scroll", "Scroll: an element into view (id or name of an item), or a container (its id or name, else the " +
+        // Moves the view, not the data; each call scrolls one more page or line.
+        T("scroll", "scroll", "Scroll", Hint.Changes,"Scroll: an element into view (id or name of an item), or a container (its id or name, else the " +
           "window's first scrollable area) by a page or line. Replies with what came into view.",
           "window:string=Window,id:string=Id,name:string=Name,direction:string=Direction,amount:string=Amount,changes:boolean=Changes", ""),
-        T("select", "select", "Pick an item by its text in a combo box, list, tab strip or menu (id or window + name of the box): " +
+        // A menu item can run any command (Delete), and runs it again on a repeat.
+        T("select", "select", "Pick an item", Hint.Destructive,"Pick an item by its text in a combo box, list, tab strip or menu (id or window + name of the box): " +
           "opens it if needed, selects the item (exact name first, else one containing the text) and closes it. Replies with what changed.",
           "option:string=Option,id:string=Id,window:string=Window,name:string=Name,type:string=Type,changes:boolean=Changes", "option"),
-        T("click", "click", "Click with the real mouse, for what has no UIA action (a sheet's cells, a canvas): an element (id = a ref, " +
+        T("click", "click", "Click with the mouse", Hint.Destructive, "Click with the real mouse, for what has no UIA action (a sheet's cells, a canvas): an element (id = a ref, " +
           "or window + name: its center) or a point (window + x, y: window pixels from its top-left corner; a screenshot says " +
           "how its pixels map). The window comes to the front first; refused while the user is active or the PC is locked. " +
           "button left/right, double. Prefer invoke for buttons and links: it doesn't take the mouse. Replies with what changed.",
           "id:string=Id,window:string=Window,name:string=Name,type:string=Type,x:integer=X,y:integer=Y,button:string=Button," +
           "double:boolean=Double,changes:boolean=Changes,screenshot:boolean=Screenshot", ""),
-        T("drag", "drag", "Press the left mouse button at (x1, y1) and release it at (x2, y2), window pixels from its top-left corner: " +
+        T("drag", "drag", "Drag with the mouse", Hint.Destructive, "Press the left mouse button at (x1, y1) and release it at (x2, y2), window pixels from its top-left corner: " +
           "drawing, sliders, selecting a range of cells or text. Same checks as click. Replies with what changed.",
           "window:string=Window,x1:integer=X1,y1:integer=Y1,x2:integer=X2,y2:integer=Y2,changes:boolean=Changes,screenshot:boolean=Screenshot", "window,x1,y1,x2,y2"),
-        T("window", "window", "Minimise, maximise or restore a window (state) and/or move it (x, y) or resize it (width, height).",
+        T("window", "window", "Move, resize or minimise a window", Hint.Idempotent, "Minimise, maximise or restore a window (state) and/or move it (x, y) or resize it (width, height).",
           "window:string=Window,state:string=State,x:number=X,y:number=Y,width:number=Width,height:number=Height", "window"),
-        T("screenshot", "screenshot", "A picture of one window (default: the one in front), for what text can't show (canvases, games, charts, images). " +
+        T("screenshot", "screenshot", "Screenshot a window", Hint.ReadOnly, "A picture of one window (default: the one in front), for what text can't show (canvases, games, charts, images). " +
           "Costs far more tokens than tree: use it only when the tree can't answer.",
           "window:string=Window,max_width:integer=MaxWidth", ""),
-        T("focus", "focus", "Restore a window if minimised and bring it to the front (fails while the PC is locked).",
+        T("focus", "focus", "Bring a window to the front", Hint.Idempotent, "Restore a window if minimised and bring it to the front (fails while the PC is locked).",
           "window:string=Window", "window"),
-        T("close", "close", "Close a window through its WindowPattern (an app may still ask to save).", "window:string=Window", "window"),
-        T("launch", "launch", "Start a program, file, folder or URI (notepad.exe, explorer.exe, ms-settings:display). With wait_title " +
+        // A window that doesn't ask to save loses what it held; a repeat closes the next window with that title.
+        T("close", "close", "Close a window", Hint.Destructive,"Close a window through its WindowPattern (an app may still ask to save).", "window:string=Window", "window"),
+        // Starts any program with any arguments, a new instance each time.
+        T("launch", "launch", "Start a program", Hint.Destructive,"Start a program, file, folder or URI (notepad.exe, explorer.exe, ms-settings:display). With wait_title " +
           "it waits until a new window whose title contains it exists, then (tree=true) for its controls to stop arriving, and " +
           "replies with that window's tree.",
           "path:string=Path,args:string=Args,wait_title:string=WaitTitle,timeout:number=Timeout,tree:boolean=Tree,max_elements:integer=Max", "path"),
-        T("keys", "keys", "Send keystrokes in SendKeys syntax to `window` (and its element `name`/`id`), after checking the window is " +
+        T("keys", "keys", "Send keystrokes", Hint.Destructive, "Send keystrokes in SendKeys syntax to `window` (and its element `name`/`id`), after checking the window is " +
           "in front and the focus is not a password field: {ENTER} {TAB} {ESC} {F5}, ^a = Ctrl+A, %{F4} = Alt+F4, +{TAB} = " +
           "Shift+Tab; plain text types as is (escape + ^ % ~ { in braces, e.g. {+}; ( ) [ ] } type as themselves). Text may only come before the " +
           "first key that can move the focus: 'hello{ENTER}' and '^ahello' work, '{TAB}secret' is refused (send the text in " +
@@ -112,7 +121,7 @@ public static class Mcp
           "as plain text (newlines as Enter), no escaping needed. Refused while the user is typing and while the PC is locked. " +
           "Replies with what changed.",
           "keys:string=Keys,window:string=Window,name:string=Name,type:string=Type,id:string=Id,literal:boolean=Literal,changes:boolean=Changes,screenshot:boolean=Screenshot", "keys,window"),
-        T("batch", "batch", "Run several actions in one call, in order, stopping at the first error (the reply shows what ran). Each " +
+        T("batch", "batch", "Run several actions", Hint.Destructive, "Run several actions in one call, in order, stopping at the first error (the reply shows what ran). Each " +
           "step is an object with \"action\" (tree, find, invoke, set, text, wait, scroll, select, window, focus, close, launch, " +
           "keys) and that action's options with capitalised names: Window, Id, Name, Type, Value, Option, Keys, Path, Args, WaitTitle, " +
           "Timeout, Direction, Amount, State. `window` is the " +
@@ -216,9 +225,15 @@ public static class Mcp
             }
             // The whole tool list is small, so clients that defer MCP tools behind a search (Claude Code) load it up front:
             // that saves a tool-search round trip, a model turn, at the start of every session.
+            bool readOnly = t.Hint.HasFlag(Hint.ReadOnly);
             list.Add(new Dictionary<string, object> {
                 { "name", t.Name }, { "description", t.Description },
                 { "inputSchema", new Dictionary<string, object> { { "type", "object" }, { "properties", props }, { "required", t.Required } } },
+                // A tool that changes nothing has no further effect when repeated. Every tool is open world: it reaches
+                // whatever app is open, web pages and signed-in accounts included.
+                { "annotations", new Dictionary<string, object> {
+                    { "title", t.Title }, { "readOnlyHint", readOnly }, { "destructiveHint", t.Hint.HasFlag(Hint.Destructive) },
+                    { "idempotentHint", readOnly || t.Hint.HasFlag(Hint.Idempotent) }, { "openWorldHint", true } } },
                 { "_meta", new Dictionary<string, object> { { "anthropic/alwaysLoad", true } } } });
         }
         return list;

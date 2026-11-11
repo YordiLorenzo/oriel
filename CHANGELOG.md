@@ -2,7 +2,13 @@
 
 All notable changes to oriel are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## 0.1.2 - unreleased
+## 0.1.2 - 2026-11-11
+
+The tools say whether they change anything, and the Claude Code plugin carries `oriel.exe`. The tools work as in 0.1.1.
+
+### Added
+
+- **Tool annotations:** every tool carries MCP tool annotations: a `title`, `readOnlyHint`, `destructiveHint`, `idempotentHint` and `openWorldHint`. The seven reading tools (`status`, `windows`, `tree`, `find`, `text`, `wait`, `screenshot`) are read-only. `invoke`, `set`, `select`, `keys`, `click`, `drag`, `close`, `launch` and `batch` are destructive, because they can change or lose data in an app. [docs/tools.md](docs/tools.md) lists them all.
 
 ### Changed
 
