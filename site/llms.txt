@@ -24,7 +24,7 @@ Set up with Claude Code, in PowerShell:
 claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp
 ```
 
-The second line can instead be (Claude Code 2.1.292 or later and Git for Windows; use one of the two):
+Or both lines can be replaced by the Claude Code plugin, which carries its own `oriel.exe` (Claude Code 2.1.292 or later and Git for Windows; use one of the two):
 
 ```
 claude plugin install oriel --marketplace YordiLorenzo/oriel

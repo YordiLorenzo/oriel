@@ -199,7 +199,7 @@
               <div class="tab-panel panel-claude">
                 <p>In the same PowerShell window:</p>
                 <pre class="code" data-copy="claude-mcp-add"><code>claude mcp add <span class="nw">--scope</span> user oriel -- "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" mcp</code></pre>
-                <p>Or as a Claude Code plugin (Claude Code 2.1.292 or later, and Git for Windows, which Claude Code uses to fetch the plugin). Use one of the two, not both.</p>
+                <p>Or as a Claude Code plugin, which carries its own oriel.exe, so it needs no step 1 (Claude Code 2.1.292 or later, and Git for Windows, which Claude Code uses to fetch the plugin). Use one of the two, not both.</p>
                 <pre class="code" data-copy="claude-plugin"><code>claude plugin install oriel <span class="nw">--marketplace</span> YordiLorenzo/oriel</code></pre>
               </div>
               <div class="tab-panel panel-ssh">

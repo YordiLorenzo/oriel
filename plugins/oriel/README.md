@@ -47,7 +47,9 @@ folder, and it builds with the C# compiler that Windows includes.
 - It keeps a per-user key, a counter for refs and an optional `config.json` in `%LOCALAPPDATA%\oriel`.
 - When Claude Code runs where there is no desktop, such as an SSH login, oriel starts a copy of itself in your
   desktop session through a one-time scheduled task, `oriel-start`, which is deleted once it has started. That copy
-  listens on `127.0.0.1` for clients that hold your per-user key, and runs until you sign out.
+  listens on `127.0.0.1` for clients that hold your per-user key, and runs until you sign out, also after the plugin
+  is updated or uninstalled. In Claude Code on the desktop itself, oriel runs inside its own MCP process and starts no
+  other copy.
 
 ## Windows warnings
 
