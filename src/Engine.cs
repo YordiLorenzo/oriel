@@ -482,7 +482,7 @@ public static class Engine
             if (!first)
                 foreach (var whole in new List<string>(words))
                 {
-                    var w = whole.Trim().Trim('"').Replace('/', '\\');
+                    var w = FromFileUri(whole.Trim().Trim('"')).Replace('/', '\\');
                     if (w.StartsWith(@"\\") && !w.EndsWith(@"\") && w.LastIndexOf('.') <= w.LastIndexOf('\\'))
                         Unchecked(root, "an argument names a file on another computer with no file type; launch can't tell what it is");
                 }
@@ -547,13 +547,7 @@ public static class Engine
             if (target == null) return Unchecked(root, "it is a shell item that is neither a file nor a folder");
         }
         else if (scheme != null && scheme != "file") return Command(root, Assoc(scheme, true), dir, depth);
-        if (scheme == "file")
-        {
-            var local = new StringBuilder(32768);
-            int size = local.Capacity;
-            if (PathCreateFromUrl(target, local, ref size, 0) == 0) target = local.ToString();
-        }
-        target = target.Replace('/', '\\');
+        target = FromFileUri(target).Replace('/', '\\');
         if ((target.StartsWith(@"\\?\") || target.StartsWith(@"\\.\")) && target.Length > 5 && target[5] == ':') target = target.Substring(4);
         if (dir.Replace('/', '\\').StartsWith(@"\\") && !target.StartsWith(@"\\") && !(target.Length > 1 && target[1] == ':'))
             target = Path.Combine(dir, target.TrimStart('\\'));  // relative to a folder on another computer
@@ -659,6 +653,15 @@ public static class Engine
     {
         if (!Shell) throw new OrielError(root + ": " + why + ", so launch can't check what it starts (\"shell\": true in config.json allows it)");
         return null;
+    }
+
+    // The path a file: URI names (file://server/share/x is \\server\share\x); anything else as it is.
+    static string FromFileUri(string target)
+    {
+        if (SchemeOf(target) != "file") return target;
+        var local = new StringBuilder(32768);
+        int size = local.Capacity;
+        return PathCreateFromUrl(target, local, ref size, 0) == 0 ? local.ToString() : target;
     }
 
     // A UNC path as Windows rewrites it, from the text alone: . and .. resolved below \\server\share, empty parts dropped,
