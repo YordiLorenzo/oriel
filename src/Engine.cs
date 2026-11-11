@@ -434,21 +434,23 @@ public static class Engine
     static string CheckLaunch(string path, string args)
     {
         string file;
-        var program = Runs(path, path, true, 0, out file);
+        var program = Runs(path, path, "", true, 0, out file);
         if (Allow.Count > 0 && (program == null || !Listed(program)))
             throw new OrielError((program ?? path) + " is not in the allow-list in config.json");
         // Only now the arguments, so a launch refused already looks at no file they name (\\host\share signs in there).
-        CheckWords(path, args, 1);
+        CheckWords(path, args, "", 1);
         return file ?? path;
     }
 
     // Each file or program that args names may not run commands either: the program started may run it. args is split
     // the way Windows splits a command line, and each value counts whole, in its parts around = , ; | < > (--gpu-launcher=cmd,
-    // /root,run.bat), up to each space (an unquoted path with spaces) and as a command line of its own (runas "cmd /c x").
-    static void CheckWords(string root, string args, int depth)
+    // /root,run.bat), up to each space or tab (an unquoted path with spaces) and as a command line of its own (runas
+    // "cmd /c x"). A relative path is read from dir, the folder the program starts in ("" for this one's).
+    static void CheckWords(string root, string args, string dir, int depth)
     {
         if (string.IsNullOrEmpty(args)) return;
         var joins = new[] { '=', ',', ';', '|', '<', '>' };
+        var blanks = new[] { ' ', '\t' };
         foreach (var value in Argv(Environment.ExpandEnvironmentVariables(args)))
         {
             var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { value };
@@ -465,9 +467,9 @@ public static class Engine
             string file;
             foreach (var word in words)
             {
-                Runs(root, word, false, depth, out file);
-                for (int i = word.IndexOf(' '); i > 0; i = word.IndexOf(' ', i + 1)) Runs(root, word.Substring(0, i), false, depth, out file);
-                if (word.IndexOf(' ') > 0) CheckWords(root, word, depth + 1);
+                Runs(root, word, dir, false, depth, out file);
+                for (int i = word.IndexOfAny(blanks); i > 0; i = word.IndexOfAny(blanks, i + 1)) Runs(root, word.Substring(0, i), dir, false, depth, out file);
+                if (word.IndexOfAny(blanks) > 0) CheckWords(root, word, dir, depth + 1);
             }
         }
     }
@@ -486,8 +488,8 @@ public static class Engine
     // The name of the program Windows runs for target: the file itself for a program, cmd for a batch file, a shortcut's
     // target, else the program that its file type's or URI scheme's open command starts (null for none, a packaged app or
     // a COM handler). Throws when that program runs commands. file is the file or folder target names, null for a URI.
-    // named: target is the path to start, so it must exist; else it is a word from args.
-    static string Runs(string root, string target, bool named, int depth, out string file)
+    // named: target is the path to start, so it must exist; else it is a word from args. dir as for CheckWords.
+    static string Runs(string root, string target, string dir, bool named, int depth, out string file)
     {
         file = null;
         string inner;
@@ -500,7 +502,7 @@ public static class Engine
             if (target == "") return "explorer";
             if (target == null) return Unchecked(root, "it is a shell item that is neither a file nor a folder");
         }
-        else if (scheme != null && scheme != "file") return Command(root, Assoc(scheme, true), depth);
+        else if (scheme != null && scheme != "file") return Command(root, Assoc(scheme, true), dir, depth);
         if (scheme == "file")
         {
             var local = new StringBuilder(32768);
@@ -520,7 +522,7 @@ public static class Engine
             if (target.EndsWith(@"\")) return "explorer";
             target = target.TrimEnd('.', ' ');
         }
-        file = remote ? null : Locate(target);
+        file = remote ? null : Locate(target, dir);
         if (file == null && !remote)
         {
             if (named) throw new OrielError("launch can't find " + target);
@@ -547,11 +549,14 @@ public static class Engine
             ((System.Runtime.InteropServices.ComTypes.IPersistFile)link).Load(file, 0);
             var to = new StringBuilder(32768);
             var with = new StringBuilder(32768);
+            var start = new StringBuilder(32768);
             link.GetPath(to, to.Capacity, IntPtr.Zero, 0);
             link.GetArguments(with, with.Capacity);
+            link.GetWorkingDirectory(start, start.Capacity);
             if (to.Length == 0) return Unchecked(root, "the shortcut points at no file");
-            var program = Runs(root, to.ToString(), true, depth + 1, out inner);
-            CheckWords(root, with.ToString(), depth + 1);
+            var folder = Environment.ExpandEnvironmentVariables(start.ToString());  // the program starts there
+            var program = Runs(root, to.ToString(), folder, true, depth + 1, out inner);
+            CheckWords(root, with.ToString(), folder, depth + 1);
             return program;
         }
         if (file != null && ext == ".url")
@@ -563,14 +568,14 @@ public static class Engine
             {
                 var url = new StringBuilder(32768);
                 if (GetPrivateProfileString(section, "URL", "", url, url.Capacity, file) == 0) continue;
-                opens = Runs(root, url.ToString(), true, depth + 1, out inner);
+                opens = Runs(root, url.ToString(), dir, true, depth + 1, out inner);
                 any = true;
             }
             return any ? opens : Unchecked(root, "the shortcut has no URL");
         }
         if (ext == ".bat" || ext == ".cmd") return Permit(root, "cmd");  // Windows runs batch files with cmd.exe
         var command = ext.Length > 0 ? Assoc(ext, false) : null;
-        if (command != null && !command.StartsWith("\"%1\"") && !command.StartsWith("%1")) return Command(root, command, depth);
+        if (command != null && !command.StartsWith("\"%1\"") && !command.StartsWith("%1")) return Command(root, command, dir, depth);
         return Permit(root, Path.GetFileNameWithoutExtension(name));  // a program, or a file no program opens, by its name
     }
 
@@ -592,7 +597,7 @@ public static class Engine
     }
 
     // The program that an open command (from Assoc) starts, checked with the rest of the command as its arguments.
-    static string Command(string root, string command, int depth)
+    static string Command(string root, string command, string dir, int depth)
     {
         if (command == null) return null;
         int cut;
@@ -604,8 +609,8 @@ public static class Engine
         }
         if (cut <= 0) cut = command.Length;
         string file;
-        var program = Runs(root, command.Substring(0, cut), false, depth + 1, out file);
-        CheckWords(root, command.Substring(cut), depth + 1);
+        var program = Runs(root, command.Substring(0, cut), dir, false, depth + 1, out file);
+        CheckWords(root, command.Substring(cut), dir, depth + 1);
         return program;
     }
 
@@ -618,17 +623,17 @@ public static class Engine
         return s.Substring(0, colon).ToLowerInvariant();
     }
 
-    // The file or folder target names, with its long name, found the way ShellExecute finds it: a path, or a bare name
-    // in the current directory, the Windows folders, on the PATH or in App Paths. A name without an extension
+    // The file or folder target names, with its long name, found the way ShellExecute finds it: a path (relative to dir,
+    // "" for the current directory), or a bare name in dir, the Windows folders, on the PATH or in App Paths. A name without an extension
     // tries the PATHEXT ones first, so "run" is run.bat when that exists, but a folder is a folder: it gets a trailing \,
     // without which ShellExecute would run folder.exe beside it. Null when there is none, or target isn't a path.
-    static string Locate(string target)
+    static string Locate(string target, string dir)
     {
         if (target.Length == 0) return null;
         try
         {
             bool bare = target.IndexOfAny(new[] { '\\', '/', ':' }) < 0;
-            var dirs = new List<string> { "" };  // the current directory
+            var dirs = new List<string> { dir };
             if (bare)
             {
                 dirs.Add(Environment.GetFolderPath(Environment.SpecialFolder.Windows));
@@ -636,9 +641,9 @@ public static class Engine
                 dirs.AddRange((Environment.GetEnvironmentVariable("PATH") ?? "").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
             }
             var exts = (Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var dir in dirs)
+            foreach (var folder in dirs)
             {
-                var full = Path.GetFullPath(Path.Combine(dir.Trim().Trim('"'), target));
+                var full = Path.GetFullPath(Path.Combine(folder.Trim().Trim('"'), target));
                 if (Directory.Exists(full)) return LongPath(full).TrimEnd('\\') + "\\";
                 var names = new List<string>();
                 if (!Path.HasExtension(full)) foreach (var e in exts) names.Add(full + e);
