@@ -538,19 +538,28 @@ public static class Engine
         return Runs(root, command.Substring(0, cut), command.Substring(cut), false, depth + 1, out file);
     }
 
-    // The words of args that may name a program or file: split at spaces and quotes, and outside URIs also at = , ; | < >
-    // (--gpu-launcher=cmd, /root,run.bat). A quoted part with spaces also counts whole ("C:\My Tools\x.exe").
-    static List<string> Words(string args)
+    // The words of args that may name a program or file, read every way a program might: each part between quotes and
+    // each start of it up to a space (as Windows reads an unquoted path with spaces); each word between spaces; and,
+    // outside URIs, what lies between and after each = , ; | < > (--gpu-launcher=cmd, /root,run.bat, C:\a,b.exe).
+    static HashSet<string> Words(string args)
     {
-        var words = new List<string>();
+        var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         if (args == null) return words;
+        var blanks = new[] { ' ', '\t', '\r', '\n', '\'' };
+        var joins = new[] { '=', ',', ';', '|', '<', '>' };
         foreach (var part in Environment.ExpandEnvironmentVariables(args).Split('"'))
         {
-            var pieces = new List<string>(part.Split(new[] { ' ', '\t', '\r', '\n', '\'' }, StringSplitOptions.RemoveEmptyEntries));
-            if (pieces.Count > 1) pieces.Add(part.Trim());
+            var pieces = new List<string>(part.Split(blanks, StringSplitOptions.RemoveEmptyEntries)) { part.Trim() };
+            for (int i = part.IndexOf(' '); i > 0; i = part.IndexOf(' ', i + 1)) pieces.Add(part.Substring(0, i).Trim());
             foreach (var piece in pieces)
-                words.AddRange(SchemeOf(piece) != null ? new[] { piece } : piece.Split(new[] { '=', ',', ';', '|', '<', '>' }, StringSplitOptions.RemoveEmptyEntries));
+            {
+                words.Add(piece);
+                if (SchemeOf(piece) != null) continue;
+                words.UnionWith(piece.Split(joins, StringSplitOptions.RemoveEmptyEntries));
+                for (int i = piece.IndexOfAny(joins); i >= 0; i = piece.IndexOfAny(joins, i + 1)) words.Add(piece.Substring(i + 1));
+            }
         }
+        words.Remove("");
         return words;
     }
 
@@ -564,8 +573,9 @@ public static class Engine
     }
 
     // The file or folder target names, with its long name, found the way ShellExecute finds it: a path or file: URI, or a
-    // bare name in the Windows folders, on the PATH or in App Paths. A name without an extension tries the PATHEXT ones
-    // first, so "run" is run.bat when that exists. Null when there is none, or target isn't a path.
+    // bare name in the current directory, the Windows folders, on the PATH or in App Paths. A name without an extension
+    // tries the PATHEXT ones first, so "run" is run.bat when that exists, but a folder is a folder: it gets a trailing \,
+    // without which ShellExecute would run folder.exe beside it. Null when there is none, or target isn't a path.
     static string Locate(string target)
     {
         if (target.Length == 0) return null;
@@ -579,20 +589,22 @@ public static class Engine
         try
         {
             bool bare = target.IndexOfAny(new[] { '\\', '/', ':' }) < 0;
-            var dirs = new List<string> { "" };
+            var dirs = new List<string> { "" };  // the current directory
             if (bare)
             {
-                dirs = new List<string> { Environment.GetFolderPath(Environment.SpecialFolder.Windows), Environment.SystemDirectory };
+                dirs.Add(Environment.GetFolderPath(Environment.SpecialFolder.Windows));
+                dirs.Add(Environment.SystemDirectory);
                 dirs.AddRange((Environment.GetEnvironmentVariable("PATH") ?? "").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
             }
             var exts = (Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var dir in dirs)
             {
                 var full = Path.GetFullPath(Path.Combine(dir.Trim().Trim('"'), target));
+                if (Directory.Exists(full)) return LongPath(full).TrimEnd('\\') + "\\";
                 var names = new List<string>();
                 if (!Path.HasExtension(full)) foreach (var e in exts) names.Add(full + e);
                 names.Add(full);
-                foreach (var p in names) if (File.Exists(p) || Directory.Exists(p)) return LongPath(p);
+                foreach (var p in names) if (File.Exists(p)) return LongPath(p);
             }
             if (bare)
                 foreach (var hive in new[] { Microsoft.Win32.Registry.CurrentUser, Microsoft.Win32.Registry.LocalMachine })
