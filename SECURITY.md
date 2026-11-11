@@ -70,7 +70,8 @@ Other programs and web pages on the same PC are **not trusted**.
   - The same check applies to every file or program that the arguments name, so `explorer.exe run.bat`,
     `chrome --gpu-launcher="cmd /c ..."` and `notepad run.bat` are refused. It reads the arguments as Windows splits
     them, as written and with environment variables expanded, and looks at them only after the program passes.
-    Arguments longer than 8192 characters, or one with more than 64 of `= , ; | < >`, are refused.
+    Arguments longer than 8192 characters, with one of more than 64 `= , ; | < >`, or naming more than 256 words
+    are refused.
   - `launch` reads no file on another computer (a `\\server\share` path), because connecting would sign in there. It
     goes by the name and file type there, and refuses a shortcut or a name without a file type (end a folder with
     `\`).

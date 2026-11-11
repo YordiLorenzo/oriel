@@ -432,6 +432,7 @@ public static class Engine
     // must be listed. Returns what to hand to ShellExecute: the file found here, so both mean the same file.
     static string CheckLaunch(string path, string args)
     {
+        lookups = 0;
         string file;
         var program = Runs(path, path, "", true, 0, out file);
         if (Allow.Count > 0 && (program == null || !Listed(program)))
@@ -495,6 +496,8 @@ public static class Engine
                     words.Add(start.Replace('/', '\\').StartsWith(@"\\") && typeless ? start + ".exe" : start);
                 }
             words.Remove("");
+            lookups += words.Count;
+            if (lookups > 256) throw new OrielError(root + ": the arguments name more words than launch checks (256)");
             // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe),
             // so for a word without a file type each file it could mean counts.
             foreach (var word in new List<string>(words))
@@ -525,11 +528,16 @@ public static class Engine
     // target, else the program that its file type's or URI scheme's open command starts (null for none, a packaged app or
     // a COM handler). Throws when that program runs commands. file is the file or folder target names, null for a URI.
     // named: target is the path to start, so it must exist; else it is a word from args. dir as for CheckWords.
+    // Words of the arguments checked in this launch, at most 256: each lookup walks the PATH, and the daemon runs one
+    // request at a time, so a long argument list must not hold it up (1000 words took 46 s).
+    static int lookups;
+
     static string Runs(string root, string target, string dir, bool named, int depth, out string file)
     {
         file = null;
         string inner;
         if (depth > 8) throw new OrielError(root + ": launch follows at most 8 shortcuts and file types in a row");
+        if (++lookups > 256) throw new OrielError(root + ": the arguments name more words than launch checks (256)");
         target = target.Trim().Trim('"');  // as written: ShellExecute expands no environment variables
         var scheme = SchemeOf(target);
         if (scheme == "shell" || target.StartsWith("::"))
@@ -673,13 +681,14 @@ public static class Engine
     {
         if (command == null) return null;
         command = Environment.ExpandEnvironmentVariables(command);  // Windows expands it before it runs it
-        int cut = command.IndexOf(' ') > 0 ? command.IndexOf(' ') : command.Length;
+        var blanks = new[] { ' ', '\t' };
+        int cut = command.IndexOfAny(blanks) > 0 ? command.IndexOfAny(blanks) : command.Length;
         if (command.StartsWith("\""))
         {
             if (command.IndexOf('"', 1) > 0) cut = command.IndexOf('"', 1) + 1;
         }
-        else  // unquoted, as CreateProcess reads it: the first start up to a space that names a file (C:\Program Files\x.exe %1)
-            for (int i = command.IndexOf(' '); i > 0; i = command.IndexOf(' ', i + 1))
+        else  // unquoted, as CreateProcess reads it: the first start up to a blank that names a file (C:\Program Files\x.exe %1)
+            for (int i = command.IndexOfAny(blanks); i > 0; i = command.IndexOfAny(blanks, i + 1))
             {
                 var found = Locate(command.Substring(0, i), dir);
                 if (found != null && File.Exists(found)) { cut = i; break; }
