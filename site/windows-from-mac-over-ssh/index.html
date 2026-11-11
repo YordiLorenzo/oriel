@@ -143,7 +143,7 @@ Set-Service -Name sshd -StartupType 'Automatic'</code></pre>
 
 <h2>4. Add oriel to Claude Code on the Mac</h2>
 <pre class="code" data-copy="claude-mcp-add-ssh"><code>claude mcp add <span class="nw">--scope</span> user oriel -- ssh '&lt;you&gt;@my-windows-pc' 'C:\<wbr>Users\<wbr>&lt;you&gt;\<wbr>AppData\<wbr>Local\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe' mcp</code></pre>
-<p>Use your Windows user name for <code>&lt;you&gt;</code>, and the PC's name or IP address for <code>my-windows-pc</code>. From 0.1.1, <code>oriel install</code> prints this line with your user name, path and PC name filled in.</p>
+<p>Use your Windows user name for <code>&lt;you&gt;</code>, and the PC's name or IP address for <code>my-windows-pc</code>. <code>oriel install</code> prints this line with your user name, path and PC name filled in.</p>
 <p>Use this line, not the Claude Code plugin: the plugin starts the exe on the machine Claude Code runs on, so it can't start on a Mac.</p>
 
 <h2>5. Try it</h2>

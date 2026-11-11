@@ -121,7 +121,7 @@ Download oriel only from this repository's [Releases page](https://github.com/Yo
 the file:
 
 - Compare its hash with the release's `SHA256SUMS`: `(Get-FileHash .\oriel.exe).Hash`.
-- From release 0.1.1, `gh attestation verify oriel.exe -R YordiLorenzo/oriel` checks that this repository's release
+- `gh attestation verify oriel.exe -R YordiLorenzo/oriel` checks that this repository's release
   workflow built it. The release's `oriel-<version>-win-x64.mcpb` bundle is in `SHA256SUMS` and attested the same
   way.
 

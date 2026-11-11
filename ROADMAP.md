@@ -12,7 +12,7 @@ thread in [Discussions](https://github.com/YordiLorenzo/oriel/discussions/catego
 2. **Windows 10.** oriel is meant to run on Windows 10 1903 and later, but has only been tested on Windows 11. Testing
    on Windows 10 22H2 comes first.
 3. **More MCP clients, tested.** Only Claude Code is tested so far. Claude Desktop, through the `.mcpb` bundle that
-   releases carry from 0.1.1, and the Codex CLI come next, then Cursor, VS Code and others. Each gets "tested" in the
+   releases carry since 0.1.1, and the Codex CLI come next, then Cursor, VS Code and others. Each gets "tested" in the
    README only once it passes.
 4. **LibreOffice.** In recent WindowsAgentArena rounds, Cua Driver completed more LibreOffice Writer and Calc tasks
    than oriel ([bench/waa/RESULTS.md](bench/waa/RESULTS.md)). Fixes have to help on any PC, not just the benchmark
