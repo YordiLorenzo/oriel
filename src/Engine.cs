@@ -559,6 +559,9 @@ public static class Engine
         if (device && target.Length > 5 && target[5] == ':') target = target.Substring(4);
         else if (device && target.Substring(4).StartsWith(@"UNC\", StringComparison.OrdinalIgnoreCase)) target = @"\\" + target.Substring(8);
         else if (device) return Unchecked(root, "it is a device path (\\\\?\\ or \\\\.\\ without a drive letter), which launch doesn't read");
+        // C:name is relative to the current folder of drive C:, which each process keeps for itself: launch can't know it.
+        if (target.Length >= 2 && char.IsLetter(target[0]) && target[1] == ':' && (target.Length == 2 || target[2] != '\\'))
+            return Unchecked(root, "a path like C:name, relative to a drive's current folder, can't be checked");
         var work = dir.Split('|')[0];
         if (work.Replace('/', '\\').StartsWith(@"\\") && !target.StartsWith(@"\\") && !(target.Length > 1 && target[1] == ':'))
             target = Path.Combine(work, target.TrimStart('\\'));  // relative to a folder on another computer
@@ -769,8 +772,12 @@ public static class Engine
             var exts = ProgramTypes();
             foreach (var folder in dirs)
             {
-                // Nothing on another computer is read (see Runs), whichever folder the path comes from.
-                var joined = Path.Combine(folder.Trim().Trim('"'), target).Replace('/', '\\');
+                // Nothing on another computer is read (see Runs), whichever folder the path comes from. \name is on the
+                // drive of the folder the program starts in.
+                var start = folder.Trim().Trim('"').Replace('/', '\\');
+                var name = target.Replace('/', '\\');
+                var joined = name.StartsWith(@"\") && !name.StartsWith(@"\\") && Path.IsPathRooted(start)
+                    ? Path.GetPathRoot(start) + name.Substring(1) : Path.Combine(start, name);
                 if (joined.StartsWith(@"\\")) continue;
                 var full = Path.GetFullPath(joined);
                 if (full.StartsWith(@"\\")) continue;

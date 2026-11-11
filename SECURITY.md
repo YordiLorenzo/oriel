@@ -78,7 +78,8 @@ Other programs and web pages on the same PC are **not trusted**.
   - `launch` starts the file it checked. A bare name, a path without its extension, a `file:` URI or a `shell:` path
     becomes the full path of that file first. A folder opens as a folder, even with a program of the same name beside
     it (Windows itself would run `folder.exe` for the path `folder`). A `shell:AppsFolder` app and a shortcut that
-    points at no file are refused, because launch can't see what they start. So is a file without a file type
+    points at no file are refused, because launch can't see what they start, and so is a path like `C:name`, which
+    is relative to a drive's current folder. So is a file without a file type
     (`report`), because Windows would open a program or shortcut of the same name (`report.lnk`) instead.
   - Terminals that are already open are off limits too (Windows Terminal, console windows of cmd and PowerShell, the
     PowerShell ISE, mintty and similar), because keys typed into one run as commands. So are the windows of the
