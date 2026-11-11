@@ -8,7 +8,9 @@
    start. Setup now installs Microsoft's VC++ runtime before the server packages.
 
 It also hides WAA's own server and proxy windows (on-logon.ps1): in a pilot run an agent typed into the server's
-visible console and the server died, ending the run.
+visible console and the server died, ending the run. And it publishes each container's ports (the VM's web viewer and
+RDP) on 127.0.0.1 only: on a lab machine Docker's published ports bypass the firewall, and the web viewer controls the
+VM without a password.
 
     python3 waa-patch.py /root/WindowsAgentArena
 
@@ -119,6 +121,13 @@ def main():
         logon_path.write_text(logon)
 
     patch_browser_profiles(root / "src/win-arena-container/client/desktop_env")
+
+    run_sh = root / "scripts/run.sh"
+    r = run_sh.read_text()
+    for port, inside in (("browser_port", "8006"), ("rdp_port", "3389")):
+        r = r.replace(f'" -p ${{{port}}}:{inside}"', f'" -p 127.0.0.1:${{{port}}}:{inside}"')
+    assert r.count("-p 127.0.0.1:") == 2, "run.sh port anchors not found"
+    run_sh.write_text(r)
 
     setup_path = setup_dir / "setup.ps1"
     setup = setup_path.read_text()

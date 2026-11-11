@@ -2,7 +2,7 @@
 # Put the benchmark's tools in WAA's share (vm/setup, \\host.lan\Data in the VM), each checked against the hash its
 # release publishes: oriel (oriel.exe, and oriel-<version>.exe for do-roles.sh and do-warm.sh), Cua Driver (cua/cua.zip
 # and its checksums.txt, which cua-provision.ps1 checks again), the OpenSSH MSI (GitHub's asset digest; the VM also
-# shows its Authenticode signature), the VM's public key and the in-VM scripts from this repo.
+# shows its Authenticode signature) and the in-VM scripts from this repo. do-setup.sh put the VM's key there.
 # Usage: waa-tools.sh <oriel version> <cua driver version>   (round 10: waa-tools.sh 0.1.1 0.46.1)
 set -eo pipefail
 H=${WAA_HOME:-/root}
@@ -34,6 +34,5 @@ check "$S/cua/cua.zip" "$(listed "$S/cua/checksums.txt" "$zip")" "Cua Driver $2"
 [ -f "$S/OpenSSH-Win64-v10.0.0.0.msi" ] || fetch "$S/OpenSSH-Win64-v10.0.0.0.msi" "$OPENSSH"
 check "$S/OpenSSH-Win64-v10.0.0.0.msi" "$OPENSSH_SHA256" "OpenSSH 10.0.0.0"
 
-cp "$H/.ssh/waa_vm.pub" "$S/waa_vm.pub"
 cp "$BENCH/vm/oriel-provision.ps1" "$BENCH/vm/cua-provision.ps1" "$BENCH/../headtohead/mcp-relay.ps1" "$S/"
 ls -l "$S"/oriel*.exe "$S"/cua/* "$S"/*.msi | awk '{print $5, $NF}'
