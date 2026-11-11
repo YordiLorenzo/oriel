@@ -61,7 +61,7 @@ oriel 0.1.1 against Cua Driver 0.46.1, two runs per layer over the same tasks, p
 **What changed:**
 - **Host:** firecracker, the lab's Linux machine (Threadripper 9960X, 48 threads, 122 GiB, KVM on bare metal), instead of a droplet with nested KVM. The agents run there too (`run.py --remote local`), so no client connection can drop mid-run as in rounds 8 and 9.
 - **Agent settings:** Claude Code runs with its own settings folder (`host/agent-home.sh`): no CLAUDE.md, skills, plugins or hooks of the machine's user, and no auto-update during the run. Rounds 1 to 9 ran with the Mac user's settings. On 11 Nov a one-line prompt with round 9's flags started from 50,040 tokens under those settings, 12,682 in the agents' own folder, and 3,652 with round 10's flags.
-- **Model and effort pinned:** `--model claude-sonnet-5-5 --effort xhigh`. Round 9 passed `sonnet`, which named Sonnet 5.5 then and still does, and took the effort from the user's settings. They say `xhigh` in every settings file and backup from 3 Nov on; no record shows round 9's own value.
+- **Model and effort pinned:** `--model claude-sonnet-5-5 --effort xhigh`. Round 9 passed `sonnet`, which named Sonnet 5.5 then and still does, and took the effort from the user's settings. They say `xhigh` in every settings file and backup from 3 Nov on; no record shows round 9's own value. Effort `xhigh` for round 10, pilot and full run, is the user's decision of 11 Nov 2026.
 - **Claude Code's own tools:** only ToolSearch, which loads deferred MCP tools (`--tools ToolSearch`). Round 9's list of tools to drop leaves 14 newer tools in Claude Code 2.1.322 (Workflow, SendMessage, Skill, Cron and others).
 - **Background load:** other work shares firecracker, also at night. Both layers of a run go at the same time on the same host (5 VMs each, as in round 9), so that load hits both alike. Each row now records the host's 1-minute load and the PSU's total output at the task's start and end (`host_load`, `host_psu_w`, from `host/host-load.sh`), and `stats.py` prints each run's mean.
 - **Network:** each VM's web viewer and RDP are published on 127.0.0.1 only (`host/waa-patch.py`).
@@ -80,17 +80,7 @@ bash $WAA_HOME/oriel/bench/waa/host/waa-tools.sh 0.1.1 0.46.1  # oriel and Cua D
 bash $WAA_HOME/agent-home.sh                                    # the agents' Claude Code folder
 ```
 
-Then, as in rounds 8 and 9, provision the golden image and warm it (LibreOffice's first start):
-
-```bash
-cd $WAA_HOME
-bash waa-snapshot.sh save storage-golden
-setsid nohup ./waa-serve.sh > waa-serve-base.log 2>&1 < /dev/null &    # wait until WAA's server answers, then:
-./vm-exec.sh '& \\host.lan\Data\oriel-provision.ps1'                   # OpenSSH with the key, oriel
-./vm-exec.sh '& \\host.lan\Data\cua-provision.ps1'                     # Cua Driver unpacked, telemetry off
-bash waa-snapshot.sh save storage-provisioned
-bash do-warm.sh oriel-0.1.1.exe                                         # saves storage-warm
-```
+Then, as in rounds 8 and 9, provision the golden image and warm it (LibreOffice's first start), once the golden build's container has exited: `bash $WAA_HOME/waa-provision.sh oriel-0.1.1.exe`. It saves `storage-golden`, installs OpenSSH with the VM key and oriel (`vm/oriel-provision.ps1`) and unpacks Cua Driver with its telemetry off (`vm/cua-provision.ps1`), saves `storage-provisioned`, then runs `do-warm.sh`, which saves `storage-warm`.
 
 ### The full run
 
