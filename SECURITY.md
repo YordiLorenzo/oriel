@@ -132,8 +132,9 @@ Other programs and web pages on the same PC are **not trusted**.
   start a program the way you can: File Explorer runs a batch file that is opened in it, its address bar and Task
   Manager's **Run new task** run a typed command, and most apps' Open dialogs open files as Explorer does. The list of
   programs that run commands can't be complete either. An allow-list that leaves out explorer and taskmgr narrows
-  this. To block scripts for certain, run the assistant in a Windows account where AppLocker or App Control for
-  Business blocks them, or in a VM.
+  this. An allow-list limits the program `launch` starts, not what that program opens from its arguments: Explorer
+  given a program's path starts it. To block scripts for certain, run the assistant in a Windows account where
+  AppLocker or App Control for Business blocks them, or in a VM.
 - **Keys and clicks are riskier** than element actions. Prefer `set` and `invoke`; `keys`, `click` and `drag` are
   refused while the user is typing or moving the mouse, and while the PC is locked.
 - **`screenshot`** shows whatever the window shows.

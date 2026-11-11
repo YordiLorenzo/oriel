@@ -438,11 +438,12 @@ public static class Engine
         if (Allow.Count > 0 && (program == null || !Listed(program)))
             throw new OrielError((program ?? path) + " is not in the allow-list in config.json");
         // Only now the arguments, so a launch refused already looks at no file they name (\\host\share signs in there).
-        // A shortcut's program starts in the shortcut's working folder, so its arguments are read from there. A program
-        // that runs a bare name from its arguments finds it first in its own folder, so that is searched too.
-        string to = file, with, folder = "";
+        // A shortcut's program gets the shortcut's arguments followed by these, in the shortcut's working folder, so they
+        // are read together, from there. A program that runs a bare name from its arguments finds it first in its own
+        // folder, so that is searched too.
+        string to = file, with = "", folder = "";
         if (file != null && file.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase)) ReadLink(file, out to, out with, out folder);
-        CheckWords(path, args, folder + "|" + FolderOf(to == null || to.StartsWith(@"\\") ? null : Locate(to, folder)), 1);
+        CheckWords(path, (with + " " + args).Trim(), folder + "|" + FolderOf(to == null || to.StartsWith(@"\\") ? null : Locate(to, folder)), 1);
         return file ?? path;
     }
 
@@ -621,7 +622,12 @@ public static class Engine
                 var folder = inner;
                 if (folder != null && Directory.Exists(folder) && !text.EndsWith("/") && !text.EndsWith(@"\"))
                     foreach (var e in ProgramTypes())
-                        if (File.Exists(folder.TrimEnd('\\') + e)) Runs(root, folder.TrimEnd('\\') + e, dir, true, depth + 1, out inner);
+                        if (File.Exists(folder.TrimEnd('\\') + e))
+                        {
+                            var alt = Runs(root, folder.TrimEnd('\\') + e, dir, true, depth + 1, out inner);
+                            if (Allow.Count > 0 && (alt == null || !Listed(alt)))
+                                throw new OrielError(root + " may start " + (alt ?? folder.TrimEnd('\\') + e) + ", which is not in the allow-list in config.json");
+                        }
                 any = true;
             }
             return any ? opens : Unchecked(root, "the shortcut has no URL");
