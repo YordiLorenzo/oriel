@@ -1,0 +1,14 @@
+[Unit]
+Description=WAA round 10 (oriel bench/waa): the start check, then the full run
+
+[Service]
+Type=exec
+WorkingDirectory=%h/waa
+Environment=WAA_HOME=%h/waa
+# The agents' Claude Code and its node: round10.sh pins the claude it finds on this PATH.
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/python3 %h/waa/round10-gate.py
+# Whatever the outcome: ends the sleep block that keeps the machine from napping until then (README, Round 10).
+ExecStopPost=/usr/bin/touch %h/waa/round10.ended
+StandardOutput=append:%h/waa/round10.log
+StandardError=append:%h/waa/round10.log
