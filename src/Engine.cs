@@ -504,12 +504,11 @@ public static class Engine
                     bool typeless = start.LastIndexOf('.') <= start.LastIndexOf('\\');
                     add(start.Replace('/', '\\').StartsWith(@"\\") && typeless ? start + ".exe" : start);
                 }
-            // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe),
-            // so for a word without a file type each file it could mean counts.
+            // The program that gets a word may look it up its own way, not as Locate does (another folder first, only .exe
+            // added), so each file the word could mean, in any folder searched and with any program type, counts.
             foreach (var word in new List<string>(words))
-                if (word.IndexOfAny(Path.GetInvalidPathChars()) < 0 && !Path.HasExtension(word.TrimEnd('.', ' ')))
-                    foreach (var e in ProgramTypes())
-                        if (Locate(word + e, dir) != null) add(word + e);
+                if (word.IndexOfAny(Path.GetInvalidPathChars()) < 0)
+                    foreach (var match in Found(word, dir, true)) add(match);
             string file;
             foreach (var word in words)
             {
@@ -740,14 +739,22 @@ public static class Engine
     // without which ShellExecute would run folder.exe beside it. Null when there is none, or target isn't a path.
     static string Locate(string target, string dir)
     {
-        if (target.Length == 0) return null;
+        var found = Found(target, dir, false);
+        return found.Count > 0 ? found[0] : null;
+    }
+
+    // Locate's search, in order; all: every file and folder found, not just the first. A program given a name in its
+    // arguments may search in another order than ShellExecute (CreateProcess looks in its own folder first), so for
+    // an argument each one counts.
+    static List<string> Found(string target, string dir, bool all)
+    {
+        var found = new List<string>();
+        if (target.Length == 0) return found;
         try
         {
             bool bare = target.IndexOfAny(new[] { '\\', '/', ':' }) < 0;
-            // dir is the working folder, or for an argument "working folder|program's folder"; a bare name is looked for
-            // in the program's folder first, as CreateProcess does.
+            // dir is the working folder, or for an argument "working folder|program's folder".
             var dirs = new List<string>(dir.Split('|'));
-            if (bare) dirs.Reverse();
             if (bare)
             {
                 dirs.Add(Environment.GetFolderPath(Environment.SpecialFolder.Windows));
@@ -762,11 +769,21 @@ public static class Engine
                 if (joined.StartsWith(@"\\")) continue;
                 var full = Path.GetFullPath(joined);
                 if (full.StartsWith(@"\\")) continue;
-                if (Directory.Exists(full)) return LongPath(full).TrimEnd('\\') + "\\";
+                if (Directory.Exists(full))
+                {
+                    found.Add(LongPath(full).TrimEnd('\\') + "\\");
+                    if (!all) return found;
+                    continue;
+                }
                 var names = new List<string>();
                 if (!Path.HasExtension(full)) foreach (var e in exts) names.Add(full + e);
                 names.Add(full);
-                foreach (var p in names) if (File.Exists(p)) return LongPath(p);
+                foreach (var p in names)
+                    if (File.Exists(p))
+                    {
+                        found.Add(LongPath(p));
+                        if (!all) return found;
+                    }
             }
             if (bare)
                 foreach (var hive in new[] { Microsoft.Win32.Registry.CurrentUser, Microsoft.Win32.Registry.LocalMachine })
@@ -777,13 +794,17 @@ public static class Engine
                             if (p != null) p = p.Trim().Trim('"').Replace('/', '\\');
                             if (p == null || p.StartsWith(@"\\")) continue;  // nothing on another computer is read
                             if (!File.Exists(p)) p += ".exe";  // the value may leave out .exe
-                            if (File.Exists(p)) return LongPath(p);
+                            if (File.Exists(p))
+                            {
+                                found.Add(LongPath(p));
+                                if (!all) return found;
+                            }
                         }
         }
         catch (ArgumentException) { }      // not a name Windows takes as a path (a:b:c)
         catch (NotSupportedException) { }
         catch (IOException) { }            // too long
-        return null;
+        return found;
     }
 
     // The file types Windows tries for a name without one: PATHEXT's, then .pif and .lnk as ShellExecute does.
