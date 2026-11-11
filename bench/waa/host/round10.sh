@@ -9,6 +9,11 @@ set -eo pipefail
 H=${WAA_HOME:-$HOME/waa}
 export WAA_HOME=$H WAA_REMOTE=local CLAUDE_CONFIG_DIR=$H/claude-home RUN_ARGS="--model claude-sonnet-5-5 --effort xhigh"
 WARM=$H/WindowsAgentArena/src/win-arena-container/vm/storage-warm
+# The Claude Code build installed now serves all runs, even if the machine's claude updates meanwhile.
+mkdir -p "$H/bin"
+ln -sf "$(readlink -f "$(command -v claude)")" "$H/bin/claude"
+export PATH=$H/bin:$PATH
+echo "Claude Code $(claude --version)"
 cd "$H/oriel/bench/waa"
 for t in ${1:-1 2}; do
     echo "run $t: rebuilding the VMs $(date -Is)"
