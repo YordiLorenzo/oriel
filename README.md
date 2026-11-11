@@ -69,16 +69,17 @@ oriel needs no admin rights and installs no service or driver. `oriel uninstall`
    claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp
    ```
 
-   Or use the Claude Code plugin, which does the same (Claude Code 2.1.292 or later, and
+   Or use the Claude Code plugin instead of steps 1 to 3 (Claude Code 2.1.292 or later, and
    [Git for Windows](https://git-scm.com/downloads/win), which Claude Code uses to fetch the plugin):
 
    ```powershell
    claude plugin install oriel --marketplace YordiLorenzo/oriel
    ```
 
-   The plugin downloads nothing: it starts the `oriel.exe` that step 2 installed. On an older Claude Code, run
-   `claude plugin marketplace add YordiLorenzo/oriel`, then `claude plugin install oriel@oriel`. Use the plugin or
-   `claude mcp add`, not both. Other clients and use from a Mac: [Set up your MCP client](#set-up-your-mcp-client).
+   The plugin carries its own `oriel.exe`, the one from the release with the same version, so there is nothing to
+   download first. On an older Claude Code, run `claude plugin marketplace add YordiLorenzo/oriel`, then
+   `claude plugin install oriel@oriel`. Use the plugin or `claude mcp add`, not both. Other clients and use from a
+   Mac: [Set up your MCP client](#set-up-your-mcp-client).
 4. Start `claude` and paste one of these. Each press and fill replies with what changed in the window.
 
    ```
@@ -117,7 +118,9 @@ SignPath Foundation for free code signing, so that Windows names the publisher.
 ### Updating
 
 Run `install` from the new `oriel.exe` (with `--autostart` again if you use it). It stops the running copy and
-replaces it. Your client config points at the installed path, so it stays as it is. To hear about new releases,
+replaces it. Your client config points at the installed path, so it stays as it is. With the plugin, run
+`claude plugin update oriel@oriel`, stop the running copy (`Stop-Process -Name oriel`), and restart Claude Code. To
+hear about new releases,
 choose **Watch > Custom > Releases** on this repository, or follow the
 [releases feed](https://github.com/YordiLorenzo/oriel/releases.atom).
 
@@ -128,8 +131,9 @@ choose **Watch > Custom > Releases** on this repository, or follow the
 ```
 
 This stops oriel, removes the logon entry if there is one, deletes the install and settings folders, and lists what
-it removed. Then remove oriel from your MCP client. In Claude Code: `claude plugin uninstall oriel@oriel` if you used
-the plugin, or `claude mcp remove --scope user oriel`.
+it removed. Then remove oriel from your MCP client: in Claude Code, `claude mcp remove --scope user oriel`. With the
+plugin, run `claude plugin uninstall oriel@oriel` instead. To remove oriel's settings too, stop any copy that still
+runs (`Stop-Process -Name oriel`), then delete the `%LOCALAPPDATA%\oriel` folder.
 
 ## What it does
 
@@ -286,6 +290,7 @@ To check oriel without a client, run `& "$env:LOCALAPPDATA\Programs\oriel\oriel.
 | Change | When | How to undo it |
 |---|---|---|
 | `oriel.exe` in `%LOCALAPPDATA%\Programs\oriel` | `oriel install` | `oriel uninstall` deletes the folder |
+| The plugin, with its own `oriel.exe`, in `%USERPROFILE%\.claude\plugins\cache\oriel\oriel\<version>` | `claude plugin install` | `claude plugin uninstall oriel@oriel`; Claude Code deletes the folder later |
 | `%LOCALAPPDATA%\oriel`: the per-user key (`token`), a counter for refs, and `config.json` if you make one | The first time oriel runs | `oriel uninstall` deletes the folder |
 | A logon entry, `oriel` under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, that starts oriel without a window | `oriel install --autostart` only | `oriel uninstall` removes it |
 | A one-time scheduled task, `oriel-start`, that starts oriel in your desktop session | When a client connects over SSH and oriel isn't running; deleted once it has started | Nothing to undo |

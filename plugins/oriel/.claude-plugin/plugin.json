@@ -1,7 +1,8 @@
 {
   "name": "oriel",
-  "version": "0.1.0",
-  "description": "Adds the oriel MCP server: Claude reads each window on your Windows PC as text through UI Automation and acts on its controls. Windows only. It runs %LOCALAPPDATA%\\Programs\\oriel\\oriel.exe, which oriel install puts there.",
+  "displayName": "oriel for Windows",
+  "version": "0.1.1",
+  "description": "Lets Claude Code use the apps on your Windows PC. oriel reads each window as text through UI Automation, presses, fills and selects controls without moving your mouse, and replies to each action with what changed.",
   "author": {
     "name": "YordiLorenzo",
     "url": "https://github.com/YordiLorenzo"
@@ -9,5 +10,15 @@
   "homepage": "https://yordilorenzo.github.io/oriel/",
   "repository": "https://github.com/YordiLorenzo/oriel",
   "license": "Apache-2.0",
-  "keywords": ["windows", "ui-automation", "computer-use", "accessibility", "mcp"]
+  "keywords": [
+    "windows",
+    "ui-automation",
+    "computer-use",
+    "accessibility",
+    "mcp"
+  ],
+  "icon": "./icon.png",
+  "documentationUrl": "https://github.com/YordiLorenzo/oriel#readme",
+  "supportUrl": "https://github.com/YordiLorenzo/oriel/issues",
+  "privacyPolicyUrl": "https://github.com/YordiLorenzo/oriel/blob/main/docs/code-signing.md#privacy-policy"
 }

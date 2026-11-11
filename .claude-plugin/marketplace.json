@@ -9,7 +9,7 @@
     {
       "name": "oriel",
       "source": "./plugins/oriel",
-      "description": "Adds the oriel MCP server on Windows. Install oriel.exe first with oriel install; the plugin only points Claude Code at it.",
+      "description": "Adds the oriel MCP server on Windows. The plugin carries oriel.exe from the GitHub release with the same version.",
       "category": "automation",
       "tags": ["windows", "ui-automation", "computer-use", "accessibility"]
     }

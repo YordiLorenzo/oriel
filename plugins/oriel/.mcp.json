@@ -2,7 +2,7 @@
   "mcpServers": {
     "oriel": {
       "type": "stdio",
-      "command": "${LOCALAPPDATA}\\Programs\\oriel\\oriel.exe",
+      "command": "${CLAUDE_PLUGIN_ROOT}/oriel.exe",
       "args": ["mcp"]
     }
   }

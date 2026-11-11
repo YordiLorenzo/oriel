@@ -1,0 +1,54 @@
+name: plugin
+
+# When the owner publishes a drafted release: copy that release's oriel.exe into the Claude Code plugin
+# (plugins/oriel/oriel.exe), set the plugin's version to the release's, and push the commit to main. The plugin carries
+# the exe because Anthropic's plugin directory accepts an MCP server command only as a file inside the plugin folder,
+# written from ${CLAUDE_PLUGIN_ROOT}. It runs on "published", like mcp-registry.yml, so the plugin only ever gets an exe
+# that release.yml built and the owner published. Run it by hand with a tag to retry.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag whose oriel.exe goes into the plugin, such as v0.2.0
+        required: true
+
+permissions:
+  contents: write      # push the commit to main
+  attestations: read   # gh attestation verify
+
+jobs:
+  plugin:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Download oriel.exe and check it against SHA256SUMS and its build provenance
+        run: |
+          set -euo pipefail
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern oriel.exe --pattern SHA256SUMS --dir "$RUNNER_TEMP"
+          (cd "$RUNNER_TEMP" && grep '  oriel.exe$' SHA256SUMS | sha256sum -c -)
+          gh attestation verify "$RUNNER_TEMP/oriel.exe" --repo "$GITHUB_REPOSITORY" \
+            --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml"
+
+      - name: Put it into the plugin and push to main
+        run: |
+          set -euo pipefail
+          cp "$RUNNER_TEMP/oriel.exe" plugins/oriel/oriel.exe
+          manifest=plugins/oriel/.claude-plugin/plugin.json
+          jq --arg v "${TAG#v}" '.version = $v' "$manifest" > "$RUNNER_TEMP/plugin.json"
+          mv "$RUNNER_TEMP/plugin.json" "$manifest"
+          git add plugins/oriel/oriel.exe "$manifest"
+          if git diff --cached --quiet; then
+            echo "The plugin already holds the oriel.exe and version of $TAG."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Plugin: oriel.exe and version from the $TAG release"
+          git push origin HEAD:main

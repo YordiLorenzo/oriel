@@ -2,6 +2,12 @@
 
 All notable changes to oriel are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## 0.1.2 - unreleased
+
+### Changed
+
+- **Claude Code plugin:** the plugin carries `oriel.exe` and starts it from its own folder, so it no longer needs `oriel install` first. It got 0.1.1's `oriel.exe` on 11 Nov 2026 (plugin version 0.1.1). From now on the `plugin.yml` workflow copies each published release's `oriel.exe` into the plugin, after it checks the file against `SHA256SUMS` and its build provenance. Anthropic's plugin directory accepts an MCP server command only as a file inside the plugin, written from `${CLAUDE_PLUGIN_ROOT}`. The plugin also has its own README, which says what it runs, sends and changes, and an icon.
+
 ## 0.1.1 - 2026-11-11
 
 New ways to install and to check a download. The tools work as in 0.1.0.
