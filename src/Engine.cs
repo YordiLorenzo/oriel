@@ -507,15 +507,18 @@ public static class Engine
             int size = local.Capacity;
             if (PathCreateFromUrl(target, local, ref size, 0) == 0) target = local.ToString();
         }
+        target = target.Replace('/', '\\');
         if ((target.StartsWith(@"\\?\") || target.StartsWith(@"\\.\")) && target.Length > 5 && target[5] == ':') target = target.Substring(4);
         // A UNC path names a file on another computer: launch reads nothing there, since connecting signs in to it, and
-        // goes by the name and type alone. GetFullPath only rewrites the text (run.bat. and run.bat  are run.bat).
-        bool remote = target.StartsWith(@"\\") || target.StartsWith("//");
+        // goes by the name and type alone. It reads the path as text, as Windows will (run.bat. and "run.bat " are run.bat);
+        // . .. and short names (~) it can't resolve without asking the server.
+        bool remote = target.StartsWith(@"\\");
         if (remote)
         {
-            try { target = Path.GetFullPath(target); }
-            catch (Exception e) { if (!(e is ArgumentException || e is NotSupportedException || e is IOException)) throw; return Unchecked(root, "it is not a path launch can read"); }
+            if (target.IndexOf('~') >= 0 || (target + @"\").Contains(@"\.\") || (target + @"\").Contains(@"\..\"))
+                return Unchecked(root, "a path on another computer with ., .. or ~ in it can't be read without connecting to it");
             if (target.EndsWith(@"\")) return "explorer";
+            target = target.TrimEnd('.', ' ');
         }
         file = remote ? null : Locate(target);
         if (file == null && !remote)

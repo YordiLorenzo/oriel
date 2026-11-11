@@ -69,7 +69,11 @@ Other programs and web pages on the same PC are **not trusted**.
       (msiexec) and `.chm` (hh) files. A `.ps1` opens in Notepad unless PowerShell is set to run it; a `.txt`,
       an `https:` link or `ms-settings:` opens as before.
   - The same check applies to every file or program that the arguments name, so `explorer.exe run.bat`,
-    `chrome --gpu-launcher="cmd /c ..."` and `notepad run.bat` are refused.
+    `chrome --gpu-launcher="cmd /c ..."` and `notepad run.bat` are refused. It reads the arguments as Windows splits
+    them, checks the program first and looks at the arguments only after that passes.
+  - `launch` reads no file on another computer (a `\\server\share` path), because connecting would sign in there. It
+    goes by the name and file type there, and refuses a shortcut or a name without a file type (end a folder with
+    `\`).
   - `launch` starts the file it checked. A bare name, a path without its extension, an environment variable, a
     `file:` URI or a `shell:` path becomes the full path of that file first. A folder opens as a folder, even with a
     program of the same name beside it (Windows itself would run `folder.exe` for the path `folder`). A
