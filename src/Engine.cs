@@ -437,7 +437,10 @@ public static class Engine
         if (Allow.Count > 0 && (program == null || !Listed(program)))
             throw new OrielError((program ?? path) + " is not in the allow-list in config.json");
         // Only now the arguments, so a launch refused already looks at no file they name (\\host\share signs in there).
-        CheckWords(path, args, "", 1);
+        // A shortcut's program starts in the shortcut's working folder, so its arguments are read from there.
+        string to, with, folder = "";
+        if (file != null && file.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase)) ReadLink(file, out to, out with, out folder);
+        CheckWords(path, args, folder, 1);
         return file ?? path;
     }
 
@@ -557,18 +560,11 @@ public static class Engine
             return named ? Unchecked(root, "on another computer launch can't tell what a name without a file type is (end a folder with \\)") : null;
         if (file != null && ext == ".lnk")
         {
-            var link = (IShellLinkW)new ShellLink();
-            ((System.Runtime.InteropServices.ComTypes.IPersistFile)link).Load(file, 0);
-            var to = new StringBuilder(32768);
-            var with = new StringBuilder(32768);
-            var start = new StringBuilder(32768);
-            link.GetPath(to, to.Capacity, IntPtr.Zero, 0);
-            link.GetArguments(with, with.Capacity);
-            link.GetWorkingDirectory(start, start.Capacity);
+            string to, with, folder;
+            ReadLink(file, out to, out with, out folder);
             if (to.Length == 0) return Unchecked(root, "the shortcut points at no file");
-            var folder = Environment.ExpandEnvironmentVariables(start.ToString());  // the program starts there
-            var program = Runs(root, to.ToString(), folder, true, depth + 1, out inner);
-            CheckWords(root, with.ToString(), folder, depth + 1);
+            var program = Runs(root, to, folder, true, depth + 1, out inner);
+            CheckWords(root, with, folder, depth + 1);
             return program;
         }
         if (file != null && ext == ".url")
@@ -591,6 +587,22 @@ public static class Engine
         var command = ext.Length > 0 ? Assoc(ext, false) : null;
         if (command != null && !command.StartsWith("\"%1\"") && !command.StartsWith("%1")) return Command(root, command, dir, depth);
         return Permit(root, Path.GetFileNameWithoutExtension(name));  // a program, or a file no program opens, by its name
+    }
+
+    // A shortcut's target, its arguments and the folder its program starts in.
+    static void ReadLink(string file, out string target, out string args, out string folder)
+    {
+        var link = (IShellLinkW)new ShellLink();
+        ((System.Runtime.InteropServices.ComTypes.IPersistFile)link).Load(file, 0);
+        var to = new StringBuilder(32768);
+        var with = new StringBuilder(32768);
+        var start = new StringBuilder(32768);
+        link.GetPath(to, to.Capacity, IntPtr.Zero, 0);
+        link.GetArguments(with, with.Capacity);
+        link.GetWorkingDirectory(start, start.Capacity);
+        target = to.ToString();
+        args = with.ToString();
+        folder = Environment.ExpandEnvironmentVariables(start.ToString());
     }
 
     // A program that runs commands starts only when config.json allows it by name or turns "shell" on.
