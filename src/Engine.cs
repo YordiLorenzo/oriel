@@ -464,6 +464,12 @@ public static class Engine
                 }
             }
             words.Remove("");
+            // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe),
+            // so for a word without a file type, each file it could mean counts: the word with each PATHEXT type that exists.
+            foreach (var word in new List<string>(words))
+                if (word.IndexOfAny(Path.GetInvalidPathChars()) < 0 && !Path.HasExtension(word.TrimEnd('.', ' ')))
+                    foreach (var e in (Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                        if (Locate(word + e, dir) != null) words.Add(word + e);
             string file;
             foreach (var word in words)
             {
