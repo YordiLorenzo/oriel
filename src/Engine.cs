@@ -438,10 +438,11 @@ public static class Engine
         if (Allow.Count > 0 && (program == null || !Listed(program)))
             throw new OrielError((program ?? path) + " is not in the allow-list in config.json");
         // Only now the arguments, so a launch refused already looks at no file they name (\\host\share signs in there).
-        // A shortcut's program starts in the shortcut's working folder, so its arguments are read from there.
-        string to, with, folder = "";
+        // A shortcut's program starts in the shortcut's working folder, so its arguments are read from there. A program
+        // that runs a bare name from its arguments finds it first in its own folder, so that is searched too.
+        string to = file, with, folder = "";
         if (file != null && file.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase)) ReadLink(file, out to, out with, out folder);
-        CheckWords(path, args, folder, 1);
+        CheckWords(path, args, folder + "|" + FolderOf(to == null || to.StartsWith(@"\\") ? null : Locate(to, folder)), 1);
         return file ?? path;
     }
 
@@ -558,8 +559,9 @@ public static class Engine
         if (device && target.Length > 5 && target[5] == ':') target = target.Substring(4);
         else if (device && target.Substring(4).StartsWith(@"UNC\", StringComparison.OrdinalIgnoreCase)) target = @"\\" + target.Substring(8);
         else if (device) return Unchecked(root, "it is a device path (\\\\?\\ or \\\\.\\ without a drive letter), which launch doesn't read");
-        if (dir.Replace('/', '\\').StartsWith(@"\\") && !target.StartsWith(@"\\") && !(target.Length > 1 && target[1] == ':'))
-            target = Path.Combine(dir, target.TrimStart('\\'));  // relative to a folder on another computer
+        var work = dir.Split('|')[0];
+        if (work.Replace('/', '\\').StartsWith(@"\\") && !target.StartsWith(@"\\") && !(target.Length > 1 && target[1] == ':'))
+            target = Path.Combine(work, target.TrimStart('\\'));  // relative to a folder on another computer
         // A UNC path names a file on another computer: launch reads nothing there, since connecting signs in to it, and
         // goes by the name and type alone, read from the text as Windows will read it.
         bool remote = target.StartsWith(@"\\");
@@ -600,7 +602,7 @@ public static class Engine
             ReadLink(file, out to, out with, out folder);
             if (to.Length == 0) return Unchecked(root, "the shortcut points at no file");
             var program = Runs(root, to, folder, true, depth + 1, out inner);
-            CheckWords(root, with, folder, depth + 1);
+            CheckWords(root, with, folder + "|" + FolderOf(inner), depth + 1);
             return program;
         }
         if (file != null && ext == ".url")
@@ -629,6 +631,12 @@ public static class Engine
         var command = ext.Length > 0 ? Assoc(ext, false) : null;
         if (command != null && !command.StartsWith("\"%1\"") && !command.StartsWith("%1")) return Command(root, command, dir, depth);
         return Permit(root, Path.GetFileNameWithoutExtension(name));  // a program, or a file no program opens, by its name
+    }
+
+    // The folder of a file found by Locate, "" for none or a folder.
+    static string FolderOf(string file)
+    {
+        return file == null || file.StartsWith(@"\\") || !File.Exists(file) ? "" : Path.GetDirectoryName(file) ?? "";
     }
 
     // A shortcut's target, its arguments and the folder its program starts in.
@@ -707,7 +715,7 @@ public static class Engine
             }
         string file;
         var program = Runs(root, command.Substring(0, cut), dir, false, depth + 1, out file);
-        CheckWords(root, command.Substring(cut), dir, depth + 1);
+        CheckWords(root, command.Substring(cut), dir.Split('|')[0] + "|" + FolderOf(file), depth + 1);
         return program;
     }
 
@@ -730,7 +738,10 @@ public static class Engine
         try
         {
             bool bare = target.IndexOfAny(new[] { '\\', '/', ':' }) < 0;
-            var dirs = new List<string> { dir };
+            // dir is the working folder, or for an argument "working folder|program's folder"; a bare name is looked for
+            // in the program's folder first, as CreateProcess does.
+            var dirs = new List<string>(dir.Split('|'));
+            if (bare) dirs.Reverse();
             if (bare)
             {
                 dirs.Add(Environment.GetFolderPath(Environment.SpecialFolder.Windows));
