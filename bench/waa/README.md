@@ -64,6 +64,22 @@ oriel 0.1.1 against Cua Driver 0.46.1, two runs per layer over the same tasks, p
 - **Model and effort pinned:** `--model claude-sonnet-5-5 --effort xhigh`. Round 9 passed `sonnet`, which named Sonnet 5.5 then and still does, and took the effort from the user's settings. They say `xhigh` in every settings file and backup from 3 Nov on; no record shows round 9's own value.
 - **Claude Code's own tools:** only ToolSearch, which loads deferred MCP tools (`--tools ToolSearch`). Round 9's list of tools to drop leaves 14 newer tools in Claude Code 2.1.322 (Workflow, SendMessage, Skill, Cron and others).
 - **Network:** each VM's web viewer and RDP are published on 127.0.0.1 only (`host/waa-patch.py`).
+- **VM network on this host:** the WAA image's network script forces legacy iptables, whose kernel modules firecracker (Ubuntu 26.04, nftables) doesn't load, so the VM fell back to user-mode networking, where WAA can't reach its server. `host/waa-patch.py` keeps the image's iptables-nft instead; nothing on the host changes.
+
+### Setup on firecracker
+
+As the user `yordidekleijn` (in the docker group, no sudo), everything in `WAA_HOME=~/waa`:
+
+```bash
+export WAA_HOME=~/waa
+git clone -b main https://github.com/YordiLorenzo/oriel.git $WAA_HOME/oriel
+cp $WAA_HOME/oriel/bench/waa/host/* $WAA_HOME/oriel/bench/waa/waa_env.py $WAA_HOME/
+bash $WAA_HOME/do-setup.sh                                      # WAA, patches, ISO, images; the golden image builds in the background
+bash $WAA_HOME/oriel/bench/waa/host/waa-tools.sh 0.1.1 0.46.1  # oriel and Cua Driver into the share, hashes checked
+bash $WAA_HOME/agent-home.sh                                    # the agents' Claude Code folder
+```
+
+Then, as in rounds 8 and 9: provision the golden image (OpenSSH, oriel, Cua Driver unpacked) and save it as `storage-provisioned`, and build the warmed image with `do-warm.sh oriel-0.1.1.exe` (`storage-warm`).
 
 ## Not tuning to the benchmark
 
