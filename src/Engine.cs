@@ -449,17 +449,22 @@ public static class Engine
     // /root,run.bat), up to each space or tab (an unquoted path with spaces) and as a command line of its own (runas
     // "cmd /c x"). Each as written and with environment variables expanded, as the program may read it either way. A
     // relative path is read from dir, the folder the program starts in ("" for this one's).
-    static void CheckWords(string root, string args, string dir, int depth)
+    static void CheckWords(string root, string args, string dir, int depth, bool nested = false)
     {
         if (string.IsNullOrEmpty(args)) return;
         // Every split is kept and looked up, so arguments get a size limit: 30,000 '=' would hold about 900 MB of parts.
         if (args.Length > 8192) { Unchecked(root, "arguments longer than 8192 characters are more than launch checks"); return; }
         var joins = new[] { '=', ',', ';', '|', '<', '>' };
         var blanks = new[] { ' ', '\t' };
-        var values = new HashSet<string>(Argv(args), StringComparer.OrdinalIgnoreCase);
-        values.UnionWith(Argv(Environment.ExpandEnvironmentVariables(args)));
+        var written = Argv(args);
+        var expanded = Argv(Environment.ExpandEnvironmentVariables(args));
+        var values = new HashSet<string>(written, StringComparer.OrdinalIgnoreCase);
+        values.UnionWith(expanded);
         foreach (var value in values)
         {
+            // In a command line found inside an argument, the first word is the program (CreateProcess adds .exe to it,
+            // see below); a later one may be a file the program opens, which only a whole argument can say.
+            bool first = nested && ((written.Length > 0 && written[0] == value) || (expanded.Length > 0 && expanded[0] == value));
             var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { value };
             if (value.Split(joins).Length > 65) { Unchecked(root, "an argument with more than 64 of = , ; | < > is more than launch checks"); continue; }
             if (SchemeOf(value) == null)
@@ -471,6 +476,24 @@ public static class Engine
                     words.Add(value.Substring(i + 1));
                 }
             }
+            // A whole argument (not a fragment of one) that is a path on another computer with no file type: Windows picks
+            // a file of that name there, which launch can't read (explorer.exe \\server\share\run finds run.bat).
+            if (!first)
+                foreach (var whole in new List<string>(words))
+                {
+                    var w = whole.Trim().Trim('"').Replace('/', '\\');
+                    if (w.StartsWith(@"\\") && !w.EndsWith(@"\") && w.LastIndexOf('.') <= w.LastIndexOf('\\'))
+                        Unchecked(root, "an argument names a file on another computer with no file type; launch can't tell what it is");
+                }
+            // A word with spaces may be read as a command line by CreateProcess: each start up to a space is a program
+            // path, to which it adds .exe when it has no file type (on another computer that is all launch can check).
+            foreach (var word in new List<string>(words))
+                for (int i = word.IndexOfAny(blanks); i > 0; i = word.IndexOfAny(blanks, i + 1))
+                {
+                    var start = word.Substring(0, i);
+                    bool typeless = start.LastIndexOf('.') <= start.LastIndexOf('\\');
+                    words.Add(start.Replace('/', '\\').StartsWith(@"\\") && typeless ? start + ".exe" : start);
+                }
             words.Remove("");
             // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe),
             // so for a word without a file type each file it could mean counts.
@@ -482,8 +505,7 @@ public static class Engine
             foreach (var word in words)
             {
                 Runs(root, word, dir, false, depth, out file);
-                for (int i = word.IndexOfAny(blanks); i > 0; i = word.IndexOfAny(blanks, i + 1)) Runs(root, word.Substring(0, i), dir, false, depth, out file);
-                if (word.IndexOfAny(blanks) > 0) CheckWords(root, word, dir, depth + 1);
+                if (word.IndexOfAny(blanks) > 0) CheckWords(root, word, dir, depth + 1, true);
             }
         }
     }
@@ -709,8 +731,9 @@ public static class Engine
                         {
                             var p = app == null ? null : app.GetValue("") as string;
                             if (p != null) p = p.Trim().Trim('"').Replace('/', '\\');
-                            if (p != null && !File.Exists(p)) p += ".exe";  // the value may leave out .exe
-                            if (p != null && !p.StartsWith(@"\\") && File.Exists(p)) return LongPath(p);
+                            if (p == null || p.StartsWith(@"\\")) continue;  // nothing on another computer is read
+                            if (!File.Exists(p)) p += ".exe";  // the value may leave out .exe
+                            if (File.Exists(p)) return LongPath(p);
                         }
         }
         catch (ArgumentException) { }      // not a name Windows takes as a path (a:b:c)
