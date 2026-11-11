@@ -514,15 +514,12 @@ public static class Engine
         if (dir.Replace('/', '\\').StartsWith(@"\\") && !target.StartsWith(@"\\") && !(target.Length > 1 && target[1] == ':'))
             target = Path.Combine(dir, target.TrimStart('\\'));  // relative to a folder on another computer
         // A UNC path names a file on another computer: launch reads nothing there, since connecting signs in to it, and
-        // goes by the name and type alone. It reads the path as text, as Windows will (run.bat. and "run.bat " are run.bat);
-        // . .. and short names (~) it can't resolve without asking the server.
+        // goes by the name and type alone, read from the text as Windows will read it.
         bool remote = target.StartsWith(@"\\");
         if (remote)
         {
-            if (target.IndexOf('~') >= 0 || (target + @"\").Contains(@"\.\") || (target + @"\").Contains(@"\..\"))
-                return Unchecked(root, "a path on another computer with ., .. or ~ in it can't be read without connecting to it");
             if (target.EndsWith(@"\")) return "explorer";
-            target = target.TrimEnd('.', ' ');
+            target = Tidy(target);
         }
         file = remote ? null : Locate(target, dir);
         if (file == null && !remote)
@@ -544,7 +541,8 @@ public static class Engine
         string ext;
         try { ext = Path.GetExtension(name).ToLowerInvariant(); } catch (ArgumentException) { return null; }
         if (remote && (ext == ".lnk" || ext == ".url")) return Unchecked(root, "a shortcut on another computer can't be read without connecting to it");
-        if (remote && ext.Length == 0) return Unchecked(root, "on another computer Windows would pick a program for a name without a type (end a folder with \\)");
+        if (remote && ext.Length == 0)  // Windows would pick a file for it there (tool.bat for tool)
+            return named ? Unchecked(root, "on another computer launch can't tell what a name without a file type is (end a folder with \\)") : null;
         if (file != null && ext == ".lnk")
         {
             var link = (IShellLinkW)new ShellLink();
@@ -599,18 +597,33 @@ public static class Engine
         return null;
     }
 
+    // A UNC path as Windows rewrites it, from the text alone: . and .. resolved below \\server\share, empty parts dropped,
+    // trailing dots and spaces cut from the last part (run.bat. is run.bat).
+    static string Tidy(string unc)
+    {
+        var parts = new List<string>();
+        foreach (var part in unc.Substring(2).Split('\\'))
+        {
+            if (part.Length == 0 || part == ".") continue;
+            if (part == "..") { if (parts.Count > 2) parts.RemoveAt(parts.Count - 1); continue; }
+            parts.Add(part);
+        }
+        if (parts.Count > 0) parts[parts.Count - 1] = parts[parts.Count - 1].TrimEnd('.', ' ');
+        return @"\\" + string.Join(@"\", parts);
+    }
+
     // The program that an open command (from Assoc) starts, checked with the rest of the command as its arguments.
     static string Command(string root, string command, string dir, int depth)
     {
         if (command == null) return null;
-        int cut;
-        if (command.StartsWith("\"")) cut = command.IndexOf('"', 1) + 1;
-        else
+        int cut = command.Length;
+        if (command.StartsWith("\""))
         {
-            cut = command.IndexOf(".exe", StringComparison.OrdinalIgnoreCase);  // an unquoted path may hold spaces
-            cut = cut >= 0 ? cut + 4 : command.IndexOf(' ');
+            if (command.IndexOf('"', 1) > 0) cut = command.IndexOf('"', 1) + 1;
         }
-        if (cut <= 0) cut = command.Length;
+        else  // unquoted, as CreateProcess reads it: the first start up to a space that names a file (C:\Program Files\x.exe %1)
+            for (int i = command.IndexOf(' '); i > 0; i = command.IndexOf(' ', i + 1))
+                if (Locate(command.Substring(0, i), dir) != null) { cut = i; break; }
         string file;
         var program = Runs(root, command.Substring(0, cut), dir, false, depth + 1, out file);
         CheckWords(root, command.Substring(cut), dir, depth + 1);
