@@ -139,10 +139,36 @@ public static class Program
         }
         Engine.LoadToken();
         Daemon.Start(target, port);
-        Console.WriteLine("installed " + target + "\nthe daemon is starting now on 127.0.0.1:" + port + "; " + logon +
-            "\nMCP command for agents on this PC:   " + target + " mcp" +
-            "\nfrom another computer (OpenSSH):     ssh <this-pc> \"" + target + "\" mcp");
+        Console.WriteLine("installed " + target + "\nthe daemon is starting now on 127.0.0.1:" + port + "; " + logon);
+        Console.WriteLine(ClientConfig(target));
         return 0;
+    }
+
+    // What install prints last: each client's config with the real path, ready to paste (README "Set up your MCP client").
+    static string ClientConfig(string exe)
+    {
+        var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var escaped = exe.Replace("\\", "\\\\");  // JSON and TOML strings; a Windows path holds no quote characters
+        // PowerShell expands $ inside double quotes; single quotes are literal, with a ' written twice.
+        var ps = "'" + exe.Replace("'", "''") + "'";
+        // Over SSH, cmd.exe (OpenSSH's default shell on Windows) runs the command; inside double quotes it takes a space,
+        // & or ^ in the path literally.
+        var remote = "\"" + exe + "\"";
+        var host = System.Net.Dns.GetHostName().ToLowerInvariant();
+        // The SSH line goes to a Mac or Linux shell: single quotes keep the backslashes, and a ' in a user name becomes '\''.
+        Func<string, string> sh = s => "'" + s.Replace("'", "'\\''") + "'";
+        return "\nTo add oriel to your MCP client, paste one of these:\n" +
+            "\nClaude Code on this PC, in PowerShell:\n" +
+            "claude mcp add --scope user oriel -- " + ps + " mcp\n" +
+            "\nClaude Desktop (Settings > Developer > Edit Config) or Cursor (" + Path.Combine(profile, ".cursor", "mcp.json") + "):\n" +
+            "{\n  \"mcpServers\": {\n    \"oriel\": { \"command\": \"" + escaped + "\", \"args\": [\"mcp\"] }\n  }\n}\n" +
+            "\nCodex (" + Path.Combine(profile, ".codex", "config.toml") + "):\n" +
+            "[mcp_servers.oriel]\ncommand = \"" + escaped + "\"\nargs = [\"mcp\"]\n" +
+            "\nClaude Code on a Mac or Linux machine, over SSH (this PC needs OpenSSH Server on, with key login; if \"" + host +
+            "\" isn't found there, use this PC's IP address):\n" +
+            "claude mcp add --scope user oriel -- ssh " + sh(Environment.UserName + "@" + host) + " " + sh(remote) + " mcp\n" +
+            "\nRestart Claude Desktop, Cursor or Codex after you edit its file.\n" +
+            "Did it work? Say so at https://github.com/YordiLorenzo/oriel/discussions";
     }
 
     // Undoes install: the logon entry, the daemon (and any other oriel process), the installed exe and the per-user state

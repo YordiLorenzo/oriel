@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.YordiLorenzo/oriel",
+  "title": "oriel for Windows",
+  "description": "Computer use for Windows: reads each app as text through the accessibility tree, not screenshots.",
+  "version": "0.1.0",
+  "websiteUrl": "https://yordilorenzo.github.io/oriel/",
+  "repository": {
+    "url": "https://github.com/YordiLorenzo/oriel",
+    "source": "github",
+    "id": "1434559912"
+  },
+  "icons": [
+    {
+      "src": "https://yordilorenzo.github.io/oriel/images/icon.png",
+      "mimeType": "image/png",
+      "sizes": ["512x512"]
+    }
+  ],
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/YordiLorenzo/oriel/releases/download/v0.1.0/oriel-0.1.0-win-x64.mcpb",
+      "fileSha256": "91216fea677c35b0fea6d9473387b8ba94db3c87fb6299545fad179e1bf5b854",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

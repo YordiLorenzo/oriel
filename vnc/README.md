@@ -1,5 +1,7 @@
 # oriel-vnc
 
+<!-- mcp-name: io.github.YordiLorenzo/oriel-vnc -->
+
 **oriel-vnc is an MCP server that lets an AI assistant operate any computer that runs a VNC server, through
 screenshots, clicks and keys.**
 
@@ -16,7 +18,7 @@ installed on the machines themselves.
    such as TigerVNC or x11vnc on Linux, TightVNC or similar on Windows. Allow it only from your own network or
    tailnet.
 2. List the machines in `~/.config/oriel-vnc/hosts.json` (or the file `$ORIEL_VNC_HOSTS` names). See
-   [hosts.example.json](hosts.example.json):
+   [hosts.example.json](https://github.com/YordiLorenzo/oriel/blob/main/vnc/hosts.example.json):
 
    ```json
    {
@@ -72,4 +74,4 @@ screen. Actions reply with a fresh screenshot about 0.6 s later, so the assistan
 
 oriel-vnc can do anything a person at that screen could, including on the lock screen. Point it only at machines
 you own, keep VNC off the public internet, and don't let the assistant act on instructions it reads on screen.
-oriel's [SECURITY.md](../SECURITY.md) covers how to report a problem.
+oriel's [SECURITY.md](https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md) covers how to report a problem.

@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.28.0.schema.json
+
+PackageIdentifier: YordiLorenzo.oriel
+PackageVersion: 0.1.0
+PackageLocale: en-US
+Publisher: YordiLorenzo
+PublisherUrl: https://github.com/YordiLorenzo
+PublisherSupportUrl: https://github.com/YordiLorenzo/oriel/issues
+PackageName: oriel
+PackageUrl: https://github.com/YordiLorenzo/oriel
+License: Apache-2.0
+LicenseUrl: https://github.com/YordiLorenzo/oriel/blob/main/LICENSE
+ShortDescription: MCP server that lets an AI assistant use the apps on your Windows PC by reading each window as text, through the accessibility tree.
+Description: |-
+  oriel is an MCP server for Windows. It reads each window as text through UI Automation, the accessibility tree that screen readers use, and acts on the controls directly (press, fill, select, scroll) without moving the mouse or taking focus. Every action replies with what changed in the window. Keys, clicks and screenshots are there for apps that have no accessibility tree.
+  It is one exe for the .NET Framework 4.8 that Windows includes, and it needs no admin rights. An MCP client starts it with `oriel mcp`; from another computer, `ssh <pc> oriel mcp`.
+  Password fields are refused, sign-in screens, UAC prompts and password managers are off limits, and there is no shell by default.
+Moniker: oriel
+Tags:
+- accessibility
+- ai-agents
+- automation
+- claude-code
+- computer-use
+- desktop-automation
+- mcp
+- mcp-server
+- model-context-protocol
+- ui-automation
+ReleaseNotesUrl: https://github.com/YordiLorenzo/oriel/releases/tag/v0.1.0
+InstallationNotes: |-
+  Open a new terminal so that `oriel` is on your PATH. To add it to Claude Code: claude mcp add --scope user oriel -- oriel mcp
+  Before `winget uninstall YordiLorenzo.oriel`, run `oriel uninstall`: it stops oriel and deletes its settings folder, %LOCALAPPDATA%\oriel.
+Documentations:
+- DocumentLabel: README
+  DocumentUrl: https://github.com/YordiLorenzo/oriel#readme
+- DocumentLabel: Tools
+  DocumentUrl: https://github.com/YordiLorenzo/oriel/blob/main/docs/tools.md
+- DocumentLabel: Security
+  DocumentUrl: https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md
+ManifestType: defaultLocale
+ManifestVersion: 1.28.0

@@ -4,7 +4,8 @@ Thanks for helping. Bug reports, apps oriel can't read or act on, configs for mo
 are welcome. For a large change, please open an issue first so we can agree on the approach before you spend the
 time.
 
-Be kind to each other. The maintainer moderates issues and pull requests.
+Be kind to each other: everyone here follows the [code of conduct](CODE_OF_CONDUCT.md). The maintainer moderates
+issues, pull requests and discussions. Questions go in [Discussions](https://github.com/YordiLorenzo/oriel/discussions).
 
 ## Reporting a bug
 
@@ -13,6 +14,9 @@ runs on the PC or over SSH, the app involved, and what happened. The most useful
 reply: `oriel call` reproduces most of them from a terminal, for example
 `oriel call tree --Window "Character Map"`. Replies hold window titles and text from your screen, so read them before
 you post one.
+
+If oriel can't see or use the controls of one app or web page, use the **App oriel can't read** form instead. It
+asks for the window list and the tree oriel printed.
 
 Security problems go through a private report, as [SECURITY.md](SECURITY.md) describes, not a public issue.
 

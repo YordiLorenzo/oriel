@@ -6,7 +6,9 @@ body:
     attributes:
       value: |
         Please check the open issues first, in case someone has reported it already. One problem per report helps.
+        If oriel can't see or use the controls of one app or web page, the **App oriel can't read** form fits better.
         For a security problem, follow [SECURITY.md](https://github.com/YordiLorenzo/oriel/blob/HEAD/SECURITY.md) instead, so the report stays private.
+        In the commands below, `oriel` stands for `& "$env:LOCALAPPDATA\Programs\oriel\oriel.exe"` in PowerShell.
 
   - type: input
     id: oriel-version
@@ -32,8 +34,10 @@ body:
       label: MCP client
       options:
         - Claude Code
+        - Claude Desktop
         - Codex
         - Cursor
+        - VS Code
         - Another client (write which one below)
         - None (oriel call from a terminal)
     validations:

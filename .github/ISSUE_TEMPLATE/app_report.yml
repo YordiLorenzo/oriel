@@ -1,0 +1,92 @@
+name: App oriel can't read
+description: An app or web page whose controls oriel doesn't see, or can't act on.
+labels: ["app support"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        oriel reads what an app tells UI Automation. Some apps draw their own controls and tell it little or nothing, and some controls have no action oriel can use. What oriel printed for the window shows which case it is, and whether oriel or the app needs the fix.
+        Please check the [issues labelled app support](https://github.com/YordiLorenzo/oriel/issues?q=label%3A%22app%20support%22) first, in case the app is there already. One app per report helps.
+        In the commands below, `oriel` stands for `& "$env:LOCALAPPDATA\Programs\oriel\oriel.exe"` in PowerShell.
+
+  - type: input
+    id: app
+    attributes:
+      label: App
+      description: The app or web page, its version, and where you got it (Microsoft Store, the maker's site, winget) if you know.
+      placeholder: GIMP 3.0 from the maker's site, or a page in Chrome 141
+    validations:
+      required: true
+
+  - type: dropdown
+    id: problem
+    attributes:
+      label: What goes wrong
+      multiple: true
+      options:
+        - The window isn't in the list that `windows` prints
+        - The tree is empty, or misses controls I can see
+        - A control is listed, but an action on it fails or does nothing
+        - Something else (write it below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you can see in the window
+      description: The controls you expected oriel to list or use, as they look on screen.
+      placeholder: The Layers panel on the right, with a row for each layer, and the tool buttons on the left.
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: What oriel printed
+      description: >-
+        Run `oriel call windows`, then `oriel call tree --Window "<part of the title>"`, and paste both outputs. Or
+        paste the tool call and oriel's reply from your assistant. The output holds window titles and text from your
+        screen: read it first and remove anything you don't want to share.
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: oriel-version
+    attributes:
+      label: oriel version
+      description: The output of `oriel version`.
+      placeholder: oriel 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: windows-version
+    attributes:
+      label: Windows version
+      description: Press Win+R, type `winver` and press Enter. Copy the version and the OS build.
+      placeholder: Windows 11 25H2, OS build 26200.6584
+    validations:
+      required: true
+
+  - type: dropdown
+    id: elevated
+    attributes:
+      label: Does the app run as administrator?
+      description: oriel can't reach windows that run as administrator unless oriel does too.
+      options:
+        - "No"
+        - "Yes"
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: |
+        Other tools that do read the app (Accessibility Insights, Narrator, Inspect), what you already tried, or a screenshot of the window if it shows nothing private.
+    validations:
+      required: false

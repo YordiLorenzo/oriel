@@ -1,0 +1,66 @@
+headtohead.py --runs 5 on TOASTER, 2026-11-10 (unlocked, idle). p50 and p90 are ms per MCP call, timed on the Mac.
+
+== oriel 0.1.0, Cua Driver 0.46.1 daemon (cua), Cua Driver 0.46.1 bare mcp with its agent cursor overlay on (cua-direct, the default)
+tool         operation                          n  ok   p50 ms   p90 ms   chars images
+oriel        launch                             5   5      192      204      82      0
+oriel        tree charmap                       5   5       20       20    1048      0
+oriel        fill field (ref)                   5   5        2        2      42      0
+oriel        press button (ref)                 5   5        2        2      35      0
+oriel        outcome: field = abc + char       10  10        0        0       4      0
+oriel        fill field                         5   5       15       16      43      0
+oriel        press button                       5   5        2        2      35      0
+oriel        press + change report              5   5       42       46     115      0
+oriel        launch + tree (1 call)             5   5      294      295    1111      0
+oriel        tree chrome                        5   5      109      120   12272      0
+oriel        tree edge                          5   5      107      149    1546      0
+oriel        list windows                       5   5        1        2     304      0
+cua          launch                             5   5      604      606     177      0
+cua          list windows (charmap)             5   5       30       49     186      0
+cua          tree charmap                       5   5       37       42    1254      0
+cua          fill field                         5   5        3        6      40      0
+cua          press button                       5   5        5        8      49      0
+cua          outcome: field = abc + char        5   5        0        0       4      0
+cua          list windows (chrome)              5   5       28       32     278      0
+cua          tree chrome                        5   5      222      225   25724      0
+cua          list windows (msedge)              5   5       30       31     245      0
+cua          tree edge                          5   5      226      294   26259      0
+cua          list windows                       5   5       30       36    1034      0
+cua-direct   launch                             5   5      606      659     177      0
+cua-direct   list windows (charmap)             5   5       35       39     186      0
+cua-direct   tree charmap                       5   5       40       50    1254      0
+cua-direct   fill field                         5   5      570      573      40      0
+cua-direct   press button                       5   5      568      581      49      0
+cua-direct   outcome: field = abc + char        5   5        0        0       4      0
+cua-direct   list windows (chrome)              5   5       34       36     278      0
+cua-direct   tree chrome                        5   5      230      233   25724      0
+cua-direct   list windows (msedge)              5   5       34       36     245      0
+cua-direct   tree edge                          5   5      235      237   26259      0
+cua-direct   list windows                       5   5       37       39    1034      0
+
+== Cua Driver 0.46.1 bare mcp, agent cursor overlay off (set_agent_cursor_enabled false before timing)
+tool         operation                          n  ok   p50 ms   p90 ms   chars images
+cua-direct   launch                             5   5      606      649     177      0
+cua-direct   list windows (charmap)             5   5       34       42     186      0
+cua-direct   tree charmap                       5   5       38       49    1254      0
+cua-direct   fill field                         5   5        5        9      40      0
+cua-direct   press button                       5   5        7       11      49      0
+cua-direct   outcome: field = abc + char        5   5        0        0       4      0
+cua-direct   list windows (chrome)              5   5       34       36     278      0
+cua-direct   tree chrome                        5   5      229      238   25724      0
+cua-direct   list windows (msedge)              5   5       34       35     245      0
+cua-direct   tree edge                          5   5      232      234   26259      0
+cua-direct   list windows                       5   5       34       36    1034      0
+
+== Control: Cua Driver 0.38.0 daemon, same PC, same session
+tool         operation                          n  ok   p50 ms   p90 ms   chars images
+cua          launch                             5   5      619      671     177      0
+cua          list windows (charmap)             5   5       38       94     186      0
+cua          tree charmap                       5   5       40       48    1254      0
+cua          fill field                         5   5        3        8      40      0
+cua          press button                       5   5        7       12      49      0
+cua          outcome: field = abc + char        5   5        0        0       4      0
+cua          list windows (chrome)              5   5       39       53     278      0
+cua          tree chrome                        5   5      222      290   25724      0
+cua          list windows (msedge)              5   5       38       40     245      0
+cua          tree edge                          5   5      228      232   26259      0
+cua          list windows                       5   5       40       42    1034      0

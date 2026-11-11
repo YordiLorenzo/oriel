@@ -33,6 +33,8 @@ It holds the ref, the control type, the name, the automation id (when meaningful
 
 Other markers: `{none}` means the control can't be acted on; `(off screen)` means it is scrolled away. A scrollable area also shows where it stands: `(scrolled 0%, more below)`.
 
+`find` sees off-screen elements only when the app exposes them. A Windows Forms ListBox shows UI Automation only its visible rows, so scroll the list itself (`scroll` with the list's name) to reach the others.
+
 ## Acting
 
 Each of these replies with what changed in the window once it settles (`changes: false` skips that). `invoke`, `set`, `select` and `scroll` act through UI Automation and don't take keyboard focus or move the mouse. `keys`, `click` and `drag` send real input: they bring the window to the front, check it, and wait for a pause in the user's own typing and mouse use (see [SECURITY.md](../SECURITY.md)).
@@ -44,10 +46,12 @@ Each of these replies with what changed in the window once it settles (`changes:
 | `select` | `option`, `id` or `window` + `name` | open a combo box, list, tab strip or menu, pick the item, close it |
 | `scroll` | `id` or `window` (+ `name`), `direction` (down), `amount` (page/line) | scroll an item into view, or a container |
 | `keys` | `keys`, `window` (+ `name`/`id`), `literal` | SendKeys syntax (or plain text with `literal`), after the safety checks in [SECURITY.md](../SECURITY.md); arrows, page keys and Ctrl/Shift+Home/End count as editing keys, and text may follow Enter or Tab only in a document or a spreadsheet's cells |
-| `click` | `id` or `window` + `name` (its center), or `window` + `x`, `y` (window pixels), `button` (left), `double` | click with the real mouse, for what has no UIA action (cells, canvases); the window comes to the front first, the point must be inside it and not covered |
+| `click` | `id` or `window` + `name` (its centre), or `window` + `x`, `y` (window pixels), `button` (left), `double` | click with the real mouse, for what has no UIA action (cells, canvases); the window comes to the front first, the point must be inside it and not covered |
 | `drag` | `window`, `x1`, `y1`, `x2`, `y2` | press at the first point, release at the second (in 20 steps): drawing, sliders, selecting a range |
 | `batch` | `steps`, `window` | several actions in one call; the report covers the whole batch |
 | `screenshot=true` on invoke, set, keys, click, drag, batch | | the action's reply plus a picture of the window afterwards (1024 px wide), so checking by eye costs no extra call |
+
+A Windows Forms app built without a target framework attribute runs with legacy accessibility: its combo boxes offer UI Automation no items, so `select` fails with `no item like ...`. Visual Studio writes the attribute for you, for example `[assembly: TargetFramework(".NETFramework,Version=v4.8")]`, and with it `select` works.
 
 A change report looks like this:
 

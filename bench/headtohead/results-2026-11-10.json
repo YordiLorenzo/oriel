@@ -1,0 +1,2555 @@
+{
+ "date": "2026-11-10",
+ "pc": "TOASTER: Windows 11 Pro build 26200, Ryzen 5 7600X, unlocked, idle, Lamplit full screen in front",
+ "client": "MacBook on the same LAN, headtohead.py --runs 5",
+ "versions": {
+  "oriel": "0.1.0 (GitHub release oriel.exe, sha256 462fe094...)",
+  "cua": "Cua Driver 0.46.1 (cua-driver-rs-0.46.1-windows-x86_64-binary.zip, sha256 ec49cca5...)",
+  "cua_control": "Cua Driver 0.38.0 (the 2026-10-21 copy)"
+ },
+ "sets": {
+  "oriel and cua 0.46.1 (daemon via mcp --socket, serve --no-overlay)": [
+   {
+    "tool": "oriel",
+    "op": "launch",
+    "ms": 204.3,
+    "ok": true,
+    "chars": 82,
+    "blocks": 0,
+    "out": "started charmap.exe: window [1049444] charmap \"Character Map\"\n(launch took 195 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree charmap",
+    "ms": 19.8,
+    "ok": true,
+    "chars": 1048,
+    "blocks": 0,
+    "out": "window [1049444] charmap \"Character Map\" at 14,66 466x438\n[dcp292] Pane \"Character Grid\"\n[dcp293] Text \"Characters to copy :\"\n[dcp294] Edit \"Characters to copy :\" value=\" \"\n[dcp291] Button \"Select\"\n[dcp295] Button \"Copy\" (disabled)\n[dcp296] CheckBox \"Advanced view\" off {invoke,toggle}\n[dcp297] Text "
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field (ref)",
+    "ms": 2.2,
+    "ok": true,
+    "chars": 42,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button (ref)",
+    "ms": 2.1,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field",
+    "ms": 15.4,
+    "ok": true,
+    "chars": 43,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 14 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button",
+    "ms": 1.8,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "press + change report",
+    "ms": 42.3,
+    "ok": true,
+    "chars": 115,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n~ [dcp294] Edit \"Characters to copy :\" value=\"!!abc \"\n~ [dcp295] Button \"Copy\"\n(invoke took 41 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch + tree (1 call)",
+    "ms": 294.2,
+    "ok": true,
+    "chars": 1111,
+    "blocks": 0,
+    "out": "started charmap.exe: window [264194] charmap \"Character Map\"\nwindow [264194] charmap \"Character Map\" at 14,66 466x438\n[dcp314] Pane \"Character Grid\"\n[dcp315] Text \"Characters to copy :\"\n[dcp316] Edit \"Characters to copy :\" value=\" \"\n[dcp317] Button \"Select\"\n[dcp318] Button \"Copy\" (disabled)\n[dcp319]"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch",
+    "ms": 192.5,
+    "ok": true,
+    "chars": 81,
+    "blocks": 0,
+    "out": "started charmap.exe: window [329728] charmap \"Character Map\"\n(launch took 190 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree charmap",
+    "ms": 18.8,
+    "ok": true,
+    "chars": 1047,
+    "blocks": 0,
+    "out": "window [329728] charmap \"Character Map\" at 14,66 466x438\n[dcp338] Pane \"Character Grid\"\n[dcp339] Text \"Characters to copy :\"\n[dcp340] Edit \"Characters to copy :\" value=\" \"\n[dcp337] Button \"Select\"\n[dcp341] Button \"Copy\" (disabled)\n[dcp342] CheckBox \"Advanced view\" off {invoke,toggle}\n[dcp343] Text \""
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field (ref)",
+    "ms": 2.0,
+    "ok": true,
+    "chars": 42,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button (ref)",
+    "ms": 1.5,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field",
+    "ms": 14.1,
+    "ok": true,
+    "chars": 43,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 12 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button",
+    "ms": 1.7,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "press + change report",
+    "ms": 40.2,
+    "ok": true,
+    "chars": 115,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n~ [dcp340] Edit \"Characters to copy :\" value=\"!!abc \"\n~ [dcp341] Button \"Copy\"\n(invoke took 38 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch + tree (1 call)",
+    "ms": 292.0,
+    "ok": true,
+    "chars": 1113,
+    "blocks": 0,
+    "out": "started charmap.exe: window [2097642] charmap \"Character Map\"\nwindow [2097642] charmap \"Character Map\" at 14,66 466x438\n[dcp360] Pane \"Character Grid\"\n[dcp361] Text \"Characters to copy :\"\n[dcp362] Edit \"Characters to copy :\" value=\" \"\n[dcp363] Button \"Select\"\n[dcp364] Button \"Copy\" (disabled)\n[dcp36"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch",
+    "ms": 192.2,
+    "ok": true,
+    "chars": 82,
+    "blocks": 0,
+    "out": "started charmap.exe: window [2163178] charmap \"Character Map\"\n(launch took 190 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree charmap",
+    "ms": 19.5,
+    "ok": true,
+    "chars": 1048,
+    "blocks": 0,
+    "out": "window [2163178] charmap \"Character Map\" at 14,66 466x438\n[dcp384] Pane \"Character Grid\"\n[dcp385] Text \"Characters to copy :\"\n[dcp386] Edit \"Characters to copy :\" value=\" \"\n[dcp383] Button \"Select\"\n[dcp387] Button \"Copy\" (disabled)\n[dcp388] CheckBox \"Advanced view\" off {invoke,toggle}\n[dcp389] Text "
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field (ref)",
+    "ms": 1.9,
+    "ok": true,
+    "chars": 42,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button (ref)",
+    "ms": 1.5,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field",
+    "ms": 16.3,
+    "ok": true,
+    "chars": 43,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 14 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button",
+    "ms": 2.0,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "press + change report",
+    "ms": 41.2,
+    "ok": true,
+    "chars": 115,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n~ [dcp386] Edit \"Characters to copy :\" value=\"!!abc \"\n~ [dcp387] Button \"Copy\"\n(invoke took 39 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch + tree (1 call)",
+    "ms": 294.3,
+    "ok": true,
+    "chars": 1111,
+    "blocks": 0,
+    "out": "started charmap.exe: window [395264] charmap \"Character Map\"\nwindow [395264] charmap \"Character Map\" at 14,66 466x438\n[dcp406] Pane \"Character Grid\"\n[dcp407] Text \"Characters to copy :\"\n[dcp408] Edit \"Characters to copy :\" value=\" \"\n[dcp409] Button \"Select\"\n[dcp410] Button \"Copy\" (disabled)\n[dcp411]"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch",
+    "ms": 192.4,
+    "ok": true,
+    "chars": 81,
+    "blocks": 0,
+    "out": "started charmap.exe: window [460800] charmap \"Character Map\"\n(launch took 190 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree charmap",
+    "ms": 19.8,
+    "ok": true,
+    "chars": 1047,
+    "blocks": 0,
+    "out": "window [460800] charmap \"Character Map\" at 14,66 466x438\n[dcp430] Pane \"Character Grid\"\n[dcp431] Text \"Characters to copy :\"\n[dcp432] Edit \"Characters to copy :\" value=\" \"\n[dcp429] Button \"Select\"\n[dcp433] Button \"Copy\" (disabled)\n[dcp434] CheckBox \"Advanced view\" off {invoke,toggle}\n[dcp435] Text \""
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field (ref)",
+    "ms": 2.2,
+    "ok": true,
+    "chars": 42,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button (ref)",
+    "ms": 1.7,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field",
+    "ms": 15.5,
+    "ok": true,
+    "chars": 43,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 14 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button",
+    "ms": 1.6,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "press + change report",
+    "ms": 41.5,
+    "ok": true,
+    "chars": 115,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n~ [dcp432] Edit \"Characters to copy :\" value=\"!!abc \"\n~ [dcp433] Button \"Copy\"\n(invoke took 39 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch + tree (1 call)",
+    "ms": 292.1,
+    "ok": true,
+    "chars": 1113,
+    "blocks": 0,
+    "out": "started charmap.exe: window [1246052] charmap \"Character Map\"\nwindow [1246052] charmap \"Character Map\" at 14,66 466x438\n[dcp452] Pane \"Character Grid\"\n[dcp453] Text \"Characters to copy :\"\n[dcp454] Edit \"Characters to copy :\" value=\" \"\n[dcp455] Button \"Select\"\n[dcp456] Button \"Copy\" (disabled)\n[dcp45"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch",
+    "ms": 192.1,
+    "ok": true,
+    "chars": 82,
+    "blocks": 0,
+    "out": "started charmap.exe: window [1311588] charmap \"Character Map\"\n(launch took 189 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree charmap",
+    "ms": 19.8,
+    "ok": true,
+    "chars": 1048,
+    "blocks": 0,
+    "out": "window [1311588] charmap \"Character Map\" at 14,66 466x438\n[dcp476] Pane \"Character Grid\"\n[dcp477] Text \"Characters to copy :\"\n[dcp478] Edit \"Characters to copy :\" value=\" \"\n[dcp475] Button \"Select\"\n[dcp479] Button \"Copy\" (disabled)\n[dcp480] CheckBox \"Advanced view\" off {invoke,toggle}\n[dcp481] Text "
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field (ref)",
+    "ms": 2.2,
+    "ok": true,
+    "chars": 42,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button (ref)",
+    "ms": 1.7,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "fill field",
+    "ms": 14.5,
+    "ok": true,
+    "chars": 43,
+    "blocks": 0,
+    "out": "set \"Characters to copy :\"\n(set took 13 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "press button",
+    "ms": 1.7,
+    "ok": true,
+    "chars": 35,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n(invoke took 0 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "oriel",
+    "op": "press + change report",
+    "ms": 45.5,
+    "ok": true,
+    "chars": 115,
+    "blocks": 0,
+    "out": "invoked \"Select\"\n~ [dcp478] Edit \"Characters to copy :\" value=\"!!abc \"\n~ [dcp479] Button \"Copy\"\n(invoke took 44 ms)"
+   },
+   {
+    "tool": "oriel",
+    "op": "launch + tree (1 call)",
+    "ms": 294.7,
+    "ok": true,
+    "chars": 1111,
+    "blocks": 0,
+    "out": "started charmap.exe: window [526336] charmap \"Character Map\"\nwindow [526336] charmap \"Character Map\" at 14,66 466x438\n[dcp498] Pane \"Character Grid\"\n[dcp499] Text \"Characters to copy :\"\n[dcp500] Edit \"Characters to copy :\" value=\" \"\n[dcp501] Button \"Select\"\n[dcp502] Button \"Copy\" (disabled)\n[dcp503]"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree chrome",
+    "ms": 102.7,
+    "ok": true,
+    "chars": 12272,
+    "blocks": 0,
+    "out": "window [8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\" at 774,333 947x1015\n[dcp48] Pane \"Microsoft Windows - Wikipedia - Google Chrome\"\n  [dcp49] Button \"Minimise\"\n  [dcp50] Button \"Maximise\"\n  [dcp51] Button \"Close\"\n  [dcp52] Button \"Back\" (disabled)\n  [dcp53] Button \"Forward\" (dis"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree edge",
+    "ms": 101.4,
+    "ok": true,
+    "chars": 1545,
+    "blocks": 0,
+    "out": "window [526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" at 10,10 1083x1168\n[dcp264] Pane \"Microsoft Windows - Wikipedia - Microsoft Edge\"\n  [dcp265] Button \"Minimise\"\n  [dcp266] Button \"Maximise\"\n  [dcp267] Button \"Close\"\n  [dcp268] ToolBar \"App bar\"\n    ["
+   },
+   {
+    "tool": "oriel",
+    "op": "list windows",
+    "ms": 1.3,
+    "ok": true,
+    "chars": 304,
+    "blocks": 0,
+    "out": "[1442506] lamplit \"Lamplit\"\n[526336] charmap \"Character Map\"\n[1311588] charmap \"Character Map\"\n[526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\"\n[8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\"\n[197712] steamwebhelper \"Steam\"\n(windows took 0"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree chrome",
+    "ms": 105.5,
+    "ok": true,
+    "chars": 12272,
+    "blocks": 0,
+    "out": "window [8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\" at 774,333 947x1015\n[dcp48] Pane \"Microsoft Windows - Wikipedia - Google Chrome\"\n  [dcp49] Button \"Minimise\"\n  [dcp50] Button \"Maximise\"\n  [dcp51] Button \"Close\"\n  [dcp52] Button \"Back\" (disabled)\n  [dcp53] Button \"Forward\" (dis"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree edge",
+    "ms": 101.6,
+    "ok": true,
+    "chars": 1545,
+    "blocks": 0,
+    "out": "window [526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" at 10,10 1083x1168\n[dcp264] Pane \"Microsoft Windows - Wikipedia - Microsoft Edge\"\n  [dcp265] Button \"Minimise\"\n  [dcp266] Button \"Maximise\"\n  [dcp267] Button \"Close\"\n  [dcp268] ToolBar \"App bar\"\n    ["
+   },
+   {
+    "tool": "oriel",
+    "op": "list windows",
+    "ms": 1.4,
+    "ok": true,
+    "chars": 304,
+    "blocks": 0,
+    "out": "[1442506] lamplit \"Lamplit\"\n[526336] charmap \"Character Map\"\n[1311588] charmap \"Character Map\"\n[526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\"\n[8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\"\n[197712] steamwebhelper \"Steam\"\n(windows took 0"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree chrome",
+    "ms": 119.9,
+    "ok": true,
+    "chars": 12272,
+    "blocks": 0,
+    "out": "window [8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\" at 774,333 947x1015\n[dcp48] Pane \"Microsoft Windows - Wikipedia - Google Chrome\"\n  [dcp49] Button \"Minimise\"\n  [dcp50] Button \"Maximise\"\n  [dcp51] Button \"Close\"\n  [dcp52] Button \"Back\" (disabled)\n  [dcp53] Button \"Forward\" (dis"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree edge",
+    "ms": 148.8,
+    "ok": true,
+    "chars": 1546,
+    "blocks": 0,
+    "out": "window [526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" at 10,10 1083x1168\n[dcp264] Pane \"Microsoft Windows - Wikipedia - Microsoft Edge\"\n  [dcp265] Button \"Minimise\"\n  [dcp266] Button \"Maximise\"\n  [dcp267] Button \"Close\"\n  [dcp268] ToolBar \"App bar\"\n    ["
+   },
+   {
+    "tool": "oriel",
+    "op": "list windows",
+    "ms": 1.4,
+    "ok": true,
+    "chars": 304,
+    "blocks": 0,
+    "out": "[1442506] lamplit \"Lamplit\"\n[526336] charmap \"Character Map\"\n[1311588] charmap \"Character Map\"\n[526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\"\n[8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\"\n[197712] steamwebhelper \"Steam\"\n(windows took 0"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree chrome",
+    "ms": 119.5,
+    "ok": true,
+    "chars": 12272,
+    "blocks": 0,
+    "out": "window [8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\" at 774,333 947x1015\n[dcp48] Pane \"Microsoft Windows - Wikipedia - Google Chrome\"\n  [dcp49] Button \"Minimise\"\n  [dcp50] Button \"Maximise\"\n  [dcp51] Button \"Close\"\n  [dcp52] Button \"Back\" (disabled)\n  [dcp53] Button \"Forward\" (dis"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree edge",
+    "ms": 107.0,
+    "ok": true,
+    "chars": 1546,
+    "blocks": 0,
+    "out": "window [526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" at 10,10 1083x1168\n[dcp264] Pane \"Microsoft Windows - Wikipedia - Microsoft Edge\"\n  [dcp265] Button \"Minimise\"\n  [dcp266] Button \"Maximise\"\n  [dcp267] Button \"Close\"\n  [dcp268] ToolBar \"App bar\"\n    ["
+   },
+   {
+    "tool": "oriel",
+    "op": "list windows",
+    "ms": 1.5,
+    "ok": true,
+    "chars": 304,
+    "blocks": 0,
+    "out": "[1442506] lamplit \"Lamplit\"\n[526336] charmap \"Character Map\"\n[1311588] charmap \"Character Map\"\n[526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\"\n[8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\"\n[197712] steamwebhelper \"Steam\"\n(windows took 0"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree chrome",
+    "ms": 109.4,
+    "ok": true,
+    "chars": 12272,
+    "blocks": 0,
+    "out": "window [8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\" at 774,333 947x1015\n[dcp48] Pane \"Microsoft Windows - Wikipedia - Google Chrome\"\n  [dcp49] Button \"Minimise\"\n  [dcp50] Button \"Maximise\"\n  [dcp51] Button \"Close\"\n  [dcp52] Button \"Back\" (disabled)\n  [dcp53] Button \"Forward\" (dis"
+   },
+   {
+    "tool": "oriel",
+    "op": "tree edge",
+    "ms": 118.3,
+    "ok": true,
+    "chars": 1546,
+    "blocks": 0,
+    "out": "window [526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" at 10,10 1083x1168\n[dcp264] Pane \"Microsoft Windows - Wikipedia - Microsoft Edge\"\n  [dcp265] Button \"Minimise\"\n  [dcp266] Button \"Maximise\"\n  [dcp267] Button \"Close\"\n  [dcp268] ToolBar \"App bar\"\n    ["
+   },
+   {
+    "tool": "oriel",
+    "op": "list windows",
+    "ms": 1.5,
+    "ok": true,
+    "chars": 304,
+    "blocks": 0,
+    "out": "[1442506] lamplit \"Lamplit\"\n[526336] charmap \"Character Map\"\n[1311588] charmap \"Character Map\"\n[526158] msedge \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\"\n[8716482] chrome \"Microsoft Windows - Wikipedia - Google Chrome\"\n[197712] steamwebhelper \"Steam\"\n(windows took 0"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 598.5,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 22112) in background.\n\nWindows:\n- \"Character Map\" [window_id: 2361256]\n→ Call get_window_state(pid: 22112, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 48.6,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 22112) \"Character Map\" [window_id: 2361256]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 41.6,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=2361256 pid=22112 elements=15 snapshot_id=s00000005\nelement_token for row [N] = s00000005:N (row [1] is \"s00000005:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 5.9,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 8.4,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 601.8,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 22368) in background.\n\nWindows:\n- \"Character Map\" [window_id: 2426792]\n→ Call get_window_state(pid: 22368, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 29.4,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 22368) \"Character Map\" [window_id: 2426792]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 36.8,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=2426792 pid=22368 elements=15 snapshot_id=s00000006\nelement_token for row [N] = s00000006:N (row [1] is \"s00000006:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 2.6,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 4.9,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 605.5,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 25128) in background.\n\nWindows:\n- \"Character Map\" [window_id: 6423322]\n→ Call get_window_state(pid: 25128, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 29.7,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 25128) \"Character Map\" [window_id: 6423322]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 36.9,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=6423322 pid=25128 elements=15 snapshot_id=s00000007\nelement_token for row [N] = s00000007:N (row [1] is \"s00000007:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 2.9,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 5.3,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 603.9,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 17020) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1049638]\n→ Call get_window_state(pid: 17020, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 29.1,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 17020) \"Character Map\" [window_id: 1049638]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 35.7,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1049638 pid=17020 elements=15 snapshot_id=s00000008\nelement_token for row [N] = s00000008:N (row [1] is \"s00000008:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 3.2,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 5.3,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 604.6,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 11212) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1115174]\n→ Call get_window_state(pid: 11212, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 29.6,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 11212) \"Character Map\" [window_id: 1115174]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 35.7,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1115174 pid=11212 elements=15 snapshot_id=s00000009\nelement_token for row [N] = s00000009:N (row [1] is \"s00000009:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 3.3,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 5.4,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 32.0,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 221.6,
+    "ok": true,
+    "chars": 25659,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000a\nelement_token for row [N] = s0000000a:N (row [1] is \"s0000000a:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000a\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 31.2,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 225.9,
+    "ok": true,
+    "chars": 26194,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000b\nelement_token for row [N] = s0000000b:N (row [1] is \"s0000000b:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000b\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 30.4,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11212) \"Charact"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 27.8,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 218.5,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000c\nelement_token for row [N] = s0000000c:N (row [1] is \"s0000000c:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000c\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 30.7,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 224.8,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000d\nelement_token for row [N] = s0000000d:N (row [1] is \"s0000000d:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000d\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 29.9,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11212) \"Charact"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 27.9,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 217.6,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000e\nelement_token for row [N] = s0000000e:N (row [1] is \"s0000000e:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000e\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 29.5,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 226.0,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000f\nelement_token for row [N] = s0000000f:N (row [1] is \"s0000000f:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000f\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 30.3,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11212) \"Charact"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 28.3,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 223.5,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s00000010\nelement_token for row [N] = s00000010:N (row [1] is \"s00000010:1\"); this read stops at row [134], so rows past it from a larger read are not in s00000010\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 28.2,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 225.7,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s00000011\nelement_token for row [N] = s00000011:N (row [1] is \"s00000011:1\"); this read stops at row [131], so rows past it from a larger read are not in s00000011\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 32.2,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11212) \"Charact"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 30.0,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 225.0,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s00000012\nelement_token for row [N] = s00000012:N (row [1] is \"s00000012:1\"); this read stops at row [134], so rows past it from a larger read are not in s00000012\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 29.5,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 294.5,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s00000013\nelement_token for row [N] = s00000013:N (row [1] is \"s00000013:1\"); this read stops at row [131], so rows past it from a larger read are not in s00000013\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 35.7,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11212) \"Charact"
+   }
+  ],
+  "cua-direct 0.46.1 (bare mcp), agent cursor overlay off": [
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 649.3,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 21908) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1771320]\n→ Call get_window_state(pid: 21908, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 42.4,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 21908) \"Character Map\" [window_id: 1771320]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 48.9,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1771320 pid=21908 elements=15 snapshot_id=s00000001\nelement_token for row [N] = s00000001:N (row [1] is \"s00000001:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 8.6,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 10.8,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 606.5,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 28552) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1836856]\n→ Call get_window_state(pid: 28552, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 32.7,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 28552) \"Character Map\" [window_id: 1836856]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 38.3,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1836856 pid=28552 elements=15 snapshot_id=s00000002\nelement_token for row [N] = s00000002:N (row [1] is \"s00000002:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 5.4,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 7.0,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 603.7,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 26824) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1902392]\n→ Call get_window_state(pid: 26824, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 33.4,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 26824) \"Character Map\" [window_id: 1902392]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 38.1,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1902392 pid=26824 elements=15 snapshot_id=s00000003\nelement_token for row [N] = s00000003:N (row [1] is \"s00000003:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 4.9,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 6.2,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 602.4,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 22864) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1967928]\n→ Call get_window_state(pid: 22864, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 34.4,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 22864) \"Character Map\" [window_id: 1967928]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 39.3,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1967928 pid=22864 elements=15 snapshot_id=s00000004\nelement_token for row [N] = s00000004:N (row [1] is \"s00000004:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 5.1,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 6.6,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 621.8,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 12368) in background.\n\nWindows:\n- \"Character Map\" [window_id: 2033464]\n→ Call get_window_state(pid: 12368, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 35.6,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 12368) \"Character Map\" [window_id: 2033464]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 38.0,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=2033464 pid=12368 elements=15 snapshot_id=s00000005\nelement_token for row [N] = s00000005:N (row [1] is \"s00000005:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 5.6,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 7.4,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 36.2,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 238.0,
+    "ok": true,
+    "chars": 25659,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s00000006\nelement_token for row [N] = s00000006:N (row [1] is \"s00000006:1\"); this read stops at row [134], so rows past it from a larger read are not in s00000006\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 34.7,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 233.7,
+    "ok": true,
+    "chars": 26194,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s00000007\nelement_token for row [N] = s00000007:N (row [1] is \"s00000007:1\"); this read stops at row [131], so rows past it from a larger read are not in s00000007\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 35.6,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 12368) \"Charact"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 33.1,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 235.5,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s00000008\nelement_token for row [N] = s00000008:N (row [1] is \"s00000008:1\"); this read stops at row [134], so rows past it from a larger read are not in s00000008\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 35.2,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 233.3,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s00000009\nelement_token for row [N] = s00000009:N (row [1] is \"s00000009:1\"); this read stops at row [131], so rows past it from a larger read are not in s00000009\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 34.0,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 12368) \"Charact"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 33.2,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 227.4,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000a\nelement_token for row [N] = s0000000a:N (row [1] is \"s0000000a:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000a\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 33.9,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 231.7,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000b\nelement_token for row [N] = s0000000b:N (row [1] is \"s0000000b:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000b\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 34.0,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 12368) \"Charact"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 35.0,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 226.7,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000c\nelement_token for row [N] = s0000000c:N (row [1] is \"s0000000c:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000c\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 33.5,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 227.7,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000d\nelement_token for row [N] = s0000000d:N (row [1] is \"s0000000d:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000d\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 32.9,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 12368) \"Charact"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 33.6,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 229.0,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000e\nelement_token for row [N] = s0000000e:N (row [1] is \"s0000000e:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000e\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 32.9,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 229.9,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000f\nelement_token for row [N] = s0000000f:N (row [1] is \"s0000000f:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000f\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 34.6,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 12368) \"Charact"
+   }
+  ],
+  "cua-direct 0.46.1 (bare mcp), agent cursor overlay on (default)": [
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 659.4,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 28316) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1180710]\n→ Call get_window_state(pid: 28316, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 38.7,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 28316) \"Character Map\" [window_id: 1180710]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 49.6,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1180710 pid=28316 elements=15 snapshot_id=s00000001\nelement_token for row [N] = s00000001:N (row [1] is \"s00000001:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 9.6,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 580.7,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 586.6,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 19584) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1246246]\n→ Call get_window_state(pid: 19584, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 35.3,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 19584) \"Character Map\" [window_id: 1246246]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 40.3,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1246246 pid=19584 elements=15 snapshot_id=s00000002\nelement_token for row [N] = s00000002:N (row [1] is \"s00000002:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 570.2,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 568.4,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 605.6,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 12196) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1311782]\n→ Call get_window_state(pid: 12196, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 35.0,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 12196) \"Character Map\" [window_id: 1311782]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 40.5,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1311782 pid=12196 elements=15 snapshot_id=s00000003\nelement_token for row [N] = s00000003:N (row [1] is \"s00000003:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 558.3,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 564.5,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 616.6,
+    "ok": true,
+    "chars": 175,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 6188) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1377318]\n→ Call get_window_state(pid: 6188, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 39.0,
+    "ok": true,
+    "chars": 185,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 6188) \"Character Map\" [window_id: 1377318]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 41.7,
+    "ok": true,
+    "chars": 1253,
+    "blocks": 0,
+    "out": "window_id=1377318 pid=6188 elements=15 snapshot_id=s00000004\nelement_token for row [N] = s00000004:N (row [1] is \"s00000004:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"Se"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 571.1,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 567.7,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "launch",
+    "ms": 597.4,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 11920) in background.\n\nWindows:\n- \"Character Map\" [window_id: 1442854]\n→ Call get_window_state(pid: 11920, window_id) to inspect."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (charmap)",
+    "ms": 33.9,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 11920) \"Character Map\" [window_id: 1442854]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree charmap",
+    "ms": 40.0,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=1442854 pid=11920 elements=15 snapshot_id=s00000005\nelement_token for row [N] = s00000005:N (row [1] is \"s00000005:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "fill field",
+    "ms": 573.2,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "press button",
+    "ms": 567.2,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua-direct",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 35.6,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 230.2,
+    "ok": true,
+    "chars": 25659,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s00000006\nelement_token for row [N] = s00000006:N (row [1] is \"s00000006:1\"); this read stops at row [134], so rows past it from a larger read are not in s00000006\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 33.9,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 230.9,
+    "ok": true,
+    "chars": 26194,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s00000007\nelement_token for row [N] = s00000007:N (row [1] is \"s00000007:1\"); this read stops at row [131], so rows past it from a larger read are not in s00000007\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 36.9,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11920) \"Charact"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 33.4,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 225.7,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s00000008\nelement_token for row [N] = s00000008:N (row [1] is \"s00000008:1\"); this read stops at row [134], so rows past it from a larger read are not in s00000008\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 35.5,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 236.9,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s00000009\nelement_token for row [N] = s00000009:N (row [1] is \"s00000009:1\"); this read stops at row [131], so rows past it from a larger read are not in s00000009\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 33.6,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11920) \"Charact"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 32.9,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 231.1,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000a\nelement_token for row [N] = s0000000a:N (row [1] is \"s0000000a:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000a\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 34.6,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 235.3,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000b\nelement_token for row [N] = s0000000b:N (row [1] is \"s0000000b:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000b\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 34.7,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11920) \"Charact"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 35.1,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 230.4,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000c\nelement_token for row [N] = s0000000c:N (row [1] is \"s0000000c:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000c\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 33.9,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 235.2,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000d\nelement_token for row [N] = s0000000d:N (row [1] is \"s0000000d:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000d\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 38.5,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11920) \"Charact"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (chrome)",
+    "ms": 34.1,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree chrome",
+    "ms": 233.1,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000e\nelement_token for row [N] = s0000000e:N (row [1] is \"s0000000e:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000e\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows (msedge)",
+    "ms": 33.9,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "tree edge",
+    "ms": 237.4,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000f\nelement_token for row [N] = s0000000f:N (row [1] is \"s0000000f:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000f\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua-direct",
+    "op": "list windows",
+    "ms": 38.7,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 11920) \"Charact"
+   }
+  ],
+  "cua 0.38.0 control (daemon via mcp --socket, serve --no-overlay)": [
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 670.7,
+    "ok": true,
+    "chars": 174,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 2104) in background.\n\nWindows:\n- \"Character Map\" [window_id: 657454]\n→ Call get_window_state(pid: 2104, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 94.3,
+    "ok": true,
+    "chars": 184,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 2104) \"Character Map\" [window_id: 657454]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 47.9,
+    "ok": true,
+    "chars": 1252,
+    "blocks": 0,
+    "out": "window_id=657454 pid=2104 elements=15 snapshot_id=s00000001\nelement_token for row [N] = s00000001:N (row [1] is \"s00000001:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"Sel"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 8.0,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 11.7,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 653.6,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 17708) in background.\n\nWindows:\n- \"Character Map\" [window_id: 2492284]\n→ Call get_window_state(pid: 17708, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 35.3,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 17708) \"Character Map\" [window_id: 2492284]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 37.6,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=2492284 pid=17708 elements=15 snapshot_id=s00000002\nelement_token for row [N] = s00000002:N (row [1] is \"s00000002:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 2.9,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 6.9,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 619.3,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 27032) in background.\n\nWindows:\n- \"Character Map\" [window_id: 4327240]\n→ Call get_window_state(pid: 27032, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 39.9,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 27032) \"Character Map\" [window_id: 4327240]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 34.9,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=4327240 pid=27032 elements=15 snapshot_id=s00000003\nelement_token for row [N] = s00000003:N (row [1] is \"s00000003:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 2.7,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 7.0,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 604.1,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 10016) in background.\n\nWindows:\n- \"Character Map\" [window_id: 4392776]\n→ Call get_window_state(pid: 10016, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 37.8,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 10016) \"Character Map\" [window_id: 4392776]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 39.5,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=4392776 pid=10016 elements=15 snapshot_id=s00000004\nelement_token for row [N] = s00000004:N (row [1] is \"s00000004:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 3.7,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 7.5,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "launch",
+    "ms": 609.7,
+    "ok": true,
+    "chars": 177,
+    "blocks": 0,
+    "out": "✅ Launched C:\\Windows\\System32\\charmap.exe (pid 28164) in background.\n\nWindows:\n- \"Character Map\" [window_id: 4458312]\n→ Call get_window_state(pid: 28164, window_id) to inspect."
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (charmap)",
+    "ms": 38.0,
+    "ok": true,
+    "chars": 186,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- charmap.exe (pid 28164) \"Character Map\" [window_id: 4458312]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree charmap",
+    "ms": 39.5,
+    "ok": true,
+    "chars": 1254,
+    "blocks": 0,
+    "out": "window_id=4458312 pid=28164 elements=15 snapshot_id=s00000005\nelement_token for row [N] = s00000005:N (row [1] is \"s00000005:1\")\n\n- Window \"Character Map\"\n  - Pane \"Character Grid\"\n  - Text \"Characters to copy :\"\n  - [0] Edit \"Characters to copy :\" [id=104 actions=[set_value,text]]\n  - [1] Button \"S"
+   },
+   {
+    "tool": "cua",
+    "op": "fill field",
+    "ms": 3.1,
+    "ok": true,
+    "chars": 40,
+    "blocks": 0,
+    "out": "✅ Set AXValue on [0] (UIA ValuePattern)."
+   },
+   {
+    "tool": "cua",
+    "op": "press button",
+    "ms": 7.3,
+    "ok": true,
+    "chars": 49,
+    "blocks": 0,
+    "out": "✅ Performed UIA Invoke on [1] (screen (609,733))."
+   },
+   {
+    "tool": "cua",
+    "op": "outcome: field = abc + char",
+    "ms": 0,
+    "ok": true,
+    "chars": 4,
+    "out": "!abc"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 52.8,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 289.6,
+    "ok": true,
+    "chars": 25659,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s00000006\nelement_token for row [N] = s00000006:N (row [1] is \"s00000006:1\"); this read stops at row [134], so rows past it from a larger read are not in s00000006\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 38.4,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 230.9,
+    "ok": true,
+    "chars": 26194,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s00000007\nelement_token for row [N] = s00000007:N (row [1] is \"s00000007:1\"); this read stops at row [131], so rows past it from a larger read are not in s00000007\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 42.3,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 28164) \"Charact"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 37.6,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 223.2,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s00000008\nelement_token for row [N] = s00000008:N (row [1] is \"s00000008:1\"); this read stops at row [134], so rows past it from a larger read are not in s00000008\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 39.8,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 224.8,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s00000009\nelement_token for row [N] = s00000009:N (row [1] is \"s00000009:1\"); this read stops at row [131], so rows past it from a larger read are not in s00000009\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 40.2,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 28164) \"Charact"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 39.2,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 221.7,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000a\nelement_token for row [N] = s0000000a:N (row [1] is \"s0000000a:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000a\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 37.5,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 227.6,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000b\nelement_token for row [N] = s0000000b:N (row [1] is \"s0000000b:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000b\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 39.1,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 28164) \"Charact"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 39.6,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 216.3,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000c\nelement_token for row [N] = s0000000c:N (row [1] is \"s0000000c:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000c\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 39.5,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 223.3,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000d\nelement_token for row [N] = s0000000d:N (row [1] is \"s0000000d:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000d\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 39.6,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 28164) \"Charact"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (chrome)",
+    "ms": 38.0,
+    "ok": true,
+    "chars": 278,
+    "blocks": 0,
+    "out": "✅ Found 2 window(s) across 1 app(s); 2 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- chrome.exe (pid 5872) \"Restore pages?\" [window_id: 1180510]\n- chrome.exe (pid 5872) \"Microsoft Windows - Wikipedia - Google Chrome\" [window_id: 8716482]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree chrome",
+    "ms": 222.3,
+    "ok": true,
+    "chars": 25724,
+    "blocks": 0,
+    "out": "window_id=8716482 pid=5872 elements=135 snapshot_id=s0000000e\nelement_token for row [N] = s0000000e:N (row [1] is \"s0000000e:1\"); this read stops at row [134], so rows past it from a larger read are not in s0000000e\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (55 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows (msedge)",
+    "ms": 37.1,
+    "ok": true,
+    "chars": 245,
+    "blocks": 0,
+    "out": "✅ Found 1 window(s) across 1 app(s); 1 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- msedge.exe (pid 20624) \"Microsoft Windows - Wikipedia and 1 more page - Personal - Microsoft​ Edge\" [window_id: 526158]"
+   },
+   {
+    "tool": "cua",
+    "op": "tree edge",
+    "ms": 232.4,
+    "ok": true,
+    "chars": 26259,
+    "blocks": 0,
+    "out": "window_id=526158 pid=20624 elements=132 snapshot_id=s0000000f\nelement_token for row [N] = s0000000f:N (row [1] is \"s0000000f:1\"); this read stops at row [131], so rows past it from a larger read are not in s0000000f\n⚠️ PARTIAL TREE: the max_elements node budget ran out after 250 node(s) (63 discover"
+   },
+   {
+    "tool": "cua",
+    "op": "list windows",
+    "ms": 38.5,
+    "ok": true,
+    "chars": 1034,
+    "blocks": 0,
+    "out": "✅ Found 12 window(s) across 10 app(s); 11 on-screen. (SkyLight Space SPIs unavailable — on_current_space / space_ids omitted.)\n- NVIDIA Overlay.exe (pid 25916) \"NVIDIA GeForce Overlay DT\" [window_id: 3145838]\n- lamplit.exe (pid 12884) \"Lamplit\" [window_id: 1442506]\n- charmap.exe (pid 28164) \"Charact"
+   }
+  ]
+ }
+}

@@ -41,12 +41,15 @@ public static class OrielTypeLib {
 $target = Join-Path $dist 'oriel.exe'
 Get-Process oriel -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq $target } | Stop-Process -Force
 Start-Sleep -Milliseconds 300
-# csc turns these attributes into the exe's version resource (FileVersion, ProductVersion, FileDescription).
+# csc turns these attributes into the exe's version resource (FileDescription, ProductName, CompanyName,
+# LegalCopyright, FileVersion, ProductVersion). Code signing (docs/code-signing.md) needs ProductName to stay "oriel".
 $info = Join-Path $obj 'BuildInfo.cs'
 Set-Content -Encoding UTF8 $info @"
 // Written by build\build.ps1 -Version at every build.
 [assembly: System.Reflection.AssemblyTitle("oriel")]
 [assembly: System.Reflection.AssemblyProduct("oriel")]
+[assembly: System.Reflection.AssemblyCompany("YordiLorenzo")]
+[assembly: System.Reflection.AssemblyCopyright("Copyright 2026 YordiLorenzo")]
 [assembly: System.Reflection.AssemblyVersion("$fileVersion")]
 [assembly: System.Reflection.AssemblyFileVersion("$fileVersion")]
 [assembly: System.Reflection.AssemblyInformationalVersion(Oriel.BuildInfo.Version)]

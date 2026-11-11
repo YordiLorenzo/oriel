@@ -1,14 +1,17 @@
 name: release
 
-# On a version tag (v0.1.0): build oriel.exe with that version, smoke-test it and draft a GitHub release with oriel.exe
-# and SHA256SUMS. Someone publishes the draft by hand. The asset is always named oriel.exe, so
-# releases/latest/download/oriel.exe points at the newest published release.
+# On a version tag (v0.1.0): build oriel.exe with that version, smoke-test it, pack it as an MCP bundle
+# (oriel-0.1.0-win-x64.mcpb), attest both files' build provenance and draft a GitHub release with oriel.exe, the bundle
+# and SHA256SUMS. Someone publishes the draft by hand; mcp-registry.yml then puts that version into the MCP Registry.
+# The exe asset is always named oriel.exe, so releases/latest/download/oriel.exe points at the newest published release.
 on:
   push:
-    tags: ['v*']
+    tags: ['v[0-9]*']  # not vnc-v*, which vnc-release.yml handles
 
 permissions:
   contents: write
+  id-token: write      # attest-build-provenance signs with a Sigstore certificate
+  attestations: write  # and stores the attestation in the repository
 
 jobs:
   release:
@@ -38,7 +41,12 @@ jobs:
           account only, without admin rights, and prints the MCP command for your agent. Add `--autostart` to start its
           daemon at every logon. `oriel uninstall` removes it again.
 
-          To check the download, compare `(Get-FileHash oriel.exe).Hash` with `SHA256SUMS`.
+          For Claude Desktop, download the `.mcpb` file below and open it with Claude Desktop, which installs it as an
+          extension. This way isn't tested yet.
+
+          To check a download, compare `(Get-FileHash oriel.exe).Hash` with `SHA256SUMS`, or run
+          `gh attestation verify oriel.exe -R YordiLorenzo/oriel`, which checks that this repository's release workflow
+          built it.
 
           This build isn't code-signed yet, so Windows may warn about it, and Smart App Control blocks it.
 
@@ -65,12 +73,41 @@ jobs:
           if ($product -ne $env:VERSION) { throw "the exe's product version is '$product', not '$env:VERSION'" }
           dist\oriel.exe call windows
 
+      # The bundle's manifest lists the tools that src/Mcp.cs serves; a tool added there and not in the manifest stops
+      # the release here. diff --strip-trailing-cr: the Windows checkout and jq.exe both write CRLF.
+      - name: Pack the MCP bundle
+        shell: bash
+        env:
+          VERSION: ${{ steps.changelog.outputs.version }}
+        run: |
+          if ! diff --strip-trailing-cr <(sed -n 's/^ *T("\([a-z]*\)".*/\1/p' src/Mcp.cs) <(jq -r '.tools[].name' mcpb/manifest.json); then
+            echo "::error::The tools in mcpb/manifest.json differ from src/Mcp.cs (< only in Mcp.cs, > only in the manifest)."
+            exit 1
+          fi
+          stage="$RUNNER_TEMP/mcpb"
+          mkdir -p "$stage"
+          jq --arg v "$VERSION" '.version = $v' mcpb/manifest.json > "$stage/manifest.json"
+          cp mcpb/icon.png LICENSE dist/oriel.exe "$stage/"
+          npx --yes @anthropic-ai/mcpb@2.1.2 pack "$stage" "dist/oriel-$VERSION-win-x64.mcpb"
+
       - name: Write SHA256SUMS
         shell: powershell
+        env:
+          VERSION: ${{ steps.changelog.outputs.version }}
         run: |
-          $hash = (Get-FileHash dist\oriel.exe -Algorithm SHA256).Hash.ToLower()
-          [IO.File]::WriteAllText("$PWD\dist\SHA256SUMS", "$hash  oriel.exe`n")
+          $sums = foreach ($name in "oriel.exe", "oriel-$env:VERSION-win-x64.mcpb") {
+            "$((Get-FileHash "dist\$name" -Algorithm SHA256).Hash.ToLower())  $name`n"
+          }
+          [IO.File]::WriteAllText("$PWD\dist\SHA256SUMS", -join $sums)
           Get-Content dist\SHA256SUMS
+
+      # gh attestation verify <file> -R YordiLorenzo/oriel checks a download against this.
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: |
+            dist/oriel.exe
+            dist/oriel-${{ steps.changelog.outputs.version }}-win-x64.mcpb
 
       - name: Draft the release
         shell: bash
@@ -78,4 +115,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.changelog.outputs.version }}
           NOTES: ${{ steps.changelog.outputs.notes }}
-        run: gh release create "$GITHUB_REF_NAME" dist/oriel.exe dist/SHA256SUMS --draft --title "oriel $VERSION" --notes-file "$NOTES"
+        run: >-
+          gh release create "$GITHUB_REF_NAME" dist/oriel.exe "dist/oriel-$VERSION-win-x64.mcpb" dist/SHA256SUMS
+          --draft --title "oriel $VERSION" --notes-file "$NOTES"

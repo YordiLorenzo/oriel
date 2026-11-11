@@ -1,0 +1,17 @@
+{
+  "name": "oriel",
+  "description": "oriel for Claude Code: use the apps on your Windows PC through UI Automation, as text.",
+  "owner": {
+    "name": "YordiLorenzo",
+    "url": "https://github.com/YordiLorenzo"
+  },
+  "plugins": [
+    {
+      "name": "oriel",
+      "source": "./plugins/oriel",
+      "description": "Adds the oriel MCP server on Windows. Install oriel.exe first with oriel install; the plugin only points Claude Code at it.",
+      "category": "automation",
+      "tags": ["windows", "ui-automation", "computer-use", "accessibility"]
+    }
+  ]
+}

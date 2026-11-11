@@ -113,8 +113,18 @@ plain text in `hosts.json`. Reports about oriel-vnc follow the same process as a
 
 ## Downloads
 
-Release builds aren't code-signed yet, so Windows may show a SmartScreen warning. Download oriel only from this
-repository's [Releases page](https://github.com/YordiLorenzo/oriel/releases), and compare the file's hash with the
-release's `SHA256SUMS` (`Get-FileHash .\oriel.exe`). Or build it yourself: the build needs nothing beyond Windows.
-What oriel changes on your PC is listed in the
+Release builds aren't code-signed yet, so Windows may show a SmartScreen warning, and Smart App Control, where it is
+on, blocks them. The [code signing policy](docs/code-signing.md) says how signing will work if SignPath Foundation
+accepts oriel.
+
+Download oriel only from this repository's [Releases page](https://github.com/YordiLorenzo/oriel/releases), and check
+the file:
+
+- Compare its hash with the release's `SHA256SUMS`: `(Get-FileHash .\oriel.exe).Hash`.
+- From release 0.1.1, `gh attestation verify oriel.exe -R YordiLorenzo/oriel` checks that this repository's release
+  workflow built it. The release's `oriel-<version>-win-x64.mcpb` bundle is in `SHA256SUMS` and attested the same
+  way.
+
+Or build it yourself: the build needs nothing beyond Windows. A build of your own avoids SmartScreen's download
+warning; Smart App Control still checks it. What oriel changes on your PC is listed in the
 [README](README.md#what-oriel-changes-on-your-pc).

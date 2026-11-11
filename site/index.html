@@ -3,26 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>oriel: fast, cheap computer use for Windows (MCP server)</title>
-  <meta name="description" content="oriel is a free, open-source MCP server that lets your AI assistant use the apps on your Windows PC. It reads each window as text instead of screenshots.">
+  <title>oriel: a Windows MCP server that lets Claude Code use your apps</title>
+  <meta name="description" content="oriel is a free Windows MCP server that lets Claude Code use your Windows apps. It reads each window as text and replies to every action with what changed.">
   <meta name="theme-color" content="#0b0f1e">
   <meta name="color-scheme" content="dark">
   <link rel="canonical" href="https://yordilorenzo.github.io/oriel/">
+  <link rel="alternate" type="application/atom+xml" title="oriel releases" href="https://github.com/YordiLorenzo/oriel/releases.atom">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="oriel">
-  <meta property="og:title" content="oriel: fast, cheap computer use for Windows">
-  <meta property="og:description" content="A free, open-source MCP server that lets your AI assistant use the apps on your Windows PC. Same model, 30% faster and 38% cheaper per task than with Cua Driver on WindowsAgentArena.">
+  <meta property="og:title" content="oriel for Windows: an MCP server that lets Claude Code use your Windows apps">
+  <meta property="og:description" content="Free and open source. On WindowsAgentArena, same model: a median 49 s a task with oriel, 70 s with Cua Driver 0.38.0, which ran without 4 of its 63 tools and completed 4 points more.">
   <meta property="og:url" content="https://yordilorenzo.github.io/oriel/">
   <meta property="og:image" content="https://yordilorenzo.github.io/oriel/social-preview.png">
   <meta property="og:image:width" content="1280">
   <meta property="og:image:height" content="640">
-  <meta property="og:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel and the line &quot;Fast, cheap computer use for Windows.&quot;">
+  <meta property="og:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel, the line &quot;Lets Claude Code use your Windows apps.&quot; and Free and open source, Windows 11, MCP server.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="oriel: fast, cheap computer use for Windows">
-  <meta name="twitter:description" content="A free, open-source MCP server that lets your AI assistant use the apps on your Windows PC. Same model, 30% faster and 38% cheaper per task than with Cua Driver on WindowsAgentArena.">
+  <meta name="twitter:title" content="oriel for Windows: an MCP server that lets Claude Code use your Windows apps">
+  <meta name="twitter:description" content="Free and open source. On WindowsAgentArena, same model: a median 49 s a task with oriel, 70 s with Cua Driver 0.38.0, which ran without 4 of its 63 tools and completed 4 points more.">
   <meta name="twitter:image" content="https://yordilorenzo.github.io/oriel/social-preview.png">
-  <meta name="twitter:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel and the line &quot;Fast, cheap computer use for Windows.&quot;">
+  <meta name="twitter:image:alt" content="The oriel logo, a glowing arched window on a midnight-blue tile, next to the word oriel, the line &quot;Lets Claude Code use your Windows apps.&quot; and Free and open source, Windows 11, MCP server.">
 
   <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" href="icon-32.png" type="image/png" sizes="32x32">
@@ -38,22 +39,23 @@
         "@id": "https://yordilorenzo.github.io/oriel/#website",
         "url": "https://yordilorenzo.github.io/oriel/",
         "name": "oriel",
+        "alternateName": "oriel for Windows",
         "inLanguage": "en-GB",
-        "description": "Fast, cheap computer use for Windows."
+        "description": "An MCP server that lets Claude Code use your Windows apps."
       },
       {
         "@type": "SoftwareApplication",
         "@id": "https://yordilorenzo.github.io/oriel/#software",
         "name": "oriel",
+        "alternateName": "oriel for Windows",
         "url": "https://yordilorenzo.github.io/oriel/",
-        "description": "oriel is an MCP server that lets an AI assistant use the apps on your Windows PC. It reads each window as text, through the accessibility tree, instead of screenshots.",
+        "description": "oriel is a Windows MCP server that lets Claude Code use your Windows apps. It reads each window as text through the accessibility tree, presses, fills and selects controls through UI Automation, and replies to every action with what changed.",
         "applicationCategory": "DeveloperApplication",
         "applicationSubCategory": "MCP server",
-        "operatingSystem": "Windows 11, Windows 10 version 1903 or later",
+        "operatingSystem": "Windows 11",
         "softwareRequirements": ".NET Framework 4.8, which Windows includes",
         "softwareVersion": "0.1.0",
         "datePublished": "2026-10-26",
-        "fileSize": "180 KB",
         "downloadUrl": "https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe",
         "releaseNotes": "https://github.com/YordiLorenzo/oriel/blob/main/CHANGELOG.md",
         "license": "https://www.apache.org/licenses/LICENSE-2.0",
@@ -69,33 +71,43 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "How is it different from Cua Driver?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Both read the accessibility tree. oriel answers every action with what changed, so the assistant doesn't read the window again. On WindowsAgentArena that made tasks 30% faster and 38% cheaper with the same model. Cua Driver completed 4 points more tasks: 67% against 63%." }
+            "name": "Does Claude Code have computer use on Windows?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Not in the CLI. Anthropic's docs say \"Computer use in the CLI is not available on Linux or Windows\" and send Windows users to Claude Desktop, whose computer use is a research preview on Pro, Max and Ultra that hides your other windows while it works. An MCP server such as oriel lets the CLI use your Windows apps. oriel was never measured against Claude Desktop's computer use." }
           },
           {
             "@type": "Question",
-            "name": "Is it safe to let an assistant use my PC?",
-            "acceptedAnswer": { "@type": "Answer", "text": "In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts and password managers, and has no shell. An allow-list in config.json keeps it to the apps you name. SECURITY.md lists what it guarantees." }
+            "name": "How is it different from Cua Driver?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Both read the accessibility tree. oriel answers every action with what changed in the same reply; Cua Driver needs a second call to read the window. On WindowsAgentArena round 9 (October 2026), with the same model, tasks took a median 49 s against 70 s, at the model cost Claude Code reported of $38 against $61. Cua Driver 0.38.0 completed 4 points more tasks: 67% against 63%. Its own two runs differed by 6.5 points. It ran without 4 of its 63 tools, run_script among them." }
+          },
+          {
+            "@type": "Question",
+            "name": "Which clients and Windows versions does it work with?",
+            "acceptedAnswer": { "@type": "Answer", "text": "It is tested with Claude Code on Windows 11. Any client that starts a stdio MCP server should work, but no other client is tested yet. Windows 10 version 1903 or later should work, since it includes the .NET Framework 4.8, but it isn't tested yet." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is it safe to let Claude use my PC?",
+            "acceptedAnswer": { "@type": "Answer", "text": "In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts, password managers and terminals, and has no shell by default. An allow-list in config.json keeps it to the apps you name. It is not a sandbox. SECURITY.md lists what it guarantees and where that stops." }
           },
           {
             "@type": "Question",
             "name": "It isn't code-signed. Can I trust it?",
-            "acceptedAnswer": { "@type": "Answer", "text": "The source is open, every release lists its hash in SHA256SUMS, and you can build it yourself with the C# compiler that ships with Windows. Code signing is first on the roadmap." }
+            "acceptedAnswer": { "@type": "Answer", "text": "The source is open and every release lists its hash in SHA256SUMS. From 0.1.1, each release file also carries a GitHub build attestation that gh attestation verify checks. oriel will apply to SignPath Foundation for free code signing; the code signing policy says how it will work. Until then SmartScreen warns, and Smart App Control, where it is on, blocks it." }
           },
           {
             "@type": "Question",
             "name": "Does it work on a Mac or on Linux?",
-            "acceptedAnswer": { "@type": "Answer", "text": "oriel.exe runs on Windows. From a Mac or Linux machine, your assistant can use a Windows PC over SSH. For the Mac or Linux desktop itself, use oriel-vnc, the second MCP server in the repo." }
+            "acceptedAnswer": { "@type": "Answer", "text": "oriel.exe runs on Windows. From a Mac or Linux machine, Claude Code can use a Windows PC over SSH. oriel itself needs no admin rights; turning on OpenSSH Server needs admin once. For the Mac or Linux desktop itself, use oriel-vnc, the second MCP server in the repo." }
           },
           {
             "@type": "Question",
             "name": "Does it send anything anywhere?",
-            "acceptedAnswer": { "@type": "Answer", "text": "No telemetry and no update checks. Your MCP client sends what oriel reads to its model provider, as it does with anything else you show it." }
+            "acceptedAnswer": { "@type": "Answer", "text": "No telemetry and no update checks. oriel only talks to itself on 127.0.0.1. Your MCP client sends what oriel reads to its model provider, as it does with anything else you show it." }
           },
           {
             "@type": "Question",
             "name": "How do I remove it?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Run & \"$env:LOCALAPPDATA\\Programs\\oriel\\oriel.exe\" uninstall in PowerShell. It removes what it added and lists each item. Then remove oriel from your MCP client." }
+            "acceptedAnswer": { "@type": "Answer", "text": "Run & \"$env:LOCALAPPDATA\\Programs\\oriel\\oriel.exe\" uninstall in PowerShell. It removes what it added and lists each item. Then remove oriel from your MCP client: in Claude Code, claude mcp remove --scope user oriel, or claude plugin uninstall oriel@oriel if you used the plugin." }
           }
         ]
       }
@@ -114,8 +126,8 @@
       </a>
       <nav aria-label="Sections">
         <ul class="nav">
-          <li class="nav-wide"><a href="#benchmark">Benchmark</a></li>
           <li><a href="#setup">Set up</a></li>
+          <li class="nav-wide"><a href="#benchmark">Benchmark</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel">GitHub</a></li>
         </ul>
@@ -127,10 +139,11 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <h1 id="hero-title">Fast, cheap computer use for Windows.</h1>
-          <p class="lead">oriel is an MCP server that lets your AI assistant use the apps on your Windows PC. It reads each window as text instead of screenshots.</p>
+          <p class="kicker">The Claude Code CLI has no built-in computer use on Windows (<a href="https://code.claude.com/docs/en/computer-use">docs</a>, read 10&nbsp;Nov&nbsp;2026).</p>
+          <h1 id="hero-title">oriel lets Claude Code use your Windows apps.</h1>
+          <p class="lead">An MCP server for Windows. It reads each window as text through the accessibility tree, presses, fills and selects controls through UI Automation so those actions don't move your mouse, and replies to every action with what changed.</p>
           <div class="actions">
-            <a class="btn btn-primary" href="https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe">
+            <a class="btn btn-primary" href="download/">
               <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Download for Windows
             </a>
@@ -139,7 +152,8 @@
               View on GitHub
             </a>
           </div>
-          <p class="meta">Free and open&nbsp;source <span aria-hidden="true">·</span> 180&nbsp;KB <span aria-hidden="true">·</span> No admin&nbsp;rights <span aria-hidden="true">·</span> Windows&nbsp;10 and&nbsp;11</p>
+          <p class="fine">Not code-signed yet, so Windows will warn. <a class="text-link" href="#windows-warns">Why, and how to check the file</a></p>
+          <p class="meta">Free, Apache-2.0 <span aria-hidden="true">·</span> One exe under 200&nbsp;KB <span aria-hidden="true">·</span> No admin&nbsp;rights <span aria-hidden="true">·</span> Tested on Windows&nbsp;11 with Claude&nbsp;Code</p>
         </div>
 
         <figure class="pane pane-hero">
@@ -153,62 +167,215 @@
       </div>
     </section>
 
+    <section class="section" id="setup" aria-labelledby="setup-title">
+      <div class="wrap split">
+        <div>
+          <h2 id="setup-title">Set up</h2>
+          <p class="lead">One exe, no admin rights, three steps. Tested with Claude Code on Windows&nbsp;11.</p>
+          <p class="aside">Claude Code on a Mac? Run it there and reach the PC over SSH: <a class="text-link" href="windows-from-mac-over-ssh/">the SSH guide</a>. For a Mac or Linux desktop itself, <a class="text-link nw" href="https://github.com/YordiLorenzo/oriel/tree/main/vnc">oriel-vnc</a>, in the same repo, works with any screen that runs a VNC server.</p>
+        </div>
+        <ol class="steps">
+          <li>
+            <h3>Install</h3>
+            <p><a class="text-link" href="download/">Download oriel.exe</a>, then run this in PowerShell in the download folder:</p>
+            <pre class="code" data-copy="install"><code>.\oriel.exe install</code></pre>
+            <p class="fine">It copies oriel to <code>%LOCALAPPDATA%\Programs\oriel</code>, for your Windows account only. From 0.1.1 it ends by printing the config line for each client, with your path filled in. Not code-signed yet, so Windows will warn: <a class="text-link" href="#windows-warns">why, and how to check the file</a>.</p>
+          </li>
+          <li>
+            <h3>Add it to Claude Code</h3>
+            <div class="tabs">
+              <input type="radio" name="client" id="tab-claude" checked>
+              <input type="radio" name="client" id="tab-ssh">
+              <input type="radio" name="client" id="tab-codex">
+              <input type="radio" name="client" id="tab-desktop">
+              <input type="radio" name="client" id="tab-vscode">
+              <div class="tab-list">
+                <label for="tab-claude">Claude Code</label>
+                <label for="tab-ssh">Over SSH</label>
+                <label for="tab-codex">Codex</label>
+                <label for="tab-desktop">Claude Desktop</label>
+                <label for="tab-vscode">VS Code</label>
+              </div>
+              <div class="tab-panel panel-claude">
+                <p>In the same PowerShell window:</p>
+                <pre class="code" data-copy="claude-mcp-add"><code>claude mcp add <span class="nw">--scope</span> user oriel -- "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" mcp</code></pre>
+                <p>Or, from 0.1.1, as a Claude Code plugin (Claude Code 2.1.292 or later). Use one of the two, not both.</p>
+                <pre class="code" data-copy="claude-plugin"><code>claude plugin install oriel <span class="nw">--marketplace</span> YordiLorenzo/oriel</code></pre>
+              </div>
+              <div class="tab-panel panel-ssh">
+                <p>On the Mac or Linux machine, with your Windows user name for <code>&lt;you&gt;</code>. The PC needs OpenSSH Server with key login. Turning it on needs admin once; oriel itself needs none. <a class="text-link" href="windows-from-mac-over-ssh/">SSH guide</a></p>
+                <pre class="code" data-copy="claude-mcp-add-ssh"><code>claude mcp add <span class="nw">--scope</span> user oriel -- ssh '&lt;you&gt;@my-windows-pc' 'C:\<wbr>Users\<wbr>&lt;you&gt;\<wbr>AppData\<wbr>Local\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe' mcp</code></pre>
+              </div>
+              <div class="tab-panel panel-codex">
+                <p>Not tested yet. In <code>%USERPROFILE%\.codex\config.toml</code>, with your Windows user name for <code>&lt;you&gt;</code>:</p>
+                <pre class="code" data-copy="codex-toml"><code>[mcp_servers.oriel]
+command = "C:\\<wbr>Users\\<wbr>&lt;you&gt;\\<wbr>AppData\\<wbr>Local\\<wbr>Programs\\<wbr>oriel\\<wbr>oriel.exe"
+args = ["mcp"]</code></pre>
+              </div>
+              <div class="tab-panel panel-desktop">
+                <p>Not tested yet. In <code>claude_desktop_config.json</code>, or <code>.cursor\mcp.json</code> for Cursor:</p>
+                <pre class="code" data-copy="desktop-json"><code>{
+  "mcpServers": {
+    "oriel": {
+      "command": "C:\\<wbr>Users\\<wbr>&lt;you&gt;\\<wbr>AppData\\<wbr>Local\\<wbr>Programs\\<wbr>oriel\\<wbr>oriel.exe",
+      "args": ["mcp"]
+    }
+  }
+}</code></pre>
+                <p class="fine">From 0.1.1, each release also has an <code>.mcpb</code> bundle that Claude Desktop installs as an extension.</p>
+              </div>
+              <div class="tab-panel panel-vscode">
+                <p>Not tested yet. In <code>.vscode\mcp.json</code>:</p>
+                <pre class="code" data-copy="vscode-json"><code>{
+  "servers": {
+    "oriel": {
+      "type": "stdio",
+      "command": "C:\\<wbr>Users\\<wbr>&lt;you&gt;\\<wbr>AppData\\<wbr>Local\\<wbr>Programs\\<wbr>oriel\\<wbr>oriel.exe",
+      "args": ["mcp"]
+    }
+  }
+}</code></pre>
+              </div>
+            </div>
+            <p class="fine">Tested with Claude Code. The Codex, Claude Desktop, Cursor and VS Code configs follow each client's documented format.</p>
+          </li>
+          <li>
+            <h3>Try it</h3>
+            <p>Ask Claude one of these. Each press and fill replies with what changed in the window.</p>
+            <pre class="code" data-copy="prompt-calculator"><code>Open Calculator and work out 127 times 46 by pressing its buttons.</code></pre>
+            <pre class="code" data-copy="prompt-notepad"><code>Open Notepad, write a three-line note and save it in Documents as oriel-test.txt.</code></pre>
+            <p class="fine">Did it work? Say so in <a class="text-link" href="https://github.com/YordiLorenzo/oriel/discussions">Discussions</a>. To hear about new releases, choose Watch, Custom, Releases on GitHub, or follow the <a class="text-link" href="https://github.com/YordiLorenzo/oriel/releases.atom">releases feed</a>.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section warns" id="windows-warns" aria-labelledby="warns-title">
+      <div class="wrap split">
+        <div>
+          <h2 id="warns-title">Windows warns about oriel.exe</h2>
+          <p class="lead">oriel isn't code-signed yet, so Windows can't name the publisher. Here is each warning, and how to check the file.</p>
+        </div>
+        <div class="prose">
+          <ul>
+            <li><strong>Your browser</strong> may say the file isn't commonly downloaded. In Edge, open the download's <strong>...</strong> menu, choose <strong>Keep</strong>, then <strong>Show more</strong> and <strong>Keep anyway</strong>.</li>
+            <li><strong>SmartScreen</strong> may show "Windows protected your PC". Choose <strong>More info</strong>, then <strong>Run anyway</strong>. Reputation builds with downloads, and every new version starts with none (<a class="text-link" href="https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation">Microsoft</a>).</li>
+            <li><strong>Smart App Control</strong>, where it is on, blocks unsigned programs and has no way past for one app (<a class="text-link" href="https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions">Microsoft</a>). It checks a copy you build yourself too; a local build only avoids SmartScreen's download warning.</li>
+            <li><strong>Antivirus</strong> may be wary of an unsigned program that sends keystrokes and reads other windows. oriel doesn't try to get around it.</li>
+          </ul>
+          <h3>Check the file</h3>
+          <p>In PowerShell, compare its hash with the release's <code>SHA256SUMS</code>:</p>
+          <pre class="code" data-copy="get-filehash"><code>(Get-FileHash .\oriel.exe).Hash</code></pre>
+          <p>From 0.1.1, the GitHub CLI can also check that this repository's release workflow built it:</p>
+          <pre class="code" data-copy="attestation"><code>gh attestation verify oriel.exe -R YordiLorenzo/oriel</code></pre>
+          <p>oriel will apply to SignPath Foundation for free code signing, so that Windows names the publisher. The <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/code-signing.md">code signing policy</a> says what will be signed and who approves it.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="benchmark" aria-labelledby="bench-title">
       <div class="wrap bench">
         <div class="bench-head">
-          <h2 id="bench-title">30% faster.<br>38% cheaper.</h2>
+          <h2 id="bench-title">A median 49&nbsp;s a task, against 70&nbsp;s.</h2>
           <p>Same model, same 153 tasks from Microsoft's WindowsAgentArena, two runs each. Only the MCP server changed.</p>
-          <p class="fine">Claude Sonnet 5.5 in Claude Code. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/benchmarks.md">Method and every round</a></p>
+          <p>Cua Driver 0.38.0 completed 4 points more tasks: 67% against 63%. Its own two identical runs differed by 6.5 points, so that gap is within run-to-run variation, but it was also ahead in every round since round 5. It ran without 4 of its 63 tools, <code>run_script</code> among them.</p>
+          <p class="fine">Round 9, October 2026, Claude Sonnet 5.5 in Claude Code. Median time 30% lower, model cost 38% lower, 19% fewer turns; each gap is larger than either layer's own run-to-run gap. The benchmark does not show which feature did it. Model cost is what Claude Code reported, a list-price estimate. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/benchmarks.md#what-this-does-not-show">What this does not show</a> <span aria-hidden="true">·</span> <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/benchmarks.md">Method and every round</a> <span aria-hidden="true">·</span> <a class="text-link" href="oriel-vs-cua-driver/">oriel and Cua Driver compared</a></p>
         </div>
-        <table class="bench-table">
-          <thead>
-            <tr>
-              <td></td>
-              <th scope="col" class="col-oriel">oriel</th>
-              <th scope="col">Cua Driver</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Median time per task</th>
-              <td class="col-oriel win">49 s</td>
-              <td>70 s</td>
-            </tr>
-            <tr>
-              <th scope="row">Model cost, all 153 tasks</th>
-              <td class="col-oriel win">$38</td>
-              <td>$61</td>
-            </tr>
-            <tr>
-              <th scope="row">Model turns per task</th>
-              <td class="col-oriel win">21.8</td>
-              <td>27.0</td>
-            </tr>
-            <tr>
-              <th scope="row">Tasks completed</th>
-              <td class="col-oriel">63%</td>
-              <td class="win">67%</td>
-            </tr>
-          </tbody>
-        </table>
+        <div>
+          <table class="bench-table">
+            <thead>
+              <tr>
+                <td></td>
+                <th scope="col" class="col-oriel">oriel</th>
+                <th scope="col">Cua Driver 0.38.0</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Median time per task</th>
+                <td class="col-oriel win">49&nbsp;s</td>
+                <td>70&nbsp;s</td>
+              </tr>
+              <tr>
+                <th scope="row">Model cost, all 153 tasks</th>
+                <td class="col-oriel win">$38</td>
+                <td>$61</td>
+              </tr>
+              <tr>
+                <th scope="row">Model turns per task</th>
+                <td class="col-oriel win">21.8</td>
+                <td>27.0</td>
+              </tr>
+              <tr>
+                <th scope="row">Tasks completed</th>
+                <td class="col-oriel">63%</td>
+                <td class="win">67%</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 class="bench-sub">Per call, against Cua Driver 0.46.1</h3>
+          <table class="bench-table">
+            <thead>
+              <tr>
+                <td></td>
+                <th scope="col" class="col-oriel">oriel</th>
+                <th scope="col">Cua Driver</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">List windows</th>
+                <td class="col-oriel win">1&nbsp;ms</td>
+                <td>30&nbsp;ms</td>
+              </tr>
+              <tr>
+                <th scope="row">Launch an app</th>
+                <td class="col-oriel win">192&nbsp;ms</td>
+                <td>604&nbsp;ms</td>
+              </tr>
+              <tr>
+                <th scope="row">Read a window</th>
+                <td class="col-oriel win">20&nbsp;ms</td>
+                <td>37&nbsp;ms</td>
+              </tr>
+              <tr>
+                <th scope="row">Fill a field</th>
+                <td class="col-oriel win">2&nbsp;ms</td>
+                <td>3&nbsp;ms</td>
+              </tr>
+              <tr>
+                <th scope="row">Press a button</th>
+                <td class="col-oriel win">2&nbsp;ms</td>
+                <td>5&nbsp;ms</td>
+              </tr>
+              <tr>
+                <th scope="row">Calls to press and see what changed</th>
+                <td class="col-oriel win">1</td>
+                <td>2</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="fine">10 Nov 2026, oriel 0.1.0 on one unlocked Windows 11 PC, median of 5 runs. Press and change report together took oriel 42&nbsp;ms. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/bench/headtohead/RESULTS.md#2026-11-10-oriel-010-against-cua-driver-0461">Per-call results</a></p>
+        </div>
       </div>
     </section>
 
     <section class="section" id="how" aria-labelledby="how-title">
       <div class="wrap">
-        <h2 id="how-title">Text, not screenshots</h2>
+        <h2 id="how-title">A Windows MCP server that reads text, not screenshots</h2>
         <div class="how">
           <div>
             <h3>Reads windows as text</h3>
-            <p>Every control is one line with a short ref, taken from the accessibility tree that Narrator uses.</p>
+            <p>Every control is one line with a short ref, taken from the accessibility tree that Narrator uses. Claude acts on the ref without searching again.</p>
           </div>
           <div>
-            <h3>Leaves your mouse alone</h3>
-            <p>Clicks, fills and selects go through UI Automation, so you can keep using the PC while it works.</p>
+            <h3>Element actions leave your mouse alone</h3>
+            <p>Presses, fills, selects and scrolls go through UI Automation, so they don't move the mouse or take the focus. Keys, click and drag do, and wait for a pause in your typing.</p>
           </div>
           <div>
             <h3>Says what changed</h3>
-            <p>Each action replies with the controls that appeared, changed or went away. No second look.</p>
+            <p>Each action replies with the controls that appeared, changed or went away, so Claude doesn't read the window again to check.</p>
           </div>
         </div>
       </div>
@@ -218,7 +385,7 @@
       <div class="wrap pair">
         <div>
           <h2>Careful by default</h2>
-          <p class="lead">It acts as you, only in windows it may use. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists every limit.</p>
+          <p class="lead">It acts as you, only in windows it may use. It is not a sandbox: <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists every limit.</p>
           <ul class="checks">
             <li><span>Never types into a password field <span class="hint">with any setting</span></span></li>
             <li><span>Stays out of sign-in, UAC prompts and password managers <span class="hint">add your own apps with <code>deny</code></span></span></li>
@@ -239,114 +406,46 @@
       </div>
     </section>
 
-    <section class="section" id="setup" aria-labelledby="setup-title">
-      <div class="wrap split">
-        <div>
-          <h2 id="setup-title">Set up</h2>
-          <p class="lead">One exe, no admin rights. It works with any MCP client that starts a stdio server.</p>
-          <p class="aside">Need a Mac or Linux desktop too? <a class="text-link nw" href="https://github.com/YordiLorenzo/oriel/tree/main/vnc">oriel-vnc</a>, in the same repo, works with any screen that runs a VNC server.</p>
-        </div>
-        <ol class="steps">
-          <li>
-            <h3>Install</h3>
-            <p><a class="text-link" href="https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe">Download oriel.exe</a>, then run this in PowerShell in the download folder:</p>
-            <pre class="code"><code>.\oriel.exe install</code></pre>
-            <p class="fine">Not signed yet: if SmartScreen stops it, choose More info, then Run anyway.</p>
-          </li>
-          <li>
-            <h3>Add it to your MCP client</h3>
-            <div class="tabs">
-              <input type="radio" name="client" id="tab-claude" checked>
-              <input type="radio" name="client" id="tab-codex">
-              <input type="radio" name="client" id="tab-desktop">
-              <input type="radio" name="client" id="tab-vscode">
-              <input type="radio" name="client" id="tab-ssh">
-              <div class="tab-list">
-                <label for="tab-claude">Claude Code</label>
-                <label for="tab-codex">Codex</label>
-                <label for="tab-desktop">Claude Desktop</label>
-                <label for="tab-vscode">VS Code</label>
-                <label for="tab-ssh">Over SSH</label>
-              </div>
-              <div class="tab-panel panel-claude">
-                <p>In the same PowerShell window:</p>
-                <pre class="code"><code>claude mcp add <span class="nw">--scope</span> user oriel -- "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" mcp</code></pre>
-              </div>
-              <div class="tab-panel panel-codex">
-                <p>In <code>%USERPROFILE%\.codex\config.toml</code>, with your Windows user name for <code>&lt;you&gt;</code>:</p>
-                <pre class="code"><code>[mcp_servers.oriel]
-command = 'C:\<wbr>Users\<wbr>&lt;you&gt;\<wbr>AppData\<wbr>Local\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe'
-args = ["mcp"]</code></pre>
-              </div>
-              <div class="tab-panel panel-desktop">
-                <p>In <code>claude_desktop_config.json</code>, or <code>.cursor\mcp.json</code> for Cursor:</p>
-                <pre class="code"><code>{
-  "mcpServers": {
-    "oriel": {
-      "command": "C:\\<wbr>Users\\<wbr>&lt;you&gt;\\<wbr>AppData\\<wbr>Local\\<wbr>Programs\\<wbr>oriel\\<wbr>oriel.exe",
-      "args": ["mcp"]
-    }
-  }
-}</code></pre>
-              </div>
-              <div class="tab-panel panel-vscode">
-                <p>In <code>.vscode\mcp.json</code>:</p>
-                <pre class="code"><code>{
-  "servers": {
-    "oriel": {
-      "type": "stdio",
-      "command": "C:\\<wbr>Users\\<wbr>&lt;you&gt;\\<wbr>AppData\\<wbr>Local\\<wbr>Programs\\<wbr>oriel\\<wbr>oriel.exe",
-      "args": ["mcp"]
-    }
-  }
-}</code></pre>
-              </div>
-              <div class="tab-panel panel-ssh">
-                <p>On the Mac or Linux machine. The PC needs OpenSSH Server with key login.</p>
-                <pre class="code"><code>claude mcp add <span class="nw">--scope</span> user oriel -- ssh my-windows-pc 'C:\<wbr>Users\<wbr>&lt;you&gt;\<wbr>AppData\<wbr>Local\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe' mcp</code></pre>
-              </div>
-            </div>
-            <p class="fine">Tested with Claude Code. The other configs follow each client's documented format.</p>
-          </li>
-          <li>
-            <h3>Try it</h3>
-            <p>Ask your assistant: <q>Which windows are open?</q></p>
-          </li>
-        </ol>
-      </div>
-    </section>
-
     <section class="section" id="faq" aria-labelledby="faq-title">
       <div class="wrap split split-faq">
         <div>
           <h2 id="faq-title">Questions</h2>
-          <p class="lead">More in <a class="text-link" href="https://github.com/YordiLorenzo/oriel#faq">the README</a>, or <a class="text-link" href="https://github.com/YordiLorenzo/oriel/issues">open an issue</a>.</p>
+          <p class="lead">More in <a class="text-link" href="https://github.com/YordiLorenzo/oriel#faq">the README</a>, or ask in <a class="text-link" href="https://github.com/YordiLorenzo/oriel/discussions">Discussions</a>.</p>
+          <p class="aside">Longer answers: <a class="text-link" href="claude-code-computer-use-windows/">Claude Code computer use on Windows</a>, <a class="text-link" href="oriel-vs-cua-driver/">oriel and Cua Driver</a>, <a class="text-link" href="oriel-vs-windows-mcp/">oriel and Windows-MCP</a>, <a class="text-link" href="windows-from-mac-over-ssh/">a Windows PC from a Mac</a> and <a class="text-link" href="test-windows-app-claude-code/">testing your Windows app</a>.</p>
         </div>
         <div class="faq">
           <details>
-            <summary>How is it different from Cua Driver?</summary>
-            <p>Both read the accessibility tree. oriel answers every action with what changed, so the assistant doesn't read the window again. On WindowsAgentArena that made tasks 30% faster and 38% cheaper with the same model. Cua Driver completed 4 points more tasks: 67% against 63%.</p>
+            <summary>Does Claude Code have computer use on Windows?</summary>
+            <p>Not in the CLI. Anthropic's docs say "Computer use in the CLI is not available on Linux or Windows" and send Windows users to Claude Desktop, whose computer use is a research preview on Pro, Max and Ultra that hides your other windows while it works. An MCP server such as oriel lets the CLI use your Windows apps. oriel was never measured against Claude Desktop's computer use. <a class="text-link" href="claude-code-computer-use-windows/">The full answer</a></p>
           </details>
           <details>
-            <summary>Is it safe to let an assistant use my PC?</summary>
-            <p>In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts and password managers, and has no shell. An allow-list in <code>config.json</code> keeps it to the apps you name. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists what it guarantees.</p>
+            <summary>How is it different from Cua Driver?</summary>
+            <p>Both read the accessibility tree. oriel answers every action with what changed in the same reply; Cua Driver needs a second call to read the window. On WindowsAgentArena round 9 (October 2026), with the same model, tasks took a median 49&nbsp;s against 70&nbsp;s, at the model cost Claude Code reported of $38 against $61. Cua Driver 0.38.0 completed 4 points more tasks: 67% against 63%. Its own two runs differed by 6.5 points. It ran without 4 of its 63 tools, <code>run_script</code> among them. <a class="text-link" href="oriel-vs-cua-driver/">The full comparison</a></p>
+          </details>
+          <details>
+            <summary>Which clients and Windows versions does it work with?</summary>
+            <p>It is tested with Claude Code on Windows 11. Any client that starts a stdio MCP server should work, but no other client is tested yet. Windows 10 version 1903 or later should work, since it includes the .NET Framework 4.8, but it isn't tested yet.</p>
+          </details>
+          <details>
+            <summary>Is it safe to let Claude use my PC?</summary>
+            <p>In the windows it may use, it can do what you can. It won't type into password fields, stays out of sign-in, UAC prompts, password managers and terminals, and has no shell by default. An allow-list in <code>config.json</code> keeps it to the apps you name. It is not a sandbox. <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">SECURITY.md</a> lists what it guarantees and where that stops.</p>
           </details>
           <details>
             <summary>It isn't code-signed. Can I trust it?</summary>
-            <p>The source is open, every release lists its hash in <code>SHA256SUMS</code>, and you can <a class="text-link" href="https://github.com/YordiLorenzo/oriel#build-from-source">build it yourself</a> with the C# compiler that ships with Windows. Code signing is first on the <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/ROADMAP.md">roadmap</a>.</p>
+            <p>The source is open and every release lists its hash in <code>SHA256SUMS</code>. From 0.1.1, each release file also carries a GitHub build attestation that <code>gh attestation verify</code> checks. oriel will apply to SignPath Foundation for free code signing; the <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/code-signing.md">code signing policy</a> says how it will work. Until then SmartScreen warns, and Smart App Control, where it is on, blocks it. <a class="text-link" href="#windows-warns">Each warning</a></p>
           </details>
           <details>
             <summary>Does it work on a Mac or on Linux?</summary>
-            <p><code>oriel.exe</code> runs on Windows. From a Mac or Linux machine, your assistant can use a Windows PC over SSH. For the Mac or Linux desktop itself, use <a class="text-link nw" href="https://github.com/YordiLorenzo/oriel/tree/main/vnc">oriel-vnc</a>, the second MCP server in the repo.</p>
+            <p><code>oriel.exe</code> runs on Windows. From a Mac or Linux machine, Claude Code can use a Windows PC over SSH. oriel itself needs no admin rights; turning on OpenSSH Server needs admin once. For the Mac or Linux desktop itself, use <a class="text-link nw" href="https://github.com/YordiLorenzo/oriel/tree/main/vnc">oriel-vnc</a>, the second MCP server in the repo. <a class="text-link" href="windows-from-mac-over-ssh/">The SSH guide</a></p>
           </details>
           <details>
             <summary>Does it send anything anywhere?</summary>
-            <p>No telemetry and no update checks. Your MCP client sends what oriel reads to its model provider, as it does with anything else you show it.</p>
+            <p>No telemetry and no update checks. oriel only talks to itself on 127.0.0.1. Your MCP client sends what oriel reads to its model provider, as it does with anything else you show it.</p>
           </details>
           <details>
             <summary>How do I remove it?</summary>
-            <pre class="code"><code>&amp; "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" uninstall</code></pre>
-            <p>It removes what it added and lists each item. Then remove oriel from your MCP client. <a class="text-link" href="https://github.com/YordiLorenzo/oriel#what-oriel-changes-on-your-pc">What oriel changes on your PC</a></p>
+            <pre class="code" data-copy="uninstall"><code>&amp; "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" uninstall</code></pre>
+            <p>It removes what it added and lists each item. Then remove oriel from your MCP client: in Claude Code, <code>claude mcp remove --scope user oriel</code>, or <code>claude plugin uninstall oriel@oriel</code> if you used the plugin. <a class="text-link" href="https://github.com/YordiLorenzo/oriel#what-oriel-changes-on-your-pc">What oriel changes on your PC</a></p>
           </details>
         </div>
       </div>
@@ -355,9 +454,9 @@ args = ["mcp"]</code></pre>
     <section class="section closing" aria-labelledby="closing-title">
       <div class="wrap center">
         <img class="closing-icon" src="images/icon.png" width="96" height="96" decoding="async" alt="">
-        <h2 id="closing-title">Let your assistant use Windows</h2>
+        <h2 id="closing-title">Let Claude Code use your Windows apps</h2>
         <div class="actions">
-          <a class="btn btn-primary" href="https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe">
+          <a class="btn btn-primary" href="download/">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Download for Windows
           </a>
@@ -366,6 +465,7 @@ args = ["mcp"]</code></pre>
             Star on GitHub
           </a>
         </div>
+        <p class="fine">Not code-signed yet, so Windows will warn. <a class="text-link" href="#windows-warns">Why, and how to check the file</a></p>
       </div>
     </section>
   </main>
@@ -382,9 +482,19 @@ args = ["mcp"]</code></pre>
           <li><a href="https://github.com/YordiLorenzo/oriel/releases">Releases</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel/blob/main/CHANGELOG.md">Changelog</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel/blob/main/SECURITY.md">Security</a></li>
+          <li><a href="https://github.com/YordiLorenzo/oriel/blob/main/docs/code-signing.md">Code signing policy</a></li>
           <li><a href="https://github.com/YordiLorenzo/oriel/issues">Report a problem</a></li>
         </ul>
       </div>
+      <nav aria-label="Answers and guides">
+        <ul class="footer-links footer-guides">
+          <li><a href="claude-code-computer-use-windows/">Claude Code computer use on Windows</a></li>
+          <li><a href="oriel-vs-cua-driver/">oriel and Cua Driver</a></li>
+          <li><a href="oriel-vs-windows-mcp/">oriel and Windows-MCP</a></li>
+          <li><a href="windows-from-mac-over-ssh/">From a Mac over SSH</a></li>
+          <li><a href="test-windows-app-claude-code/">Test your Windows app</a></li>
+        </ul>
+      </nav>
       <p>Apache License 2.0. Not affiliated with Microsoft, Anthropic or Cua; their names are trademarks of their owners. Headings in Fraunces (<a href="fonts/OFL.txt">SIL Open Font License</a>).</p>
     </div>
   </footer>
@@ -401,6 +511,10 @@ args = ["mcp"]</code></pre>
           await navigator.clipboard.writeText(pre.querySelector("code").textContent);
           button.textContent = "Copied";
           setTimeout(() => { button.textContent = "Copy"; }, 1500);
+          // A GoatCounter event, once its script is on the page; without it there is nothing to send.
+          if (pre.dataset.copy && window.goatcounter && window.goatcounter.count) {
+            window.goatcounter.count({ path: "copy-" + pre.dataset.copy, title: "Copy " + pre.dataset.copy, event: true });
+          }
         });
         pre.append(button);
       }

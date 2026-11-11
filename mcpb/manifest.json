@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/mcpb/main/schemas/mcpb-manifest-v0.3.schema.json",
+  "manifest_version": "0.3",
+  "name": "oriel",
+  "display_name": "oriel for Windows",
+  "version": "0.1.0",
+  "description": "Lets an AI assistant use the apps on your Windows PC by reading each window as text through UI Automation, instead of screenshots.",
+  "long_description": "oriel lists a window's controls as text lines with refs, acts on them through UI Automation (press, fill, select, scroll) without taking the mouse, and replies to every action with what changed. It uses the real keyboard and mouse only where an app has no accessible controls.\n\nPassword fields, the lock screen, UAC prompts and password managers are off limits.\n\nThis build isn't code-signed yet, so Windows may warn about it, and Smart App Control blocks it.",
+  "author": {
+    "name": "YordiLorenzo",
+    "url": "https://github.com/YordiLorenzo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YordiLorenzo/oriel"
+  },
+  "homepage": "https://yordilorenzo.github.io/oriel/",
+  "documentation": "https://github.com/YordiLorenzo/oriel#readme",
+  "support": "https://github.com/YordiLorenzo/oriel/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "binary",
+    "entry_point": "oriel.exe",
+    "mcp_config": {
+      "command": "${__dirname}/oriel.exe",
+      "args": ["mcp"]
+    }
+  },
+  "tools": [
+    { "name": "status", "description": "Whether the PC is locked, seconds since the user last touched it, and the foreground window." },
+    { "name": "windows", "description": "Visible windows, front first, dialogs included." },
+    { "name": "tree", "description": "Named or actionable elements of one window as text lines, with refs, values and states." },
+    { "name": "find", "description": "Elements of a window whose name contains a text, optionally of one type." },
+    { "name": "invoke", "description": "Press, toggle, select or expand an element, and reply with what changed." },
+    { "name": "set", "description": "Fill a text field (password fields are refused), and reply with what changed." },
+    { "name": "text", "description": "Text of a document or field." },
+    { "name": "wait", "description": "Wait until a window or an element appears, or pause for some seconds." },
+    { "name": "scroll", "description": "Scroll an element into view, or a container by a page or a line." },
+    { "name": "select", "description": "Pick an item by its text in a combo box, list, tab strip or menu." },
+    { "name": "click", "description": "Click with the real mouse where there is no UI Automation action, such as a sheet's cells or a canvas." },
+    { "name": "drag", "description": "Press the left mouse button at one point of a window and release it at another." },
+    { "name": "window", "description": "Minimise, maximise, restore, move or resize a window." },
+    { "name": "screenshot", "description": "A picture of one window, for what text can't show." },
+    { "name": "focus", "description": "Restore a window if minimised and bring it to the front." },
+    { "name": "close", "description": "Close a window (an app may still ask to save)." },
+    { "name": "launch", "description": "Start a program, file, folder or URI, and reply with the new window's tree." },
+    { "name": "keys", "description": "Send keystrokes to a window, after checking that it is in front and the focus is not a password field." },
+    { "name": "batch", "description": "Run several actions in one call, in order, stopping at the first error." }
+  ],
+  "tools_generated": false,
+  "keywords": ["windows", "computer-use", "ui-automation", "accessibility", "desktop-automation", "mcp"],
+  "license": "Apache-2.0",
+  "compatibility": {
+    "platforms": ["win32"]
+  }
+}

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.png" alt="oriel: fast, cheap computer use for Windows" width="100%">
+  <img src="docs/images/banner.png" alt="oriel: lets Claude Code use your Windows apps. Free and open source, Windows 11, MCP server." width="100%">
 </p>
 
 <p align="center">
@@ -8,24 +8,26 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-Apache--2.0-22305C" alt="Licence: Apache-2.0"></a>
 </p>
 
-**oriel is an MCP server that lets an AI assistant use the apps on your Windows PC. It reads each window as text,
-through the accessibility tree, instead of looking at screenshots.**
+**The Claude Code CLI has no built-in computer use on Windows ([docs](https://code.claude.com/docs/en/computer-use),
+read 10 Nov 2026). oriel is an MCP server that lets Claude Code use your Windows apps.**
 
-Most computer-use agents send the model a screenshot at every step, then take over your mouse to click where they
-think a button is. Windows already describes every window as a tree of named controls, for screen readers. oriel
-hands that tree to the assistant, acts on the controls directly, and answers each action with what changed, so the
-assistant rarely has to look twice.
+It reads each window as text through the accessibility tree, presses, fills and selects controls through UI
+Automation so those actions don't move your mouse, and replies to every action with what changed. One exe under
+200 KB, no admin rights, free and open source.
 
-On Microsoft's WindowsAgentArena, the same model finished tasks 30% faster and at 38% lower cost with oriel than with
-Cua Driver, another MCP server that reads the accessibility tree. Cua Driver completed more of the tasks: 67% against
-63% ([details](#how-it-compares)). oriel is free, open source, and a single exe under 200 KB that needs no admin
-rights.
+On Microsoft's WindowsAgentArena (round 9, October 2026), the same model ran with only the MCP server swapped. Tasks
+took a median 49 s with oriel against 70 s with Cua Driver 0.38.0 (mean 74 s against 90 s). The model cost Claude
+Code reported was $38 against $61 per run of 153 tasks. Cua Driver completed 4 points more tasks: 67% against 63%. It
+ran without 4 of its 63 tools, `run_script` among them ([details](#how-it-compares)).
 
-[Download for Windows](https://github.com/YordiLorenzo/oriel/releases/latest) ·
-[Set up your MCP client](#set-up-your-mcp-client) · [What it changes on your PC](#what-oriel-changes-on-your-pc) ·
-[How it compares](#how-it-compares)
+oriel isn't code-signed yet, so SmartScreen warns and Smart App Control, where it is on, blocks it
+([what to expect](#windows-warns-about-orielexe)). Tested on Windows 11 with Claude Code.
 
-What the assistant sees, and what it gets back after filling a field:
+[Download for Windows](https://github.com/YordiLorenzo/oriel/releases/latest) · [Install](#install) ·
+[Set up your MCP client](#set-up-your-mcp-client) · [How it compares](#how-it-compares) ·
+[What it changes on your PC](#what-oriel-changes-on-your-pc)
+
+What Claude sees, and what it gets back after filling a field:
 
 ```
 > tree Character Map
@@ -43,15 +45,102 @@ set "Characters to copy :"
 (set took 9 ms)
 ```
 
+## Install
+
+oriel needs no admin rights and installs no service or driver. `oriel uninstall` removes everything it added
+([the full list](#what-oriel-changes-on-your-pc)).
+
+1. Download `oriel.exe` from the [latest release](https://github.com/YordiLorenzo/oriel/releases/latest). To check
+   the file, compare `(Get-FileHash .\oriel.exe).Hash` with the release's `SHA256SUMS`. From release 0.1.1,
+   `gh attestation verify oriel.exe -R YordiLorenzo/oriel` also checks that this repository's release workflow built
+   it.
+2. In PowerShell, in the download folder:
+
+   ```powershell
+   .\oriel.exe install
+   ```
+
+   This copies oriel to `%LOCALAPPDATA%\Programs\oriel` and starts it. Add `--autostart` if you want it running from
+   the moment you sign in. From release 0.1.1, it ends by printing the config for Claude Code, Claude Desktop, Cursor,
+   Codex and SSH, with your real path filled in, ready to paste.
+3. Add it to Claude Code, in the same PowerShell window:
+
+   ```powershell
+   claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp
+   ```
+
+   From release 0.1.1, the Claude Code plugin does the same (Claude Code 2.1.292 or later):
+
+   ```powershell
+   claude plugin install oriel --marketplace YordiLorenzo/oriel
+   ```
+
+   The plugin downloads nothing: it starts the `oriel.exe` that step 2 installed. On an older Claude Code, run
+   `claude plugin marketplace add YordiLorenzo/oriel`, then `claude plugin install oriel@oriel`. Use the plugin or
+   `claude mcp add`, not both. Other clients and use from a Mac: [Set up your MCP client](#set-up-your-mcp-client).
+4. Start `claude` and paste one of these. Each press and fill replies with what changed in the window.
+
+   ```
+   Open Calculator and work out 127 times 46 by pressing its buttons.
+   ```
+
+   ```
+   Open Notepad, write a three-line note and save it in Documents as oriel-test.txt.
+   ```
+
+Did it work? Say so in [Discussions](https://github.com/YordiLorenzo/oriel/discussions). If it didn't, the
+[bug report form](https://github.com/YordiLorenzo/oriel/issues/new?template=bug_report.yml) asks for what helps.
+
+### Windows warns about oriel.exe
+
+oriel isn't code-signed yet, so Windows doesn't recognise the publisher:
+
+- **Your browser** may say the file isn't commonly downloaded. In Edge, open the download's **...** menu, choose
+  **Keep**, then **Show more** and **Keep anyway**.
+- **SmartScreen** may show "Windows protected your PC". Click **More info**, then **Run anyway**.
+- **Smart App Control**, where it is on, blocks oriel.exe. It blocks unsigned programs that Windows doesn't know yet,
+  including ones you build yourself, and it has no way to let one program through
+  ([Microsoft's FAQ](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions)).
+- **Antivirus** may be wary of an unsigned program that sends keystrokes and reads other windows. oriel doesn't try
+  to get around it.
+- **A build of your own** ([Build from source](#build-from-source)) avoids SmartScreen's download warning, because
+  the file doesn't come from the internet. Smart App Control still checks it.
+
+Every new version starts with no reputation, so expect the same warnings when you update. oriel will apply to
+SignPath Foundation for free code signing, so that Windows names the publisher.
+[Code signing policy](docs/code-signing.md): what will be signed, and who approves it.
+
+### Updating
+
+Run `install` from the new `oriel.exe` (with `--autostart` again if you use it). It stops the running copy and
+replaces it. Your client config points at the installed path, so it stays as it is. To hear about new releases,
+choose **Watch > Custom > Releases** on this repository, or follow the
+[releases feed](https://github.com/YordiLorenzo/oriel/releases.atom).
+
+### Uninstalling
+
+```powershell
+& "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" uninstall
+```
+
+This stops oriel, removes the logon entry if there is one, deletes the install and settings folders, and lists what
+it removed. Then remove oriel from your MCP client. In Claude Code: `claude plugin uninstall oriel@oriel` if you used
+the plugin, or `claude mcp remove --scope user oriel`.
+
 ## What it does
+
+Screenshot-based computer use sends the model an image at every step and clicks at pixel positions. Windows already
+describes every window as a tree of named controls, for screen readers. oriel hands that tree to the assistant as
+text, acts on the controls directly, and answers each action with what changed, so the assistant rarely has to look
+twice.
 
 ### Reads windows as text
 
 - **Every control on one line.** `tree` lists a window's named and actionable controls, each with a ref such as
   `kqm17` that later calls use directly, without searching again.
 - **Milliseconds per call.** An action takes 5 to 20 ms and reading a window 20 to 60 ms
-  ([measured](docs/benchmarks.md)). oriel turns off UI Automation's AutoSetFocus, which otherwise stalls every action
-  for 2 seconds on a locked or busy desktop.
+  ([measured](docs/benchmarks.md#1-latency-per-call-benchlatencypy) over SSH, 21 and 22 Oct 2026). oriel turns off
+  UI Automation's AutoSetFocus, which otherwise stalls every action for 2 seconds on a locked or busy desktop.
 - **Search and wait.** `find` looks for controls by name, including off-screen ones. `wait` returns as soon as a
   window or control appears, driven by the app's own events instead of fixed sleeps.
 
@@ -70,11 +159,11 @@ set "Characters to copy :"
 
 ### Keeps away from passwords and terminals
 
-- **No shell.** No tool runs commands or reads files, and open terminals are off limits.
+- **No shell by default.** No tool runs commands or reads files, and open terminals are off limits.
 - **No passwords or sign-in.** Password fields, the lock screen, sign-in and UAC prompts, credential dialogs and
   common password managers can't be read or typed into.
 - **It acts as you.** In an allowed window the assistant can do what you can, so an allow-list in `config.json`
-  keeps it to the apps you name. [SECURITY.md](SECURITY.md) has every rule and its limits.
+  keeps it to the apps you name. oriel is not a sandbox: [SECURITY.md](SECURITY.md) has every rule and its limits.
 
 ### Reaches your other computers
 
@@ -88,7 +177,7 @@ set "Characters to copy :"
 
 | | Works | Not yet |
 |---|---|---|
-| **Windows** | Windows 11 (tested); Windows 10 version 1903 or later, on the .NET Framework 4.8 that Windows includes | Windows 10 isn't tested yet |
+| **Windows** | Windows 11, tested, on the .NET Framework 4.8 that Windows includes | Windows 10 isn't tested yet. Version 1903 or later should work, since it includes the .NET Framework 4.8 |
 | **Apps** | Anything that exposes UI Automation: most desktop apps, Store apps, and web pages in Chromium browsers and Electron apps. WindowsAgentArena exercised Chrome, Edge, File Explorer, LibreOffice Calc and Writer, VS Code, VLC, Settings, Paint, Clock, Calculator and Notepad | Canvases and games have no accessibility tree: `screenshot`, `click` and `drag` cover them, or oriel-vnc. Apps running as administrator need oriel to run as administrator too |
 | **MCP clients** | Any client that starts a stdio MCP server; tested with Claude Code | The Codex, Claude Desktop, Cursor and VS Code configs below follow each client's documented format but aren't tested |
 | **A locked PC** | Reading windows and element actions | `keys`, `focus`, `click` and `drag` are refused, and Windows suspends Store apps until you unlock |
@@ -118,69 +207,21 @@ set "Characters to copy :"
 Every tool and its options: [docs/tools.md](docs/tools.md). How it is built and why it is fast:
 [docs/design.md](docs/design.md).
 
-## Install
-
-oriel needs no admin rights and installs no service or driver. `oriel uninstall` removes everything it added
-([the full list](#what-oriel-changes-on-your-pc)).
-
-1. Download `oriel.exe` from the [latest release](https://github.com/YordiLorenzo/oriel/releases/latest). To check
-   the file, compare `Get-FileHash .\oriel.exe` with the release's `SHA256SUMS`.
-2. In PowerShell, in the download folder:
-
-   ```powershell
-   .\oriel.exe install
-   ```
-
-   This copies oriel to `%LOCALAPPDATA%\Programs\oriel` and starts it. Add `--autostart` if you want it running from
-   the moment you sign in.
-3. Add it to your assistant. For Claude Code, in the same PowerShell window:
-
-   ```powershell
-   claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp
-   ```
-
-   Then ask Claude "Which windows are open?" to see it work. Other clients and use from a Mac are under
-   [Set up your MCP client](#set-up-your-mcp-client).
-
-### Windows warns about oriel.exe
-
-oriel isn't code-signed yet, so Windows doesn't recognise the publisher:
-
-- **Your browser** may say the file isn't commonly downloaded. In Edge, open the download's **...** menu, choose
-  **Keep**, then **Show more** and **Keep anyway**.
-- **SmartScreen** may show "Windows protected your PC". Click **More info**, then **Run anyway**.
-- **Smart App Control**, if it is on, blocks unsigned programs and offers no way past.
-- **Antivirus** may be wary of an unsigned program that sends keystrokes and reads other windows. oriel doesn't try
-  to get around it. If you'd rather not run an unsigned download, [build it yourself](#build-from-source).
-
-Every new version starts with no reputation, so expect the same warnings when you update. Code signing, so that
-Windows names the publisher, is first on the [roadmap](ROADMAP.md).
-
-### Updating
-
-Run `install` from the new `oriel.exe` (with `--autostart` again if you use it). It stops the running copy and
-replaces it.
-
-### Uninstalling
-
-```powershell
-& "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" uninstall
-```
-
-This stops oriel, removes the logon entry if there is one, deletes the install and settings folders, and lists what
-it removed. Then remove oriel from your MCP client.
-
 ## Set up your MCP client
 
 Every client needs the same two things: the full path to the installed `oriel.exe` as the command, and `mcp` as the
-argument. `install` prints the path with your user name filled in; below, replace `<you>` with it. JSON needs each
-backslash doubled. Restart the client after editing its file.
+argument.
+
+From release 0.1.1, `oriel install` ends by printing the Claude Code line, the Codex and the Claude Desktop/Cursor
+blocks and the SSH line below with your real path filled in and the backslashes already doubled where JSON and TOML
+need it, so you can paste them as they are. It doesn't print the VS Code or oriel-vnc blocks. With 0.1.0, or without
+that output, replace `<you>` below with your Windows user name. Restart the client after editing its file.
 
 | Client | Command or config file |
 |---|---|
-| Claude Code | `claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp` (in PowerShell) |
+| Claude Code | `claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp` (in PowerShell), or from release 0.1.1 `claude plugin install oriel --marketplace YordiLorenzo/oriel` |
 | Codex | `%USERPROFILE%\.codex\config.toml` |
-| Claude Desktop | `%APPDATA%\Claude\claude_desktop_config.json` |
+| Claude Desktop | `%APPDATA%\Claude\claude_desktop_config.json`, or from release 0.1.1 the `.mcpb` bundle |
 | Cursor | `%USERPROFILE%\.cursor\mcp.json` |
 | VS Code | `.vscode\mcp.json` in a workspace |
 
@@ -188,7 +229,7 @@ backslash doubled. Restart the client after editing its file.
 
 ```toml
 [mcp_servers.oriel]
-command = 'C:\Users\<you>\AppData\Local\Programs\oriel\oriel.exe'
+command = "C:\\Users\\<you>\\AppData\\Local\\Programs\\oriel\\oriel.exe"
 args = ["mcp"]
 ```
 
@@ -202,6 +243,10 @@ args = ["mcp"]
 }
 ```
 
+From release 0.1.1, **Claude Desktop** can also install oriel as an extension: download
+`oriel-<version>-win-x64.mcpb` from the [latest release](https://github.com/YordiLorenzo/oriel/releases/latest) and
+open it with Claude Desktop. This way isn't tested yet.
+
 **VS Code:**
 
 ```json
@@ -212,14 +257,16 @@ args = ["mcp"]
 }
 ```
 
-**From a Mac or Linux machine,** over SSH. The PC needs OpenSSH Server with key login:
+**From a Mac or Linux machine,** over SSH. The PC needs OpenSSH Server with key login. Turning it on needs admin once;
+oriel itself needs none.
 
 ```
-claude mcp add --scope user oriel -- ssh my-windows-pc 'C:\Users\<you>\AppData\Local\Programs\oriel\oriel.exe' mcp
+claude mcp add --scope user oriel -- ssh '<you>@my-windows-pc' 'C:\Users\<you>\AppData\Local\Programs\oriel\oriel.exe' mcp
 ```
 
-An SSH session has no desktop, so oriel passes each call to its copy running in your desktop session, and starts
-that copy if it isn't running.
+`<you>` is your Windows user name, which is often not the same as your Mac or Linux one. An SSH session has no
+desktop, so oriel passes each call to its copy running in your desktop session, and starts that copy if it isn't
+running. The Claude Code plugin works only on the Windows PC itself; from a Mac, use this line.
 
 **oriel-vnc,** for any desktop over VNC, with [uv](https://docs.astral.sh/uv/) installed and your machines listed in
 `~/.config/oriel-vnc/hosts.json` ([vnc/README.md](vnc/README.md)):
@@ -253,42 +300,73 @@ model provider, as it does with anything else you show it.
 | What an action changed | In the same reply, control by control | Read the window again | A new screenshot, compared by eye |
 | Canvases and games | `screenshot`, `click` and `drag`, or oriel-vnc | Screenshots and mouse | What they are built for |
 
-**WindowsAgentArena** is Microsoft's benchmark of everyday tasks in a Windows 11 VM, scored by its own scripts. Both
-sides ran Claude Sonnet 5.5 in Claude Code with the same prompt and turn limit; only the MCP server was swapped. Two
-runs each, averaged over the 153 tasks scored in every run:
+**WindowsAgentArena** is Microsoft's benchmark of everyday tasks in a Windows 11 VM, scored by its own scripts. In
+round 9 (October 2026), both sides ran Claude Sonnet 5.5 in Claude Code with the same prompt and a 50-turn limit; only
+the MCP server was swapped. Two runs each, averaged over the 153 tasks scored in every run:
 
 | | oriel | Cua Driver 0.38.0 | Difference |
 |---|---|---|---|
-| Time per task, median | **49 s** | 70 s | oriel 30% faster |
-| Model cost for all 153 tasks | **$38** | $61 | oriel 38% cheaper |
-| Model turns per task | **21.8** | 27.0 | oriel 19% fewer |
+| Time per task, median (mean) | **49 s** (74 s) | 70 s (90 s) | 30% less time with oriel (median) |
+| Model cost per run of 153 tasks, as Claude Code reported it | **$38** | $61 | 38% lower with oriel |
+| Model turns per task | **21.8** | 27.0 | 19% fewer with oriel |
 | Tasks completed | 96.2 (63%) | **102.7 (67%)** | Cua Driver 4 points more |
 
-The completion gap is close to the noise: a side's score moves by about 5 tasks between two identical runs, and Cua
-Driver has completed slightly more in each of the last four reported rounds. Per call, oriel took less time than the
-three other Windows MCP servers on every action measured, for example 6 ms to list windows against Cua Driver's
-501 ms. Method, every round, per-call timings and the rules against tuning to the benchmark:
-[docs/benchmarks.md](docs/benchmarks.md).
+- **Time, cost and turns:** each gap is larger than the gap between either layer's own two runs. The benchmark
+  doesn't show which of oriel's features made the difference.
+- **Completion:** Cua Driver completed 4.2 points more. Its own two identical runs differed by 6.5 points, so the gap
+  is within run-to-run variation, but Cua Driver was also ahead in every round since round 5
+  ([every round](docs/benchmarks.md#every-round)).
+- **Cua Driver's version and tools:** round 9 ran Cua Driver 0.38.0 without 4 of its 63 tools. `run_script` runs
+  JavaScript over Cua Driver's own tools in a sandbox with no file, network or process access; it was hidden because
+  oriel has no script tool. `install_ffmpeg` and `install_extension` install software, and `check_for_update` checks
+  GitHub for a newer driver. Cua Driver 0.46.1, the newest on 10 Nov 2026, has not run on WindowsAgentArena.
+- **Cost** is the figure Claude Code reported, worked out from its list prices: an estimate, not a bill.
+
+Every run, the 95% intervals and the earlier rounds: [bench/waa/RESULTS.md](bench/waa/RESULTS.md). Before you quote
+a number, read [what this does not show](docs/benchmarks.md#what-this-does-not-show).
+
+Per call, on 10 Nov 2026, against Cua Driver 0.46.1, the newest release that day, and agent-desktop 1.2.0 (released
+5 Nov 2026), all three in one session (unlocked Windows 11 PC, median of 5 runs,
+[bench/headtohead/RESULTS.md](bench/headtohead/RESULTS.md#2026-11-10-second-run-agent-desktop-120-added)):
+
+| Call | oriel 0.1.0 | Cua Driver 0.46.1 | agent-desktop 1.2.0 |
+|---|---|---|---|
+| List windows | **2 ms** | 31 ms | 44 ms |
+| Launch an app | **193 ms** | 605 ms | 251 ms |
+| Read a window | **21 ms** | 37 ms | 143 ms |
+| Fill a field | **2 ms** | 3 ms | 174 ms |
+| Press a button | **2 ms** | 6 ms | 187 ms |
+| Press, and see what changed | **44 ms**, one call | a second call | a second call |
 
 Choose a screenshot-based agent if most of the work is in games, canvases or remote desktops, where there is no
-accessibility tree. Choose Cua Driver if a few more completed tasks matter more to you than time and cost. Choose
-oriel if your assistant works in everyday Windows apps and you want each task done in less time, for less money.
+accessibility tree. If completion is what you need most, Cua Driver is a fair choice. Choose oriel if your assistant
+works in everyday Windows apps and you want each task done in less time and fewer turns.
 
-What comes next: [ROADMAP.md](ROADMAP.md).
+Method, every round, the per-call timings of all five servers measured and the rules against tuning to the benchmark:
+[docs/benchmarks.md](docs/benchmarks.md). What comes next: [ROADMAP.md](ROADMAP.md).
 
 ## FAQ
 
 ### Is it safe to let an AI assistant use my PC?
 
 Treat it like someone using your PC on your behalf: in the windows it may touch, it can do what you can. oriel keeps
-it away from passwords, sign-in and UAC prompts, password managers and terminals, gives it no shell or file access,
-and checks every keystroke and click before sending it. [SECURITY.md](SECURITY.md) lists what oriel guarantees and
-what it doesn't.
+it away from passwords, sign-in and UAC prompts, password managers and terminals, gives it no shell by default and no
+file tools, and checks every keystroke and click before sending it. It is not a sandbox. [SECURITY.md](SECURITY.md)
+lists what oriel guarantees and what it doesn't.
 
 ### Which MCP clients does it work with?
 
 Any client that starts a stdio MCP server. Only Claude Code is tested. The Codex, Claude Desktop, Cursor and VS Code
-configs under [Set up your MCP client](#set-up-your-mcp-client) follow each client's documented format.
+configs under [Set up your MCP client](#set-up-your-mcp-client) follow each client's documented format. From release
+0.1.1, oriel is in the official MCP Registry as `io.github.YordiLorenzo/oriel` ("oriel for Windows");
+`io.github.ParadoxInfinite/oriel` is a different project.
+
+### Why not Claude Desktop's computer use?
+
+On Windows it is a research preview on the Pro, Max and Ultra plans, it works from screenshots, and it hides your
+other windows while it works ([docs](https://code.claude.com/docs/en/desktop), read 10 Nov 2026). The Claude Code CLI
+has none on Windows. oriel works from the Claude Code CLI, reads windows as text, and its element actions don't move
+your mouse or take the focus. oriel was never measured against it.
 
 ### Was oriel tuned to the benchmark?
 
@@ -334,9 +412,12 @@ alone. The benchmarks and how to run them are in [bench/README.md](bench/README.
 
 ## Contributing
 
-Bug reports, apps oriel can't read or act on, and fixes of any size are welcome.
-[CONTRIBUTING.md](CONTRIBUTING.md) explains how to build, test and send a change. Please report security problems
-privately, as [SECURITY.md](SECURITY.md) describes, not in a public issue.
+Bug reports, apps oriel can't read or act on, and fixes of any size are welcome. Report an app with the
+[App oriel can't read](https://github.com/YordiLorenzo/oriel/issues/new?template=app_report.yml) form, and ask
+questions in [Discussions](https://github.com/YordiLorenzo/oriel/discussions).
+[CONTRIBUTING.md](CONTRIBUTING.md) explains how to build, test and send a change. Everyone here follows the
+[code of conduct](CODE_OF_CONDUCT.md). Please report security problems privately, as [SECURITY.md](SECURITY.md)
+describes, not in a public issue.
 
 ## Licence
 

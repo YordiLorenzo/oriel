@@ -1,0 +1,23 @@
+{
+    "version": "0.1.0",
+    "description": "MCP server that lets an AI assistant use the apps on your Windows PC by reading each window as text, through the accessibility tree.",
+    "homepage": "https://github.com/YordiLorenzo/oriel",
+    "license": "Apache-2.0",
+    "notes": [
+        "Add oriel to Claude Code with: claude mcp add --scope user oriel -- oriel mcp",
+        "Before 'scoop uninstall oriel', run this in PowerShell: & \"$(scoop prefix oriel)\\oriel.exe\" uninstall",
+        "It stops oriel and deletes its settings folder, %LOCALAPPDATA%\\oriel. Run the exe itself, not the 'oriel' shim: oriel uninstall stops every oriel process, and the shim ends the uninstall with it."
+    ],
+    "url": "https://github.com/YordiLorenzo/oriel/releases/download/v0.1.0/oriel.exe",
+    "hash": "462fe09421fc5cd2d8e06a9c45978f6d7e32b59feb729f747e21149c213a0daf",
+    "bin": "oriel.exe",
+    "checkver": {
+        "github": "https://github.com/YordiLorenzo/oriel"
+    },
+    "autoupdate": {
+        "url": "https://github.com/YordiLorenzo/oriel/releases/download/v$version/oriel.exe",
+        "hash": {
+            "url": "$baseurl/SHA256SUMS"
+        }
+    }
+}

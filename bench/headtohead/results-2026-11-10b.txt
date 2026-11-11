@@ -1,0 +1,121 @@
+headtohead.py --runs 5 on TOASTER, 2026-11-10, second run (unlocked, idle). p50 and p90 are ms per MCP call, timed on the Mac.
+
+== published: oriel 0.1.0, Cua Driver 0.46.1 (daemon, warmed by one run), agent-desktop 1.2.0, one session
+tool           operation                          n  ok   p50 ms   p90 ms   chars images
+oriel          launch                             5   5      193      205      82      0
+oriel          tree charmap                       5   5       21       21    1048      0
+oriel          fill field (ref)                   5   5        2        2      42      0
+oriel          press button (ref)                 5   5        2        2      35      0
+oriel          outcome: field = abc + char       10  10        0        0       4      0
+oriel          fill field                         5   5       15       17      43      0
+oriel          press button                       5   5        2        2      35      0
+oriel          press + change report              5   5       44       44     115      0
+oriel          launch + tree (1 call)             5   5      294      295    1113      0
+oriel          tree chrome                        5   5      101      102    9077      0
+oriel          tree edge                          5   5      104      105    1291      0
+oriel          list windows                       5   5        2        2     287      0
+cua            launch                             5   5      605      606     177      0
+cua            list windows (charmap)             5   5       30       69     186      0
+cua            tree charmap                       5   5       37       42    1254      0
+cua            fill field                         5   5        3        7      40      0
+cua            press button                       5   5        6        9      49      0
+cua            outcome: field = abc + char        5   5        0        0       4      0
+cua            list windows (chrome)              5   5       31       32     215      0
+cua            tree chrome                        5   5      218      224   25861      0
+cua            list windows (msedge)              5   5       30       31     228      0
+cua            tree edge                          5   5      226      243   26552      0
+cua            list windows                       5   5       31       32     954      0
+agent-desktop  launch                             5   5      251      255     419      0
+agent-desktop  tree charmap                       5   5      143      150    3757      0
+agent-desktop  fill field                         5   5      174      174     566      0
+agent-desktop  press button                       5   5      187      193     516      0
+agent-desktop  outcome: field = abc + char        5   5        0        0       4      0
+agent-desktop  list windows (chrome.exe)          5   5       31       37     357      0
+agent-desktop  tree chrome                        5   5     3058     3066  131642      0
+agent-desktop  tree chrome (skeleton)             5   5     2402     2424   16404      0
+agent-desktop  list windows (msedge.exe)          5   5       30       32     370      0
+agent-desktop  tree edge                          5   5     3066     3068  137567      0
+agent-desktop  tree edge (skeleton)               5   5     2418     2422   22414      0
+agent-desktop  list windows                       5   5       44       46    1459      0
+
+== agent-desktop 1.2.0 alone (Cua Driver stopped)
+tool           operation                          n  ok   p50 ms   p90 ms   chars images
+agent-desktop  launch                             5   5      256      272     419      0
+agent-desktop  tree charmap                       5   5      148      170    3739      0
+agent-desktop  fill field                         5   5      175      177     566      0
+agent-desktop  press button                       5   5      198      205     516      0
+agent-desktop  outcome: field = abc + char        5   5        0        0       4      0
+agent-desktop  list windows (chrome.exe)          5   5       30       34     357      0
+agent-desktop  tree chrome                        5   5     3065     3077  131642      0
+agent-desktop  tree chrome (skeleton)             5   5     2402     2412   16404      0
+agent-desktop  list windows (msedge.exe)          5   5       31       34     370      0
+agent-desktop  tree edge                          5   5     3065     3066  134291      0
+agent-desktop  tree edge (skeleton)               5   5     2412     2432   22414      0
+agent-desktop  list windows                       5   5       41       45    1459      0
+
+== oriel 0.1.0 alone (Cua Driver stopped)
+tool           operation                          n  ok   p50 ms   p90 ms   chars images
+oriel          launch                             5   5      193      232      82      0
+oriel          tree charmap                       5   5       20       75    1048      0
+oriel          fill field (ref)                   5   5        2        4      42      0
+oriel          press button (ref)                 5   5        2        3      35      0
+oriel          outcome: field = abc + char       10  10        0        0       4      0
+oriel          fill field                         5   5       15       15      43      0
+oriel          press button                       5   5        2        3      35      0
+oriel          press + change report              5   5       41       45     115      0
+oriel          launch + tree (1 call)             5   5      295      296    1113      0
+oriel          tree chrome                        5   5       99      103    9077      0
+oriel          tree edge                          5   5      102      102    1291      0
+oriel          list windows                       5   5        1        2     287      0
+
+== Cua Driver 0.46.1 alone, after a one-run warm-up
+tool           operation                          n  ok   p50 ms   p90 ms   chars images
+cua            launch                             5   5      604      630     177      0
+cua            list windows (charmap)             5   5       37       71     186      0
+cua            tree charmap                       5   5       37       45    1254      0
+cua            fill field                         5   5        3        7      40      0
+cua            press button                       5   5        6        9      49      0
+cua            outcome: field = abc + char        5   5        0        0       4      0
+cua            list windows (chrome)              5   5       37       42     215      0
+cua            tree chrome                        5   5      217      219   25861      0
+cua            list windows (msedge)              5   5       38       39     228      0
+cua            tree edge                          5   5      222      238   26552      0
+cua            list windows                       5   5       40       44     954      0
+
+== not used: first combined run, started 30 s after a fresh Cua Driver daemon
+tool           operation                          n  ok   p50 ms   p90 ms   chars images
+oriel          launch                             5   5      193      232      82      0
+oriel          tree charmap                       5   5       22       82    1055      0
+oriel          fill field (ref)                   5   5        2        5      42      0
+oriel          press button (ref)                 5   5        2        2      35      0
+oriel          outcome: field = abc + char       10  10        0        0       4      0
+oriel          fill field                         5   5       16       17      43      0
+oriel          press button                       5   5        2        2      35      0
+oriel          press + change report              5   5       43       45     115      0
+oriel          launch + tree (1 call)             5   5      267      297    1120      0
+oriel          tree chrome                        5   5      110      130    9078      0
+oriel          tree edge                          5   5      135      142    1291      0
+oriel          list windows                       5   5        2        9     287      0
+cua            launch                             5   5      674      886     177      0
+cua            list windows (charmap)             5   5      109      134     186      0
+cua            tree charmap                       5   5      117      145    1254      0
+cua            fill field                         5   5       67      108      40      0
+cua            press button                       5   5       90      115      49      0
+cua            outcome: field = abc + char        5   5        0        0       4      0
+cua            list windows (chrome)              5   5      122      144     215      0
+cua            tree chrome                        5   5      375      451   25861      0
+cua            list windows (msedge)              5   5      108      144     228      0
+cua            tree edge                          5   5      443      448   26552      0
+cua            list windows                       5   5       91      146     954      0
+agent-desktop  launch                             5   5      364      402     419      0
+agent-desktop  tree charmap                       5   5      257      267    3757      0
+agent-desktop  fill field                         5   5      262      280     566      0
+agent-desktop  press button                       5   5      284      299     516      0
+agent-desktop  outcome: field = abc + char        5   5        0        0       4      0
+agent-desktop  list windows (chrome.exe)          5   5       30       36     357      0
+agent-desktop  tree chrome                        5   5     3061     3065  117460      0
+agent-desktop  tree chrome (skeleton)             5   5     2410     2426   16404      0
+agent-desktop  list windows (msedge.exe)          5   5       33       36     370      0
+agent-desktop  tree edge                          5   5     3061     3063  118719      0
+agent-desktop  tree edge (skeleton)               5   5     2425     2428   22414      0
+agent-desktop  list windows                       5   5       41       51    1459      0
