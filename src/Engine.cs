@@ -452,6 +452,8 @@ public static class Engine
     static void CheckWords(string root, string args, string dir, int depth)
     {
         if (string.IsNullOrEmpty(args)) return;
+        // Every split is kept and looked up, so arguments get a size limit: 30,000 '=' would hold about 900 MB of parts.
+        if (args.Length > 8192) { Unchecked(root, "arguments longer than 8192 characters are more than launch checks"); return; }
         var joins = new[] { '=', ',', ';', '|', '<', '>' };
         var blanks = new[] { ' ', '\t' };
         var values = new HashSet<string>(Argv(args), StringComparer.OrdinalIgnoreCase);
@@ -459,6 +461,7 @@ public static class Engine
         foreach (var value in values)
         {
             var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { value };
+            if (value.Split(joins).Length > 65) { Unchecked(root, "an argument with more than 64 of = , ; | < > is more than launch checks"); continue; }
             if (SchemeOf(value) == null)
             {
                 words.UnionWith(value.Split(joins));
@@ -706,6 +709,7 @@ public static class Engine
                         {
                             var p = app == null ? null : app.GetValue("") as string;
                             if (p != null) p = p.Trim().Trim('"').Replace('/', '\\');
+                            if (p != null && !File.Exists(p)) p += ".exe";  // the value may leave out .exe
                             if (p != null && !p.StartsWith(@"\\") && File.Exists(p)) return LongPath(p);
                         }
         }
