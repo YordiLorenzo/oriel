@@ -12,6 +12,10 @@ visible console and the server died, ending the run. And it publishes each conta
 RDP) on 127.0.0.1 only: on a lab machine Docker's published ports bypass the firewall, and the web viewer controls the
 VM without a password.
 
+On a host whose kernel has nftables but not the legacy ip_tables modules loaded (Ubuntu 26.04, firecracker), the base
+image's network script (dockur's, which forces iptables-legacy) can't set up NAT, and the VM falls back to user-mode
+networking, where WAA can't reach its server at 20.20.20.21. The dev image now keeps the image's default iptables-nft.
+
     python3 waa-patch.py /root/WindowsAgentArena
 
 Idempotent. The golden image for the published run got the same fixes by hand, midway through setup.
@@ -121,6 +125,15 @@ def main():
         logon_path.write_text(logon)
 
     patch_browser_profiles(root / "src/win-arena-container/client/desktop_env")
+
+    dockerfile = root / "src/win-arena-container/Dockerfile-WinArena"
+    d = dockerfile.read_text()
+    if MARK not in d:
+        anchor = "RUN apt-get update && apt-get install -y fuse\n"
+        assert d.count(anchor) == 1, "Dockerfile anchor not found"
+        d = d.replace(anchor, anchor + f"\n{MARK}: NAT through iptables-nft, so hosts without the legacy ip_tables modules work\n"
+                      "RUN sed -i '/update-alternatives --set ip6\\?tables .*-legacy/d' /run/network.sh\n")
+        dockerfile.write_text(d)
 
     run_sh = root / "scripts/run.sh"
     r = run_sh.read_text()
