@@ -636,7 +636,11 @@ public static class Engine
         if (ext == ".cpl") return Permit(root, "rundll32");  // a .cpl is a DLL, which Control Panel loads with rundll32
         var command = ext.Length > 0 ? Assoc(ext, false) : null;
         if (command != null && !command.StartsWith("\"%1\"") && !command.StartsWith("%1")) return Command(root, command, dir, depth);
-        return Permit(root, Path.GetFileNameWithoutExtension(name));  // a program, or a file no program opens, by its name
+        // A program (no file type, a program type, or a type that runs itself: "%1") counts by its name. Any other file
+        // opens through a packaged app or COM handler that has no command, which launch can't name.
+        if (command != null || ext.Length == 0 || Array.Exists(ProgramTypes(), e => string.Equals(e, ext, StringComparison.OrdinalIgnoreCase)))
+            return Permit(root, Path.GetFileNameWithoutExtension(name));
+        return null;
     }
 
     // The folder of a file found by Locate, "" for none or a folder.
