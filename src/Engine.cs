@@ -466,15 +466,22 @@ public static class Engine
             // In a command line found inside an argument, the first word is the program (CreateProcess adds .exe to it,
             // see below); a later one may be a file the program opens, which only a whole argument can say.
             bool first = nested && ((written.Length > 0 && written[0] == value) || (expanded.Length > 0 && expanded[0] == value));
-            var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { value };
+            var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            // Each word counts toward the limit as it is made, so a long argument is refused before its parts fill memory.
+            Action<string> add = w =>
+            {
+                if (w.Length > 0 && words.Add(w) && ++lookups > 256)
+                    throw new OrielError(root + ": the arguments name more words than launch checks (256)");
+            };
+            add(value);
             if (value.Split(joins).Length > 65) { Unchecked(root, "an argument with more than 64 of = , ; | < > is more than launch checks"); continue; }
             if (SchemeOf(value) == null)
             {
-                words.UnionWith(value.Split(joins));
+                foreach (var part in value.Split(joins)) add(part);
                 for (int i = value.IndexOfAny(joins); i >= 0; i = value.IndexOfAny(joins, i + 1))
                 {
-                    words.Add(value.Substring(0, i));
-                    words.Add(value.Substring(i + 1));
+                    add(value.Substring(0, i));
+                    add(value.Substring(i + 1));
                 }
             }
             // A whole argument (not a fragment of one) that is a path on another computer with no file type: Windows picks
@@ -493,17 +500,14 @@ public static class Engine
                 {
                     var start = word.Substring(0, i);
                     bool typeless = start.LastIndexOf('.') <= start.LastIndexOf('\\');
-                    words.Add(start.Replace('/', '\\').StartsWith(@"\\") && typeless ? start + ".exe" : start);
+                    add(start.Replace('/', '\\').StartsWith(@"\\") && typeless ? start + ".exe" : start);
                 }
-            words.Remove("");
-            lookups += words.Count;
-            if (lookups > 256) throw new OrielError(root + ": the arguments name more words than launch checks (256)");
             // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe),
             // so for a word without a file type each file it could mean counts.
             foreach (var word in new List<string>(words))
                 if (word.IndexOfAny(Path.GetInvalidPathChars()) < 0 && !Path.HasExtension(word.TrimEnd('.', ' ')))
                     foreach (var e in ProgramTypes())
-                        if (Locate(word + e, dir) != null) words.Add(word + e);
+                        if (Locate(word + e, dir) != null) add(word + e);
             string file;
             foreach (var word in words)
             {
