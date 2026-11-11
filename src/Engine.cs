@@ -442,17 +442,51 @@ public static class Engine
         return file ?? path;
     }
 
-    // Each file or program that args names may not run commands either: the program started may run it.
+    // Each file or program that args names may not run commands either: the program started may run it. args is split
+    // the way Windows splits a command line, and each value counts whole, in its parts around = , ; | < > (--gpu-launcher=cmd,
+    // /root,run.bat), up to each space (an unquoted path with spaces) and as a command line of its own (runas "cmd /c x").
     static void CheckWords(string root, string args, int depth)
     {
-        string file;
-        foreach (var word in Words(args)) Runs(root, word, false, depth, out file);
+        if (string.IsNullOrEmpty(args)) return;
+        var joins = new[] { '=', ',', ';', '|', '<', '>' };
+        foreach (var value in Argv(Environment.ExpandEnvironmentVariables(args)))
+        {
+            var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { value };
+            if (SchemeOf(value) == null)
+            {
+                words.UnionWith(value.Split(joins));
+                for (int i = value.IndexOfAny(joins); i >= 0; i = value.IndexOfAny(joins, i + 1))
+                {
+                    words.Add(value.Substring(0, i));
+                    words.Add(value.Substring(i + 1));
+                }
+            }
+            words.Remove("");
+            string file;
+            foreach (var word in words)
+            {
+                Runs(root, word, false, depth, out file);
+                for (int i = word.IndexOf(' '); i > 0; i = word.IndexOf(' ', i + 1)) Runs(root, word.Substring(0, i), false, depth, out file);
+                if (word.IndexOf(' ') > 0) CheckWords(root, word, depth + 1);
+            }
+        }
+    }
+
+    // A command line's arguments as Windows splits them (CommandLineToArgvW), which joins c"md.exe" into cmd.exe.
+    static string[] Argv(string args)
+    {
+        int count;
+        var list = CommandLineToArgvW("x " + args, out count);  // it reads the first word as the program's path
+        var argv = new string[Math.Max(count - 1, 0)];
+        for (int i = 1; i < count; i++) argv[i - 1] = Marshal.PtrToStringUni(Marshal.ReadIntPtr(list, i * IntPtr.Size));
+        LocalFree(list);
+        return argv;
     }
 
     // The name of the program Windows runs for target: the file itself for a program, cmd for a batch file, a shortcut's
     // target, else the program that its file type's or URI scheme's open command starts (null for none, a packaged app or
     // a COM handler). Throws when that program runs commands. file is the file or folder target names, null for a URI.
-    // A word from args that names no file (named false) still counts by its name and file type.
+    // named: target is the path to start, so it must exist; else it is a word from args.
     static string Runs(string root, string target, bool named, int depth, out string file)
     {
         file = null;
@@ -467,8 +501,29 @@ public static class Engine
             if (target == null) return Unchecked(root, "it is a shell item that is neither a file nor a folder");
         }
         else if (scheme != null && scheme != "file") return Command(root, Assoc(scheme, true), depth);
-        file = Locate(target);
-        if (file == null && named) throw new OrielError("launch can't find " + target);
+        if (scheme == "file")
+        {
+            var local = new StringBuilder(32768);
+            int size = local.Capacity;
+            if (PathCreateFromUrl(target, local, ref size, 0) == 0) target = local.ToString();
+        }
+        if ((target.StartsWith(@"\\?\") || target.StartsWith(@"\\.\")) && target.Length > 5 && target[5] == ':') target = target.Substring(4);
+        // A UNC path names a file on another computer: launch reads nothing there, since connecting signs in to it, and
+        // goes by the name and type alone. GetFullPath only rewrites the text (run.bat. and run.bat  are run.bat).
+        bool remote = target.StartsWith(@"\\") || target.StartsWith("//");
+        if (remote)
+        {
+            try { target = Path.GetFullPath(target); }
+            catch (Exception e) { if (!(e is ArgumentException || e is NotSupportedException || e is IOException)) throw; return Unchecked(root, "it is not a path launch can read"); }
+            if (target.EndsWith(@"\")) return "explorer";
+        }
+        file = remote ? null : Locate(target);
+        if (file == null && !remote)
+        {
+            if (named) throw new OrielError("launch can't find " + target);
+            // A word in args that names no file here counts only as a bare program name, which a program may find itself.
+            if (target.IndexOfAny(new[] { '\\', '/', ':' }) >= 0) return null;
+        }
         if (file != null && Directory.Exists(file)) return "explorer";
         // Whatever its type, a file built as an interpreter counts as one (by the name in its version resource), so a
         // renamed or 8.3-named copy of cmd.exe is still cmd: a program can run a file its arguments name directly.
@@ -481,6 +536,8 @@ public static class Engine
         var name = file ?? target;
         string ext;
         try { ext = Path.GetExtension(name).ToLowerInvariant(); } catch (ArgumentException) { return null; }
+        if (remote && (ext == ".lnk" || ext == ".url")) return Unchecked(root, "a shortcut on another computer can't be read without connecting to it");
+        if (remote && ext.Length == 0) return Unchecked(root, "on another computer Windows would pick a program for a name without a type (end a folder with \\)");
         if (file != null && ext == ".lnk")
         {
             var link = (IShellLinkW)new ShellLink();
@@ -549,31 +606,6 @@ public static class Engine
         return program;
     }
 
-    // The words of args that may name a program or file, read every way a program might: each part between quotes and
-    // each start of it up to a space (as Windows reads an unquoted path with spaces); each word between spaces; and,
-    // outside URIs, what lies between and after each = , ; | < > (--gpu-launcher=cmd, /root,run.bat, C:\a,b.exe).
-    static HashSet<string> Words(string args)
-    {
-        var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if (args == null) return words;
-        var blanks = new[] { ' ', '\t', '\r', '\n', '\'' };
-        var joins = new[] { '=', ',', ';', '|', '<', '>' };
-        foreach (var part in Environment.ExpandEnvironmentVariables(args).Split('"'))
-        {
-            var pieces = new List<string>(part.Split(blanks, StringSplitOptions.RemoveEmptyEntries)) { part.Trim() };
-            for (int i = part.IndexOf(' '); i > 0; i = part.IndexOf(' ', i + 1)) pieces.Add(part.Substring(0, i).Trim());
-            foreach (var piece in pieces)
-            {
-                words.Add(piece);
-                if (SchemeOf(piece) != null) continue;
-                words.UnionWith(piece.Split(joins, StringSplitOptions.RemoveEmptyEntries));
-                for (int i = piece.IndexOfAny(joins); i >= 0; i = piece.IndexOfAny(joins, i + 1)) words.Add(piece.Substring(i + 1));
-            }
-        }
-        words.Remove("");
-        return words;
-    }
-
     // A URI's scheme, lowercased ("https", "ms-settings"); null for a path (a drive letter is one character).
     static string SchemeOf(string s)
     {
@@ -583,20 +615,13 @@ public static class Engine
         return s.Substring(0, colon).ToLowerInvariant();
     }
 
-    // The file or folder target names, with its long name, found the way ShellExecute finds it: a path or file: URI, or a
-    // bare name in the current directory, the Windows folders, on the PATH or in App Paths. A name without an extension
+    // The file or folder target names, with its long name, found the way ShellExecute finds it: a path, or a bare name
+    // in the current directory, the Windows folders, on the PATH or in App Paths. A name without an extension
     // tries the PATHEXT ones first, so "run" is run.bat when that exists, but a folder is a folder: it gets a trailing \,
     // without which ShellExecute would run folder.exe beside it. Null when there is none, or target isn't a path.
     static string Locate(string target)
     {
         if (target.Length == 0) return null;
-        if (SchemeOf(target) == "file")
-        {
-            var local = new StringBuilder(32768);
-            int size = local.Capacity;
-            if (PathCreateFromUrl(target, local, ref size, 0) != 0) return null;
-            target = local.ToString();
-        }
         try
         {
             bool bare = target.IndexOfAny(new[] { '\\', '/', ':' }) < 0;
@@ -670,6 +695,8 @@ public static class Engine
     [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)] static extern int PathCreateFromUrl(string url, StringBuilder path, ref int size, int reserved);
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)] static extern int SHParseDisplayName(string name, IntPtr bindContext, out IntPtr pidl, uint attributesIn, out uint attributesOut);
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)] static extern bool SHGetPathFromIDListW(IntPtr pidl, StringBuilder path);
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)] static extern IntPtr CommandLineToArgvW(string line, out int count);
+    [DllImport("kernel32.dll")] static extern IntPtr LocalFree(IntPtr memory);
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] static extern int GetLongPathName(string path, StringBuilder longPath, int size);
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] static extern int GetPrivateProfileString(string section, string key, string fallback, StringBuilder value, int size, string file);
 
