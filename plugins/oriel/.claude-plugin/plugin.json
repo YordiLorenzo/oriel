@@ -1,7 +1,7 @@
 {
   "name": "oriel",
   "displayName": "oriel for Windows",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Lets Claude Code use the apps on your Windows PC. oriel reads each window as text through UI Automation, presses, fills and selects controls without moving your mouse, and replies to each action with what changed.",
   "author": {
     "name": "YordiLorenzo",
