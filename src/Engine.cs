@@ -603,6 +603,12 @@ public static class Engine
                 if (GetPrivateProfileString(section, "URL", "", url, url.Capacity, file) == 0) continue;
                 var text = section.EndsWith(".W") ? Encoding.UTF7.GetString(Encoding.ASCII.GetBytes(url.ToString())) : url.ToString();  // .W holds UTF-7
                 opens = Runs(root, text, dir, true, depth + 1, out inner);
+                // launch opens a folder it is given with a trailing \, but a URL it can't rewrite: for file:///x/tool
+                // Windows may pick tool.exe beside the folder tool, so each such file counts.
+                var folder = inner;
+                if (folder != null && Directory.Exists(folder) && !text.EndsWith("/") && !text.EndsWith(@"\"))
+                    foreach (var e in ProgramTypes())
+                        if (File.Exists(folder.TrimEnd('\\') + e)) Runs(root, folder.TrimEnd('\\') + e, dir, true, depth + 1, out inner);
                 any = true;
             }
             return any ? opens : Unchecked(root, "the shortcut has no URL");
