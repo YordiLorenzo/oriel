@@ -2,6 +2,14 @@
 
 All notable changes to oriel are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## 0.1.3 - 2026-11-12
+
+A security fix for `launch`. Update if your assistant reads web pages, mail or documents while it uses oriel.
+
+### Security
+
+- **`launch` ran commands while `shell` was off.** In 0.1.0 to 0.1.2 it compared only the file name with its list of interpreters, so `launch C:\any\run.bat` passed (name `run`) and Windows ran the file with cmd, which can run any command. `.cmd`, `.vbs`, `.vbe`, `.js`, `.jse`, `.wsf`, `.wsh` and `.hta` files ran the same way, and so did shortcuts and `file:` URIs to them, renamed or 8.3-named copies of cmd.exe and PowerShell, a script path without its extension, a file without a type beside a shortcut of the same name, `explorer.exe run.bat`, `runas` with a command, Windows Terminal started through `shell:AppsFolder` with a command, and forfiles, pcalua, msbuild, ftp and ubuntu (WSL); with an allow-list of `notepad`, `launch notepad.bat` ran too. Now `launch` checks the program Windows would run for the path and for every file or program the arguments name, starts the file it checked, and refuses more programs. [SECURITY.md](SECURITY.md#what-oriel-does) lists them and the limits that stay.
+
 ## 0.1.2 - 2026-11-11
 
 The tools say whether they change anything, and the Claude Code plugin carries `oriel.exe`. The tools work as in 0.1.1.

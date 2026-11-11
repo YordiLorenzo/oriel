@@ -398,33 +398,546 @@ public static class Engine
         if (cfg.TryGetValue("shell", out v) && v is bool) Shell = (bool)v;
     }
 
-    // oriel operates apps through their UI; starting command interpreters and script hosts is not its job, so launch
-    // refuses them unless config.json allows them by name or turns "shell" on.
+    // oriel operates apps through their UI; programs that run commands or scripts are not its job, so launch refuses
+    // them unless config.json allows them by name or turns "shell" on. Interpreters: shells, script hosts and script
+    // interpreters, whose windows are off limits too (keys typed into them run as commands).
     static readonly string[] Interpreters = { "cmd", "powershell", "pwsh", "wscript", "cscript", "mshta", "rundll32",
-        "regsvr32", "wsl", "bash", "conhost", "wt" };
-
-    static void CheckLaunch(string path)
-    {
-        var name = Path.GetFileNameWithoutExtension(path.Trim('"'));
-        bool listed = Allow.Exists(a => string.Equals(a, name, StringComparison.OrdinalIgnoreCase));
-        if (Array.Exists(Interpreters, i => string.Equals(i, name, StringComparison.OrdinalIgnoreCase)) && !listed && !Shell)
-            throw new OrielError(name + " is a command interpreter; launch starts apps, documents and URIs (\"shell\": true in config.json allows it)");
-        if (Allow.Count > 0 && !listed)
-            throw new OrielError(name + " is not in the allow-list in config.json");
-    }
+        "regsvr32", "wsl", "bash", "sh", "ubuntu", "conhost", "wt", "wmic", "ssh", "ftp", "git", "python", "python3",
+        "pythonw", "py", "pyw", "node", "perl", "ruby", "php" };
+    // Runners: Windows tools that run a command, script, package or DLL that their arguments name. launch refuses them;
+    // their windows (an installer, the Services console) stay usable.
+    static readonly string[] Runners = { "forfiles", "pcalua", "scriptrunner", "SyncAppvPublishingServer", "cmstp",
+        "msbuild", "csc", "vbc", "jsc", "msiexec", "mmc", "hh" };
 
     // A terminal that is already open is a shell too: keys typed into it run as commands. So terminal windows are
     // off limits like interpreters are for launch, unless config.json allows them by name or turns "shell" on. (An agent
     // on a benchmark VM drove an open PowerShell this way after launch refused one.)
     static readonly string[] Terminals = { "WindowsTerminal", "OpenConsole", "powershell_ise", "mintty", "alacritty", "wezterm-gui" };
 
+    static bool Listed(string name) { return Allow.Exists(a => string.Equals(a, name, StringComparison.OrdinalIgnoreCase)); }
+
+    static bool In(string[] names, string name) { return Array.Exists(names, n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase)); }
+
     static bool Allowed(string process)
     {
         if (Deny.Exists(d => string.Equals(d, process, StringComparison.OrdinalIgnoreCase))) return false;
-        bool listed = Allow.Exists(a => string.Equals(a, process, StringComparison.OrdinalIgnoreCase));
-        if (!listed && !Shell && (Array.Exists(Interpreters, i => string.Equals(i, process, StringComparison.OrdinalIgnoreCase)) ||
-                        Array.Exists(Terminals, t => string.Equals(t, process, StringComparison.OrdinalIgnoreCase)))) return false;
+        bool listed = Listed(process);
+        if (!listed && !Shell && (In(Interpreters, process) || In(Terminals, process))) return false;
         return Allow.Count == 0 || listed;
+    }
+
+    // launch checks what Windows would run, not the name it is given: the program for Path (the file itself, a shortcut's
+    // target, or what its file type or URI scheme opens with) and for every file or program that Args names. None may
+    // run commands unless config.json allows it by name or turns "shell" on, and with an allow-list the program for Path
+    // must be listed. Returns what to hand to ShellExecute: the file found here, so both mean the same file.
+    static string CheckLaunch(string path, string args)
+    {
+        lookups = 0;
+        made = 0;
+        checkedRuns.Clear();
+        string file;
+        var program = Runs(path, path, "", true, 0, out file);
+        if (Allow.Count > 0 && (program == null || !Listed(program)))
+            throw new OrielError((program ?? path) + " is not in the allow-list in config.json");
+        // Only now the arguments, so a launch refused already looks at no file they name (\\host\share signs in there).
+        // A shortcut's program gets the shortcut's arguments followed by these, in the shortcut's working folder, so they
+        // are read together, from there. A program that runs a bare name from its arguments finds it first in its own
+        // folder, so that is searched too.
+        string to = file, with = "", folder = "";
+        if (file != null && file.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase)) ReadLink(file, out to, out with, out folder);
+        CheckWords(path, (with + " " + args).Trim(), folder + "|" + FolderOf(to == null || to.StartsWith(@"\\") ? null : Locate(to, folder)), 1);
+        return file ?? path;
+    }
+
+    // Each file or program that args names may not run commands either: the program started may run it. args is split
+    // the way Windows splits a command line, and each value counts whole, in its parts around = , ; | < > (--gpu-launcher=cmd,
+    // /root,run.bat), up to each space or tab (an unquoted path with spaces) and as a command line of its own (runas
+    // "cmd /c x"). Each as written and with environment variables expanded, as the program may read it either way. A
+    // relative path is read from dir, the folder the program starts in ("" for this one's).
+    static void CheckWords(string root, string args, string dir, int depth, bool nested = false)
+    {
+        if (string.IsNullOrEmpty(args)) return;
+        // Every split is kept and looked up, so arguments get a size limit: 30,000 '=' would hold about 900 MB of parts.
+        if (args.Length > 8192) { Unchecked(root, "arguments longer than 8192 characters are more than launch checks"); return; }
+        var joins = new[] { '=', ',', ';', '|', '<', '>' };
+        var blanks = new[] { ' ', '\t' };
+        var written = Argv(args);
+        var expanded = Argv(Environment.ExpandEnvironmentVariables(args));
+        var values = new HashSet<string>(written, StringComparer.OrdinalIgnoreCase);
+        values.UnionWith(expanded);
+        // A program may take its whole argument string as one path, spaces and all (explorer.exe C:\a b\run.bat runs it
+        // unquoted), so that string, and each start of it up to a blank, counts as a path too. In a command line found
+        // inside an argument the string starts after its first word, the program.
+        foreach (var line in new[] { args, Environment.ExpandEnvironmentVariables(args) })
+        {
+            var tail = line.Trim();
+            if (nested)
+            {
+                int cut = tail.StartsWith("\"") ? tail.IndexOf('"', 1) + 1 : tail.IndexOfAny(blanks);
+                tail = cut > 0 ? tail.Substring(cut).Trim() : "";
+            }
+            string file;
+            for (int i = tail.IndexOfAny(blanks); tail.Length > 0; i = tail.IndexOfAny(blanks, i + 1))
+            {
+                var path = (i < 0 ? tail : tail.Substring(0, i)).Trim('"');
+                if (++made > 2048) throw new OrielError(root + ": the arguments name more words than launch checks");
+                Runs(root, path, dir, false, depth, out file);
+                if (path.IndexOfAny(Path.GetInvalidPathChars()) < 0)
+                    foreach (var match in Found(path, dir, true)) Runs(root, match, dir, false, depth, out file);
+                if (i < 0) break;
+            }
+        }
+        foreach (var value in values)
+        {
+            // In a command line found inside an argument, the first word is the program (CreateProcess adds .exe to it,
+            // see below); a later one may be a file the program opens, which only a whole argument can say.
+            bool first = nested && ((written.Length > 0 && written[0] == value) || (expanded.Length > 0 && expanded[0] == value));
+            var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            // Each word counts toward the limit as it is made, so a long argument is refused before its parts fill memory.
+            Action<string> add = w =>
+            {
+                if (w.Length > 0 && words.Add(w) && ++made > 2048)
+                    throw new OrielError(root + ": the arguments name more words than launch checks");
+            };
+            add(value);
+            if (value.Split(joins).Length > 65) { Unchecked(root, "an argument with more than 64 of = , ; | < > is more than launch checks"); continue; }
+            if (SchemeOf(value) == null)
+            {
+                foreach (var part in value.Split(joins)) add(part);
+                for (int i = value.IndexOfAny(joins); i >= 0; i = value.IndexOfAny(joins, i + 1))
+                {
+                    add(value.Substring(0, i));
+                    add(value.Substring(i + 1));
+                }
+            }
+            // A whole argument (not a fragment of one) that is a path on another computer with no file type: Windows picks
+            // a file of that name there, which launch can't read (explorer.exe \\server\share\run finds run.bat).
+            if (!first)
+                foreach (var whole in new List<string>(words))
+                {
+                    var w = FromFileUri(whole.Trim().Trim('"')).Replace('/', '\\');
+                    if (w.StartsWith(@"\\") && !w.EndsWith(@"\") && Typeless(w))
+                        Unchecked(root, "an argument names a file on another computer with no file type; launch can't tell what it is");
+                }
+            // A word with spaces may be read as a command line by CreateProcess: each start up to a space is a program
+            // path, to which it adds .exe when it has no file type (on another computer that is all launch can check).
+            foreach (var word in new List<string>(words))
+                for (int i = word.IndexOfAny(blanks); i > 0; i = word.IndexOfAny(blanks, i + 1))
+                {
+                    var start = word.Substring(0, i);
+                    bool typeless = Typeless(start);
+                    add(start.Replace('/', '\\').StartsWith(@"\\") && typeless ? start + ".exe" : start);
+                }
+            // The program that gets a word may look it up its own way, not as Locate does (another folder first, only .exe
+            // added), so each file the word could mean, in any folder searched and with any program type, counts.
+            foreach (var word in new List<string>(words))
+                if (word.IndexOfAny(Path.GetInvalidPathChars()) < 0)
+                    foreach (var match in Found(word, dir, true)) add(match);
+            string file;
+            foreach (var word in words)
+            {
+                Runs(root, word, dir, false, depth, out file);
+                if (word.IndexOfAny(blanks) > 0) CheckWords(root, word, dir, depth + 1, true);
+            }
+        }
+    }
+
+    // A command line's arguments as Windows splits them (CommandLineToArgvW), which joins c"md.exe" into cmd.exe.
+    static string[] Argv(string args)
+    {
+        int count;
+        var list = CommandLineToArgvW("x " + args, out count);  // it reads the first word as the program's path
+        var argv = new string[Math.Max(count - 1, 0)];
+        for (int i = 1; i < count; i++) argv[i - 1] = Marshal.PtrToStringUni(Marshal.ReadIntPtr(list, i * IntPtr.Size));
+        LocalFree(list);
+        return argv;
+    }
+
+    // The name of the program Windows runs for target: the file itself for a program, cmd for a batch file, a shortcut's
+    // target, else the program that its file type's or URI scheme's open command starts (null for none, a packaged app or
+    // a COM handler). Throws when that program runs commands. file is the file or folder target names, null for a URI.
+    // named: target is the path to start, so it must exist; else it is a word from args. dir as for CheckWords.
+    // In this launch: distinct paths and words checked (at most 256: each lookup walks the PATH, and the daemon runs one
+    // request at a time, so a long argument list must not hold it up; 1000 words took 46 s), words made from the
+    // arguments (at most 2048, before they fill memory), and the result of each check, so a repeat costs nothing.
+    static int lookups, made;
+    static readonly Dictionary<string, string[]> checkedRuns = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+
+    static string Runs(string root, string target, string dir, bool named, int depth, out string file)
+    {
+        if (depth > 8) throw new OrielError(root + ": launch follows at most 8 shortcuts and file types in a row");
+        var key = target + "\n" + dir + "\n" + named;
+        string[] done;
+        if (checkedRuns.TryGetValue(key, out done)) { file = done[1]; return done[0]; }
+        if (++lookups > 256) throw new OrielError(root + ": the arguments name more words than launch checks (256)");
+        var program = Check(root, target, dir, named, depth, out file);
+        checkedRuns[key] = new[] { program, file };
+        return program;
+    }
+
+    static string Check(string root, string target, string dir, bool named, int depth, out string file)
+    {
+        file = null;
+        string inner;
+        target = target.Trim().Trim('"');  // as written: ShellExecute expands no environment variables
+        var scheme = SchemeOf(target);
+        if (scheme == "shell" || target.StartsWith("::"))
+        {
+            target = ShellPath(target);
+            if (target == "") return "explorer";
+            if (target == null) return Unchecked(root, "it is a shell item that is neither a file nor a folder");
+        }
+        else if (scheme != null && scheme != "file") return Command(root, Assoc(scheme, true), dir, depth);
+        target = FromFileUri(target).Replace('/', '\\');
+        // Device paths: \\?\C:\x is C:\x and \\?\UNC\server\share is \\server\share; other ones (\\?\Volume{...}, \\.\pipe)
+        // launch doesn't read.
+        bool device = target.StartsWith(@"\\?\") || target.StartsWith(@"\\.\");
+        if (device && target.Length > 5 && target[5] == ':') target = target.Substring(4);
+        else if (device && target.Substring(4).StartsWith(@"UNC\", StringComparison.OrdinalIgnoreCase)) target = @"\\" + target.Substring(8);
+        else if (device) return Unchecked(root, "it is a device path (\\\\?\\ or \\\\.\\ without a drive letter), which launch doesn't read");
+        // C:name is relative to the current folder of drive C:, which each process keeps for itself: launch can't know it.
+        if (target.Length >= 2 && char.IsLetter(target[0]) && target[1] == ':' && (target.Length == 2 || target[2] != '\\'))
+            return Unchecked(root, "a path like C:name, relative to a drive's current folder, can't be checked");
+        var work = dir.Split('|')[0];
+        if (work.Replace('/', '\\').StartsWith(@"\\") && !target.StartsWith(@"\\") && !(target.Length > 1 && target[1] == ':'))
+            target = Path.Combine(work, target.TrimStart('\\'));  // relative to a folder on another computer
+        // A UNC path names a file on another computer: launch reads nothing there, since connecting signs in to it, and
+        // goes by the name and type alone, read from the text as Windows will read it.
+        bool remote = target.StartsWith(@"\\");
+        if (remote)
+        {
+            if (target.EndsWith(@"\")) return "explorer";
+            target = Tidy(target);
+        }
+        file = remote ? null : Locate(target, dir);
+        if (file == null && !remote)
+        {
+            // Named by root only: a shortcut's target comes with its environment variables expanded, which may hold secrets.
+            if (named) throw new OrielError("launch can't find " + (depth == 0 ? root : "the file " + root + " points at"));
+            // A word in args that names no file here counts only as a bare program name, which a program may find itself.
+            if (target.IndexOfAny(new[] { '\\', '/', ':' }) >= 0) return null;
+        }
+        if (file != null && Directory.Exists(file)) return "explorer";
+        // For a path without a file type ShellExecute first tries the program types and .lnk, even when the file exists:
+        // launch report would run report.lnk beside it.
+        if (named && file != null && Ext(file).Length == 0)
+            return Unchecked(root, "a file without a file type: Windows opens a program or shortcut of the same name instead, if there is one");
+        // Whatever its type, a file built as an interpreter counts as one (by the name in its version resource), so a
+        // renamed or 8.3-named copy of cmd.exe is still cmd: a program can run a file its arguments name directly.
+        if (file != null && File.Exists(file))
+        {
+            var original = FileVersionInfo.GetVersionInfo(file).OriginalFilename ?? "";
+            if (original.EndsWith(".mui", StringComparison.OrdinalIgnoreCase)) original = original.Substring(0, original.Length - 4);
+            Permit(root, Path.GetFileNameWithoutExtension(original));
+        }
+        var name = file ?? target;
+        string ext;
+        try { ext = Ext(name).ToLowerInvariant(); } catch (ArgumentException) { return null; }
+        if (remote && (ext == ".lnk" || ext == ".url")) return Unchecked(root, "a shortcut on another computer can't be read without connecting to it");
+        if (remote && ext.Length == 0)  // Windows would pick a file for it there (tool.bat for tool)
+            return named ? Unchecked(root, "on another computer launch can't tell what a name without a file type is (end a folder with \\)") : null;
+        if (file != null && ext == ".lnk")
+        {
+            string to, with, folder;
+            ReadLink(file, out to, out with, out folder);
+            if (to.Length == 0) return Unchecked(root, "the shortcut points at no file");
+            var program = Runs(root, to, folder, true, depth + 1, out inner);
+            CheckWords(root, with, folder + "|" + FolderOf(inner), depth + 1);
+            return program;
+        }
+        if (file != null && ext == ".url")
+        {
+            // Windows reads the URL from [InternetShortcut], or from [InternetShortcut.W] or .A when present: each must pass.
+            string opens = null;
+            bool any = false;
+            foreach (var section in new[] { "InternetShortcut", "InternetShortcut.A", "InternetShortcut.W" })
+            {
+                var url = new StringBuilder(32768);
+                if (GetPrivateProfileString(section, "URL", "", url, url.Capacity, file) == 0) continue;
+                var text = section.EndsWith(".W") ? Encoding.UTF7.GetString(Encoding.ASCII.GetBytes(url.ToString())) : url.ToString();  // .W holds UTF-7
+                opens = Runs(root, text, dir, true, depth + 1, out inner);
+                // launch opens a folder it is given with a trailing \, but a URL it can't rewrite: for file:///x/tool
+                // Windows may pick tool.exe beside the folder tool, so each such file counts.
+                var folder = inner;
+                if (folder != null && Directory.Exists(folder) && !text.EndsWith("/") && !text.EndsWith(@"\"))
+                    foreach (var e in ProgramTypes())
+                        if (File.Exists(folder.TrimEnd('\\') + e))
+                        {
+                            var alt = Runs(root, folder.TrimEnd('\\') + e, dir, true, depth + 1, out inner);
+                            if (Allow.Count > 0 && (alt == null || !Listed(alt)))
+                                throw new OrielError(root + " may start " + (alt ?? folder.TrimEnd('\\') + e) + ", which is not in the allow-list in config.json");
+                        }
+                any = true;
+            }
+            return any ? opens : Unchecked(root, "the shortcut has no URL");
+        }
+        if (ext == ".bat" || ext == ".cmd") return Permit(root, "cmd");  // Windows runs batch files with cmd.exe
+        if (ext == ".cpl") return Permit(root, "rundll32");  // a .cpl is a DLL, which Control Panel loads with rundll32
+        var command = ext.Length > 0 ? Assoc(ext, false) : null;
+        if (command != null && !command.StartsWith("\"%1\"") && !command.StartsWith("%1")) return Command(root, command, dir, depth);
+        // A program (no file type, a program type, or a type that runs itself: "%1") counts by its name. Any other file
+        // opens through a packaged app or COM handler that has no command, which launch can't name.
+        if (command != null || ext.Length == 0 || Array.Exists(ProgramTypes(), e => string.Equals(e, ext, StringComparison.OrdinalIgnoreCase)))
+            return Permit(root, Path.GetFileNameWithoutExtension(name));
+        return null;
+    }
+
+    // The folder of a file found by Locate, "" for none or a folder.
+    static string FolderOf(string file)
+    {
+        return file == null || file.StartsWith(@"\\") || !File.Exists(file) ? "" : Path.GetDirectoryName(file) ?? "";
+    }
+
+    // A shortcut's target, its arguments and the folder its program starts in.
+    static void ReadLink(string file, out string target, out string args, out string folder)
+    {
+        var link = (IShellLinkW)new ShellLink();
+        ((System.Runtime.InteropServices.ComTypes.IPersistFile)link).Load(file, 0);
+        var to = new StringBuilder(32768);
+        var with = new StringBuilder(32768);
+        var start = new StringBuilder(32768);
+        link.GetPath(to, to.Capacity, IntPtr.Zero, 0);
+        link.GetArguments(with, with.Capacity);
+        link.GetWorkingDirectory(start, start.Capacity);
+        target = to.ToString();
+        args = with.ToString();
+        folder = Environment.ExpandEnvironmentVariables(start.ToString());
+    }
+
+    // A program that runs commands starts only when config.json allows it by name or turns "shell" on.
+    static string Permit(string root, string program)
+    {
+        if (!Shell && !Listed(program) && (In(Interpreters, program) || In(Terminals, program) || In(Runners, program)))
+            throw new OrielError((string.Equals(root, program, StringComparison.OrdinalIgnoreCase) ? program + " is" : root + " would start " + program + ", which is") +
+                " a command interpreter, script host or terminal; launch starts apps, documents and URIs (\"shell\": true in config.json allows it, or \"" +
+                program + "\" in its allow-list)");
+        return program;
+    }
+
+    // Something launch can't check: only "shell": true lets it through.
+    static string Unchecked(string root, string why)
+    {
+        if (!Shell) throw new OrielError(root + ": " + why + ", so launch can't check what it starts (\"shell\": true in config.json allows it)");
+        return null;
+    }
+
+    // The path a file: URI names (file://server/share/x is \\server\share\x); anything else as it is.
+    static string FromFileUri(string target)
+    {
+        if (SchemeOf(target) != "file") return target;
+        var local = new StringBuilder(32768);
+        int size = local.Capacity;
+        return PathCreateFromUrl(target, local, ref size, 0) == 0 ? local.ToString() : target;
+    }
+
+    // A UNC path as Windows rewrites it, from the text alone: . and .. resolved below \\server\share, empty parts dropped,
+    // trailing dots and spaces cut from the last part (run.bat. is run.bat).
+    static string Tidy(string unc)
+    {
+        var parts = new List<string>();
+        foreach (var part in unc.Substring(2).Split('\\'))
+        {
+            if (part.Length == 0 || part == ".") continue;
+            if (part == "..") { if (parts.Count > 2) parts.RemoveAt(parts.Count - 1); continue; }
+            parts.Add(part);
+        }
+        if (parts.Count > 0) parts[parts.Count - 1] = parts[parts.Count - 1].TrimEnd('.', ' ');
+        return @"\\" + string.Join(@"\", parts);
+    }
+
+    // The program that an open command (from Assoc) starts, checked with the rest of the command as its arguments.
+    static string Command(string root, string command, string dir, int depth)
+    {
+        if (command == null) return null;
+        command = Environment.ExpandEnvironmentVariables(command);  // Windows expands it before it runs it
+        var blanks = new[] { ' ', '\t' };
+        int cut = command.IndexOfAny(blanks) > 0 ? command.IndexOfAny(blanks) : command.Length;
+        if (command.StartsWith("\""))
+        {
+            if (command.IndexOf('"', 1) > 0) cut = command.IndexOf('"', 1) + 1;
+        }
+        else
+        {
+            // Unquoted, CreateProcess tries each start up to a blank as the program, with .exe added when it has no file
+            // type (C:\Program Files\x.exe %1 tries C:\Program.exe first): each one that exists counts.
+            bool picked = false;
+            for (int i = command.IndexOfAny(blanks); i > 0; i = command.IndexOfAny(blanks, i + 1))
+            {
+                var start = command.Substring(0, i);
+                if (Ext(start).Length == 0) start += ".exe";
+                var found = Locate(start, dir);
+                if (found == null || !File.Exists(found)) continue;
+                string other;
+                Runs(root, found, dir, false, depth + 1, out other);
+                if (!picked) { cut = i; picked = true; }  // the first one that exists is the one it runs
+            }
+        }
+        string file;
+        var program = Runs(root, command.Substring(0, cut), dir, false, depth + 1, out file);
+        CheckWords(root, command.Substring(cut), dir.Split('|')[0] + "|" + FolderOf(file), depth + 1);
+        return program;
+    }
+
+    // A URI's scheme, lowercased ("https", "ms-settings"); null for a path (a drive letter is one character).
+    static string SchemeOf(string s)
+    {
+        int colon = s.IndexOf(':');
+        if (colon < 2 || !char.IsLetter(s[0])) return null;
+        for (int i = 1; i < colon; i++) if (!char.IsLetterOrDigit(s[i]) && "+-.".IndexOf(s[i]) < 0) return null;
+        return s.Substring(0, colon).ToLowerInvariant();
+    }
+
+    // The file or folder target names, with its long name, found the way ShellExecute finds it: a path (relative to dir,
+    // "" for the current directory), or a bare name in dir, the Windows folders, on the PATH or in App Paths. A name without an extension
+    // tries the ProgramTypes ones first, so "run" is run.bat when that exists, but a folder is a folder: it gets a trailing \,
+    // without which ShellExecute would run folder.exe beside it. Null when there is none, or target isn't a path.
+    static string Locate(string target, string dir)
+    {
+        var found = Found(target, dir, false);
+        return found.Count > 0 ? found[0] : null;
+    }
+
+    // Locate's search, in order; all: every file and folder found, not just the first. A program given a name in its
+    // arguments may search in another order than ShellExecute (CreateProcess looks in its own folder first), so for
+    // an argument each one counts.
+    static List<string> Found(string target, string dir, bool all)
+    {
+        var found = new List<string>();
+        if (target.Length == 0) return found;
+        try
+        {
+            bool bare = target.IndexOfAny(new[] { '\\', '/', ':' }) < 0;
+            // dir is the working folder, or for an argument "working folder|program's folder".
+            var dirs = new List<string>(dir.Split('|'));
+            if (bare)
+            {
+                dirs.Add(Environment.GetFolderPath(Environment.SpecialFolder.Windows));
+                dirs.Add(Environment.SystemDirectory);
+                dirs.AddRange((Environment.GetEnvironmentVariable("PATH") ?? "").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+            }
+            var exts = ProgramTypes();
+            foreach (var folder in dirs)
+            {
+                // Nothing on another computer is read (see Runs), whichever folder the path comes from. \name is on the
+                // drive of the folder the program starts in.
+                var start = folder.Trim().Trim('"').Replace('/', '\\');
+                var name = target.Replace('/', '\\');
+                var joined = name.StartsWith(@"\") && !name.StartsWith(@"\\") && Path.IsPathRooted(start)
+                    ? Path.GetPathRoot(start) + name.Substring(1) : Path.Combine(start, name);
+                if (joined.StartsWith(@"\\")) continue;
+                var full = Path.GetFullPath(joined);
+                if (full.StartsWith(@"\\")) continue;
+                if (Directory.Exists(full))
+                {
+                    found.Add(LongPath(full).TrimEnd('\\') + "\\");
+                    if (!all) return found;  // else also tool.exe beside the folder tool, which CreateProcess would run
+                }
+                var names = new List<string>();
+                if (Ext(full).Length == 0) foreach (var e in exts) names.Add(full + e);
+                names.Add(full);
+                foreach (var p in names)
+                    if (File.Exists(p))
+                    {
+                        found.Add(LongPath(p));
+                        if (!all) return found;
+                    }
+            }
+            if (bare)
+                foreach (var hive in new[] { Microsoft.Win32.Registry.CurrentUser, Microsoft.Win32.Registry.LocalMachine })
+                    foreach (var key in new[] { target, target + ".exe" })
+                        using (var app = hive.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\App Paths\" + key))
+                        {
+                            var p = app == null ? null : app.GetValue("") as string;
+                            if (p != null) p = p.Trim().Trim('"').Replace('/', '\\');
+                            if (p == null || p.StartsWith(@"\\")) continue;  // nothing on another computer is read
+                            if (!File.Exists(p)) p += ".exe";  // the value may leave out .exe
+                            if (File.Exists(p))
+                            {
+                                found.Add(LongPath(p));
+                                if (!all) return found;
+                            }
+                        }
+        }
+        catch (ArgumentException) { }      // not a name Windows takes as a path (a:b:c)
+        catch (NotSupportedException) { }
+        catch (IOException) { }            // too long
+        return found;
+    }
+
+    // A path's file type as Windows reads it: from the last dot of the name, and none when that part holds a space
+    // ("report. txt" has none, so Windows tries "report. txt.cmd" for it). Typeless reads it from the text alone.
+    static string Ext(string path)
+    {
+        var ext = Path.GetExtension(path);
+        return ext.IndexOf(' ') >= 0 ? "" : ext;
+    }
+
+    static bool Typeless(string path)
+    {
+        int dot = path.LastIndexOf('.');
+        return dot <= Math.Max(path.LastIndexOf('\\'), path.LastIndexOf('/')) || path.IndexOf(' ', dot) >= 0;
+    }
+
+    // The file types Windows tries for a name without one: PATHEXT's, then .pif and .lnk as ShellExecute does.
+    static string[] ProgramTypes()
+    {
+        return ((Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD") + ";.PIF;.LNK").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    static string LongPath(string path)
+    {
+        var full = new StringBuilder(32768);
+        return GetLongPathName(path, full, full.Capacity) > 0 ? full.ToString() : path;
+    }
+
+    const uint SfgaoFolder = 0x20000000, SfgaoFileSystem = 0x40000000;
+
+    // A shell: or ::{CLSID} path: the file or folder it names; "" for a folder only Explorer shows (Control Panel); null
+    // for anything else, like an app in shell:AppsFolder, or a name the shell can't parse.
+    static string ShellPath(string target)
+    {
+        IntPtr pidl;
+        uint attributes;
+        if (SHParseDisplayName(target, IntPtr.Zero, out pidl, SfgaoFolder | SfgaoFileSystem, out attributes) != 0) return null;
+        try
+        {
+            var path = new StringBuilder(1024);
+            if ((attributes & SfgaoFileSystem) != 0 && SHGetPathFromIDListW(pidl, path)) return path.ToString();
+            return (attributes & SfgaoFolder) != 0 ? "" : null;
+        }
+        finally { Marshal.FreeCoTaskMem(pidl); }
+    }
+
+    // The command that opening a file type (".txt") or URI scheme ("https") runs, with the user's choice of app; null for
+    // none or a COM handler.
+    static string Assoc(string type, bool scheme)
+    {
+        var command = new StringBuilder(4096);
+        int size = command.Capacity;
+        return AssocQueryString(scheme ? 0x1000 : 0, 1, type, null, command, ref size) == 0 ? command.ToString() : null;  // ASSOCF_IS_PROTOCOL, ASSOCSTR_COMMAND
+    }
+
+    [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)] static extern int AssocQueryString(int flags, int str, string assoc, string extra, StringBuilder output, ref int size);
+    [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)] static extern int PathCreateFromUrl(string url, StringBuilder path, ref int size, int reserved);
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)] static extern int SHParseDisplayName(string name, IntPtr bindContext, out IntPtr pidl, uint attributesIn, out uint attributesOut);
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)] static extern bool SHGetPathFromIDListW(IntPtr pidl, StringBuilder path);
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)] static extern IntPtr CommandLineToArgvW(string line, out int count);
+    [DllImport("kernel32.dll")] static extern IntPtr LocalFree(IntPtr memory);
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] static extern int GetLongPathName(string path, StringBuilder longPath, int size);
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] static extern int GetPrivateProfileString(string section, string key, string fallback, StringBuilder value, int size, string file);
+
+    [ComImport, Guid("00021401-0000-0000-C000-000000000046")] class ShellLink { }
+    [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("000214F9-0000-0000-C000-000000000046")]
+    interface IShellLinkW
+    {
+        void GetPath([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder file, int size, IntPtr findData, int flags);
+        void GetIDList(out IntPtr pidl);
+        void SetIDList(IntPtr pidl);
+        void GetDescription([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder text, int size);
+        void SetDescription([MarshalAs(UnmanagedType.LPWStr)] string text);
+        void GetWorkingDirectory([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder dir, int size);
+        void SetWorkingDirectory([MarshalAs(UnmanagedType.LPWStr)] string dir);
+        void GetArguments([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder args, int size);
     }
 
     static WinRef ResolveWindow(string query)
@@ -1896,14 +2409,14 @@ public static class Engine
             {
                 var path = o.S("Path");
                 if (path == null) throw new OrielError("Path is required");
-                CheckLaunch(path);
+                var file = CheckLaunch(path, o.S("Args"));
                 windowByQuery.Clear();  // the new window may share a title with an old one
                 var want = o.S("WaitTitle");
                 // Every top-level window, hidden and cloaked ones too: a window brought back from another virtual
                 // desktop or from hiding is not new.
                 var before = new Dictionary<IntPtr, bool>();
                 if (want != null) EnumWindows(delegate (IntPtr h, IntPtr _) { before[h] = true; return true; }, IntPtr.Zero);
-                Process.Start(new ProcessStartInfo(path, o.S("Args") ?? "") { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(file, o.S("Args") ?? "") { UseShellExecute = true });
                 lastChange = DateTime.UtcNow;
                 if (want == null) return "started " + path;
                 // Wait for a window that wasn't there before: an older one with the same title is another instance.

@@ -77,6 +77,15 @@ Other replies:
 | `window` | `window`, `state` (minimize/maximize/restore), `x`, `y`, `width`, `height` | change a window's state, position or size |
 | `close` | `window` | close it (the app may still ask to save) |
 
+`launch` refuses programs that run commands, unless `config.json` sets `"shell": true` or allow-lists the program by name. It goes by the program Windows would run, not by the name it gets:
+- a program counts by its file name and by the name in its version resource, so a renamed or 8.3-named copy of cmd.exe is still cmd;
+- a batch file (`.bat`, `.cmd`) counts as cmd, a Control Panel item (`.cpl`) as rundll32, and a shortcut (`.lnk`, `.url`) as its target;
+- any other file or URI counts as the program its file type or URI scheme opens with: `run.vbs` as wscript, `run.hta` as mshta, `report.txt` as Notepad, an `https:` link as your browser;
+- every file or program that `args` names counts too, so `explorer.exe run.bat` and `notepad run.bat` are refused;
+- a file on another computer (`\\server\share\...`) counts by its name and file type, since launch doesn't connect to read it.
+
+It starts the file it checked: a bare name, a path without its extension, a `file:` URI or a `shell:` path becomes that file's full path, and a folder opens as a folder. [SECURITY.md](../SECURITY.md#what-oriel-does) lists the programs that count.
+
 ## Batch steps
 
 A step is an object with `action` plus that action's options, capitalised: `Window`, `Id`, `Name`, `Type`, `Value`, `Option`, `Keys`, `Path`, `Args`, `WaitTitle`, `Timeout`, `Direction`, `Amount`, `State`. Steps inherit the batch's `window`. Example:
