@@ -2,7 +2,7 @@
 
 All notable changes to oriel are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## 0.1.1 - unreleased
+## 0.1.1 - 2026-11-11
 
 New ways to install and to check a download. The tools work as in 0.1.0.
 
@@ -23,6 +23,7 @@ New ways to install and to check a download. The tools work as in 0.1.0.
 ### Docs, benchmarks and repository
 
 - **README:** opens with what the Claude Code docs say (the CLI has no built-in computer use on Windows) and what oriel is, then install with the plugin from 0.1.1, two first prompts that act, every Windows warning including Smart App Control, round 9 with its caveats and the per-call table of 10 Nov 2026. SECURITY.md, CONTRIBUTING.md and ROADMAP.md follow it.
+- **Windows warnings, README and site:** the Edge steps match Edge 157, where **Keep anyway** is in the arrow menu next to **Delete**. `.\oriel.exe install` in PowerShell showed no further prompt in a clean Windows Sandbox and on a Windows 11 PC on 11 Nov 2026; opened from File Explorer, Windows asked "Are you sure that you want to run this software?".
 - **Code signing policy:** [docs/code-signing.md](docs/code-signing.md) says what will be signed, who approves it and what oriel sends over the network, for the SignPath Foundation application.
 - **WindowsAgentArena:** `bench/waa/stats.py` gives bootstrap 95% intervals for round 9 and compares each layer's own two runs. Cua Driver's two runs differed by 6.5 points, more than its 4.2-point lead. RESULTS.md and docs/benchmarks.md state Cua Driver's version, the 4 of its 63 tools that were hidden and that cost is Claude Code's list-price estimate. docs/benchmarks.md adds a "What this does not show" list and every round in one table.
 - **Head-to-head, 10 Nov 2026:** oriel 0.1.0 against Cua Driver 0.46.1 on an unlocked PC, with a same-day 0.38.0 control. oriel took less time on every call, by less than on 21 Oct (list windows 1 ms against 30 ms). The harness fetches a chosen Cua Driver version, starts only the tools asked for, turns Cua's telemetry and update check off and adds a direct-mode Cua relay.

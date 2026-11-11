@@ -95,9 +95,12 @@ Did it work? Say so in [Discussions](https://github.com/YordiLorenzo/oriel/discu
 
 oriel isn't code-signed yet, so Windows doesn't recognise the publisher:
 
-- **Your browser** may say the file isn't commonly downloaded. In Edge, open the download's **...** menu, choose
-  **Keep**, then **Show more** and **Keep anyway**.
-- **SmartScreen** may show "Windows protected your PC". Click **More info**, then **Run anyway**.
+- **Your browser** may say "oriel.exe isn't commonly downloaded". In Edge, point at the file in the downloads list,
+  open its **...** menu and choose **Keep**. In "Make sure you trust oriel.exe before you open it", open the arrow
+  next to **Delete** and choose **Keep anyway**.
+- **Running it:** `.\oriel.exe install` in PowerShell, as in step 2, showed no further prompt in a test on Windows 11
+  on 11 Nov 2026. Opened from File Explorer, Windows may ask "Are you sure that you want to run this software?" (click
+  **Run**), and SmartScreen may show "Windows protected your PC" (click **More info**, then **Run anyway**).
 - **Smart App Control**, where it is on, blocks oriel.exe. It blocks unsigned programs that Windows doesn't know yet,
   including ones you build yourself, and it has no way to let one program through
   ([Microsoft's FAQ](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions)).
