@@ -88,7 +88,7 @@ oriel needs no admin rights and installs no service or driver. `oriel uninstall`
    Open Notepad, write a three-line note and save it in Documents as oriel-test.txt.
    ```
 
-Did it work? Say so in [Discussions](https://github.com/YordiLorenzo/oriel/discussions). If it didn't, the
+Did it work? Say so in [Discussions](https://github.com/YordiLorenzo/oriel/discussions/6). If it didn't, the
 [bug report form](https://github.com/YordiLorenzo/oriel/issues/new?template=bug_report.yml) asks for what helps.
 
 ### Windows warns about oriel.exe
