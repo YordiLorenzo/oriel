@@ -552,7 +552,12 @@ public static class Engine
         }
         else if (scheme != null && scheme != "file") return Command(root, Assoc(scheme, true), dir, depth);
         target = FromFileUri(target).Replace('/', '\\');
-        if ((target.StartsWith(@"\\?\") || target.StartsWith(@"\\.\")) && target.Length > 5 && target[5] == ':') target = target.Substring(4);
+        // Device paths: \\?\C:\x is C:\x and \\?\UNC\server\share is \\server\share; other ones (\\?\Volume{...}, \\.\pipe)
+        // launch doesn't read.
+        bool device = target.StartsWith(@"\\?\") || target.StartsWith(@"\\.\");
+        if (device && target.Length > 5 && target[5] == ':') target = target.Substring(4);
+        else if (device && target.Substring(4).StartsWith(@"UNC\", StringComparison.OrdinalIgnoreCase)) target = @"\\" + target.Substring(8);
+        else if (device) return Unchecked(root, "it is a device path (\\\\?\\ or \\\\.\\ without a drive letter), which launch doesn't read");
         if (dir.Replace('/', '\\').StartsWith(@"\\") && !target.StartsWith(@"\\") && !(target.Length > 1 && target[1] == ':'))
             target = Path.Combine(dir, target.TrimStart('\\'));  // relative to a folder on another computer
         // A UNC path names a file on another computer: launch reads nothing there, since connecting signs in to it, and
