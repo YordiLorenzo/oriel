@@ -119,7 +119,8 @@ SignPath Foundation for free code signing, so that Windows names the publisher.
 
 Run `install` from the new `oriel.exe` (with `--autostart` again if you use it). It stops the running copy and
 replaces it. Your client config points at the installed path, so it stays as it is. With the plugin, run
-`claude plugin update oriel@oriel` and restart Claude Code. To hear about new releases,
+`claude plugin update oriel@oriel`, stop the running copy (`Stop-Process -Name oriel`), and restart Claude Code. To
+hear about new releases,
 choose **Watch > Custom > Releases** on this repository, or follow the
 [releases feed](https://github.com/YordiLorenzo/oriel/releases.atom).
 
