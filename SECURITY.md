@@ -52,14 +52,36 @@ Other programs and web pages on the same PC are **not trusted**.
 ## What oriel does
 
 - **No shell by default, no files.** No tool runs commands or reads or writes files.
-  - `launch` starts a program, document or URI, as double-clicking it would. It refuses command interpreters and
-    script hosts (cmd, PowerShell, Windows Script Host and similar).
+  - `launch` starts a program, document or URI, as double-clicking it would. It refuses programs that run commands:
+    - shells and script hosts: cmd, powershell, pwsh, wscript and cscript (Windows Script Host), mshta, wsl, bash,
+      sh, ubuntu, conhost, wt and the terminals below;
+    - Windows tools that run a command, script or package that their arguments name: rundll32, regsvr32, forfiles,
+      pcalua, scriptrunner, SyncAppvPublishingServer, cmstp, msbuild, csc, vbc, jsc, wmic, msiexec, mmc, hh, ssh,
+      ftp and git;
+    - script interpreters: python, python3, pythonw, py, pyw, node, perl, ruby and php.
+  - `launch` decides by the program Windows would run, not by the name it gets:
+    - for a program, the program itself, by its file name and by the name in its version resource, so a renamed or
+      8.3-named copy of cmd.exe is still cmd;
+    - for a batch file (`.bat`, `.cmd`), cmd;
+    - for a shortcut (`.lnk`, `.url`), its target;
+    - for any other file or URI, the program that its file type or URI scheme opens with. So `.vbs`, `.vbe`, `.js`,
+      `.jse`, `.wsf` and `.wsh` files are refused (wscript), and so are `.hta` (mshta), `.msc` (mmc), `.msi`
+      (msiexec) and `.chm` (hh) files. A `.ps1` opens in Notepad unless PowerShell is set to run it; a `.txt`,
+      an `https:` link or `ms-settings:` opens as before.
+  - The same check applies to every file or program that the arguments name, so `explorer.exe run.bat`,
+    `chrome --gpu-launcher="cmd /c ..."` and `notepad run.bat` are refused.
+  - `launch` starts the file it checked. A bare name, a path without its extension, an environment variable, a
+    `file:` URI or a `shell:` path becomes the full path of that file first. A `shell:AppsFolder` app and a shortcut
+    that points at no file are refused, because launch can't see what they start.
   - Terminals that are already open are off limits too (Windows Terminal, console windows of cmd and PowerShell, the
-    PowerShell ISE, mintty and similar), because keys typed into one run as commands. In a WindowsAgentArena run,
-    agents typed PowerShell into an open terminal once `launch` refused to start one.
+    PowerShell ISE, mintty and similar), because keys typed into one run as commands. So are the windows of the
+    programs listed above. In a WindowsAgentArena run, agents typed PowerShell into an open terminal once `launch`
+    refused to start one.
   - To give the assistant a shell, put `{"shell": true}` in `config.json`. The deny list and an allow-list still
     apply.
-  - With an allow-list, `launch` starts only listed programs.
+  - With an allow-list, `launch` starts only listed programs: the program Windows would run must be listed (with
+    `notepad` listed, a `.txt` that opens in Notepad starts). Listing an interpreter by name allows it, and the files
+    it runs: `cmd` allows `.bat` files.
 - **Passwords.** Password fields (UIA `IsPassword`) can't be filled, read, or typed into. `keys` refuses when the
   focused element is a password field.
 - **Off-limits windows.** The lock screen (LockApp), sign-in (LogonUI), UAC prompts (consent), Windows credential
@@ -96,6 +118,12 @@ Other programs and web pages on the same PC are **not trusted**.
 
 - **The assistant acts as you.** Anything you can do in an allowed window, it can do: send an email, delete a file in
   Explorer (to the Recycle Bin), change a setting. Use the allow-list to keep it to the apps a task needs.
+- **The shell rule covers `launch` and open terminals, not every window.** In an allowed window the assistant can
+  start a program the way you can: File Explorer runs a batch file that is opened in it, its address bar and Task
+  Manager's **Run new task** run a typed command, and most apps' Open dialogs open files as Explorer does. The list of
+  programs that run commands can't be complete either. An allow-list that leaves out explorer and taskmgr narrows
+  this. To block scripts for certain, run the assistant in a Windows account where AppLocker or App Control for
+  Business blocks them, or in a VM.
 - **Keys and clicks are riskier** than element actions. Prefer `set` and `invoke`; `keys`, `click` and `drag` are
   refused while the user is typing or moving the mouse, and while the PC is locked.
 - **`screenshot`** shows whatever the window shows.
