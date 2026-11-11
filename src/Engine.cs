@@ -433,6 +433,8 @@ public static class Engine
     static string CheckLaunch(string path, string args)
     {
         lookups = 0;
+        made = 0;
+        checkedRuns.Clear();
         string file;
         var program = Runs(path, path, "", true, 0, out file);
         if (Allow.Count > 0 && (program == null || !Listed(program)))
@@ -478,7 +480,7 @@ public static class Engine
             for (int i = tail.IndexOfAny(blanks); tail.Length > 0; i = tail.IndexOfAny(blanks, i + 1))
             {
                 var path = (i < 0 ? tail : tail.Substring(0, i)).Trim('"');
-                if (++lookups > 256) throw new OrielError(root + ": the arguments name more words than launch checks (256)");
+                if (++made > 2048) throw new OrielError(root + ": the arguments name more words than launch checks");
                 Runs(root, path, dir, false, depth, out file);
                 if (path.IndexOfAny(Path.GetInvalidPathChars()) < 0)
                     foreach (var match in Found(path, dir, true)) Runs(root, match, dir, false, depth, out file);
@@ -494,8 +496,8 @@ public static class Engine
             // Each word counts toward the limit as it is made, so a long argument is refused before its parts fill memory.
             Action<string> add = w =>
             {
-                if (w.Length > 0 && words.Add(w) && ++lookups > 256)
-                    throw new OrielError(root + ": the arguments name more words than launch checks (256)");
+                if (w.Length > 0 && words.Add(w) && ++made > 2048)
+                    throw new OrielError(root + ": the arguments name more words than launch checks");
             };
             add(value);
             if (value.Split(joins).Length > 65) { Unchecked(root, "an argument with more than 64 of = , ; | < > is more than launch checks"); continue; }
@@ -514,7 +516,7 @@ public static class Engine
                 foreach (var whole in new List<string>(words))
                 {
                     var w = FromFileUri(whole.Trim().Trim('"')).Replace('/', '\\');
-                    if (w.StartsWith(@"\\") && !w.EndsWith(@"\") && w.LastIndexOf('.') <= w.LastIndexOf('\\'))
+                    if (w.StartsWith(@"\\") && !w.EndsWith(@"\") && Typeless(w))
                         Unchecked(root, "an argument names a file on another computer with no file type; launch can't tell what it is");
                 }
             // A word with spaces may be read as a command line by CreateProcess: each start up to a space is a program
@@ -523,7 +525,7 @@ public static class Engine
                 for (int i = word.IndexOfAny(blanks); i > 0; i = word.IndexOfAny(blanks, i + 1))
                 {
                     var start = word.Substring(0, i);
-                    bool typeless = start.LastIndexOf('.') <= start.LastIndexOf('\\');
+                    bool typeless = Typeless(start);
                     add(start.Replace('/', '\\').StartsWith(@"\\") && typeless ? start + ".exe" : start);
                 }
             // The program that gets a word may look it up its own way, not as Locate does (another folder first, only .exe
@@ -555,16 +557,28 @@ public static class Engine
     // target, else the program that its file type's or URI scheme's open command starts (null for none, a packaged app or
     // a COM handler). Throws when that program runs commands. file is the file or folder target names, null for a URI.
     // named: target is the path to start, so it must exist; else it is a word from args. dir as for CheckWords.
-    // Words of the arguments checked in this launch, at most 256: each lookup walks the PATH, and the daemon runs one
-    // request at a time, so a long argument list must not hold it up (1000 words took 46 s).
-    static int lookups;
+    // In this launch: distinct paths and words checked (at most 256: each lookup walks the PATH, and the daemon runs one
+    // request at a time, so a long argument list must not hold it up; 1000 words took 46 s), words made from the
+    // arguments (at most 2048, before they fill memory), and the result of each check, so a repeat costs nothing.
+    static int lookups, made;
+    static readonly Dictionary<string, string[]> checkedRuns = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
 
     static string Runs(string root, string target, string dir, bool named, int depth, out string file)
     {
+        if (depth > 8) throw new OrielError(root + ": launch follows at most 8 shortcuts and file types in a row");
+        var key = target + "\n" + dir + "\n" + named;
+        string[] done;
+        if (checkedRuns.TryGetValue(key, out done)) { file = done[1]; return done[0]; }
+        if (++lookups > 256) throw new OrielError(root + ": the arguments name more words than launch checks (256)");
+        var program = Check(root, target, dir, named, depth, out file);
+        checkedRuns[key] = new[] { program, file };
+        return program;
+    }
+
+    static string Check(string root, string target, string dir, bool named, int depth, out string file)
+    {
         file = null;
         string inner;
-        if (depth > 8) throw new OrielError(root + ": launch follows at most 8 shortcuts and file types in a row");
-        if (++lookups > 256) throw new OrielError(root + ": the arguments name more words than launch checks (256)");
         target = target.Trim().Trim('"');  // as written: ShellExecute expands no environment variables
         var scheme = SchemeOf(target);
         if (scheme == "shell" || target.StartsWith("::"))
@@ -606,7 +620,7 @@ public static class Engine
         if (file != null && Directory.Exists(file)) return "explorer";
         // For a path without a file type ShellExecute first tries the program types and .lnk, even when the file exists:
         // launch report would run report.lnk beside it.
-        if (named && file != null && Path.GetExtension(file).Length == 0)
+        if (named && file != null && Ext(file).Length == 0)
             return Unchecked(root, "a file without a file type: Windows opens a program or shortcut of the same name instead, if there is one");
         // Whatever its type, a file built as an interpreter counts as one (by the name in its version resource), so a
         // renamed or 8.3-named copy of cmd.exe is still cmd: a program can run a file its arguments name directly.
@@ -618,7 +632,7 @@ public static class Engine
         }
         var name = file ?? target;
         string ext;
-        try { ext = Path.GetExtension(name).ToLowerInvariant(); } catch (ArgumentException) { return null; }
+        try { ext = Ext(name).ToLowerInvariant(); } catch (ArgumentException) { return null; }
         if (remote && (ext == ".lnk" || ext == ".url")) return Unchecked(root, "a shortcut on another computer can't be read without connecting to it");
         if (remote && ext.Length == 0)  // Windows would pick a file for it there (tool.bat for tool)
             return named ? Unchecked(root, "on another computer launch can't tell what a name without a file type is (end a folder with \\)") : null;
@@ -750,7 +764,7 @@ public static class Engine
             for (int i = command.IndexOfAny(blanks); i > 0; i = command.IndexOfAny(blanks, i + 1))
             {
                 var start = command.Substring(0, i);
-                if (Path.GetExtension(start).Length == 0) start += ".exe";
+                if (Ext(start).Length == 0) start += ".exe";
                 var found = Locate(start, dir);
                 if (found == null || !File.Exists(found)) continue;
                 string other;
@@ -819,7 +833,7 @@ public static class Engine
                     if (!all) return found;  // else also tool.exe beside the folder tool, which CreateProcess would run
                 }
                 var names = new List<string>();
-                if (!Path.HasExtension(full)) foreach (var e in exts) names.Add(full + e);
+                if (Ext(full).Length == 0) foreach (var e in exts) names.Add(full + e);
                 names.Add(full);
                 foreach (var p in names)
                     if (File.Exists(p))
@@ -848,6 +862,20 @@ public static class Engine
         catch (NotSupportedException) { }
         catch (IOException) { }            // too long
         return found;
+    }
+
+    // A path's file type as Windows reads it: from the last dot of the name, and none when that part holds a space
+    // ("report. txt" has none, so Windows tries "report. txt.cmd" for it). Typeless reads it from the text alone.
+    static string Ext(string path)
+    {
+        var ext = Path.GetExtension(path);
+        return ext.IndexOf(' ') >= 0 ? "" : ext;
+    }
+
+    static bool Typeless(string path)
+    {
+        int dot = path.LastIndexOf('.');
+        return dot <= Math.Max(path.LastIndexOf('\\'), path.LastIndexOf('/')) || path.IndexOf(' ', dot) >= 0;
     }
 
     // The file types Windows tries for a name without one: PATHEXT's, then .pif and .lnk as ShellExecute does.
