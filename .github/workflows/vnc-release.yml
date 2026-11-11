@@ -1,7 +1,8 @@
 name: vnc-release
 
-# On a tag vnc-v0.1.0: check the tag against vnc/pyproject.toml and vnc/server.json, build oriel-vnc, publish it to
-# PyPI through trusted publishing (no API token), then list it in the MCP Registry as io.github.YordiLorenzo/oriel-vnc.
+# On a tag vnc-v0.1.0: check the tag against vnc/pyproject.toml and vnc/server.json, build oriel-vnc, then list it in
+# the MCP Registry as io.github.YordiLorenzo/oriel-vnc.
+# PyPI uploads are done with `uv publish` and the maintainer's token, before the tag is pushed.
 on:
   push:
     tags: ['vnc-v*']
@@ -40,31 +41,10 @@ jobs:
           cp LICENSE vnc/LICENSE
           uv build vnc --out-dir dist
 
-      - uses: actions/upload-artifact@v7
-        with:
-          name: dist
-          path: dist/
-
-  pypi:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/project/oriel-vnc/
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v8
-        with:
-          name: dist
-          path: dist/
-
-      - uses: pypa/gh-action-pypi-publish@release/v1
-
   # From https://modelcontextprotocol.io/registry/github-actions. The registry checks that the PyPI README holds
   # "mcp-name: io.github.YordiLorenzo/oriel-vnc".
   registry:
-    needs: pypi
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write

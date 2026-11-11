@@ -37,11 +37,10 @@ installed on the machines themselves.
 3. Add it to your MCP client. With [uv](https://docs.astral.sh/uv/) installed:
 
    ```
-   claude mcp add --scope user oriel-vnc -- uvx --from "git+https://github.com/YordiLorenzo/oriel#subdirectory=vnc" oriel-vnc
+   claude mcp add --scope user oriel-vnc -- uvx oriel-vnc
    ```
 
-   Other clients: the command is `uvx` with the arguments `--from`,
-   `git+https://github.com/YordiLorenzo/oriel#subdirectory=vnc` and `oriel-vnc`. From a checkout,
+   Other clients: the command is `uvx` with the argument `oriel-vnc`. From a checkout,
    `uv run --script vnc/oriel_vnc.py` works too.
 
 Then ask the assistant to take a screenshot of one of your machines.

@@ -20,9 +20,6 @@ thread in [Discussions](https://github.com/YordiLorenzo/oriel/discussions/catego
 5. **winget and Scoop.** The manifests are ready in [packaging/](packaging/) but not submitted yet, so neither works
    today. They go out after the launch. Until then, download `oriel.exe` from the
    [releases](https://github.com/YordiLorenzo/oriel/releases).
-6. **oriel-vnc on PyPI,** so it installs with `uvx oriel-vnc` instead of a git URL. The release workflow is ready
-   ([vnc-release.yml](.github/workflows/vnc-release.yml)) and publishes it with the first `vnc-v` tag. Until then, use
-   the git URL in [vnc/README.md](vnc/README.md).
 
 ## Later
 

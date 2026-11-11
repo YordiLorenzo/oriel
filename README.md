@@ -272,7 +272,7 @@ running. The Claude Code plugin works only on the Windows PC itself; from a Mac,
 `~/.config/oriel-vnc/hosts.json` ([vnc/README.md](vnc/README.md)):
 
 ```
-claude mcp add --scope user oriel-vnc -- uvx --from "git+https://github.com/YordiLorenzo/oriel#subdirectory=vnc" oriel-vnc
+claude mcp add --scope user oriel-vnc -- uvx oriel-vnc
 ```
 
 To check oriel without a client, run `& "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" call windows` in PowerShell.
