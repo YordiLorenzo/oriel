@@ -13,7 +13,7 @@ New ways to install and to check a download. The tools work as in 0.1.0.
 - **MCP Registry:** each published release is registered in the official MCP Registry as `io.github.YordiLorenzo/oriel`, titled "oriel for Windows". `io.github.ParadoxInfinite/oriel` is a different project.
 - **Build provenance:** `oriel.exe` and the bundle carry a GitHub build provenance attestation. `gh attestation verify oriel.exe -R YordiLorenzo/oriel` checks that this repository's release workflow built the file.
 - **`oriel install` prints your config:** it ends with ready-to-paste config for your real path: the `claude mcp add` line, the `mcpServers` JSON for Claude Desktop and Cursor, the TOML for Codex and the SSH line for a Mac or Linux machine (a `'` in the user name or path is quoted for that shell), then a link to Discussions to say whether it worked.
-- **oriel-vnc release workflow:** a `vnc-v*` tag checks the version, builds oriel-vnc, publishes it to PyPI through trusted publishing and lists it in the MCP Registry as `io.github.YordiLorenzo/oriel-vnc`. The package has PyPI metadata, and its README uses absolute links so they work on PyPI. It isn't on PyPI yet.
+- **oriel-vnc on PyPI:** oriel-vnc 0.1.0 is on [PyPI](https://pypi.org/project/oriel-vnc/), so `claude mcp add --scope user oriel-vnc -- uvx oriel-vnc` installs it without a git URL. A `vnc-v*` tag checks the version, builds oriel-vnc and lists it in the MCP Registry as `io.github.YordiLorenzo/oriel-vnc`. The PyPI upload is done with `uv publish` before the tag.
 
 ### Changed
 
