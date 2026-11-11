@@ -4,7 +4,7 @@
 # restore copies <snapshot dir> over the instance's vm/storage; save copies vm/storage to <snapshot dir>. A relative
 # snapshot dir is taken inside the instance's vm/ folder.
 set -e
-DIR=${3:-/root/WindowsAgentArena}
+DIR=${3:-${WAA_HOME:-/root}/WindowsAgentArena}
 NAME=${4:-winarena}
 cd "$DIR/src/win-arena-container/vm"
 if docker ps --format '{{.Names}}' | grep -qx "$NAME"; then

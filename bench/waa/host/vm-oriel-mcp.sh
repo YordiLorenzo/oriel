@@ -3,5 +3,5 @@
 # which talks to the oriel daemon in the VM's desktop session. bench/waa/run.py starts this through ssh + wsl.
 # Usage: vm-oriel-mcp.sh [container]
 IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "${1:-winarena}")
-exec ssh -i /root/.ssh/waa_vm -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -T "Docker@$IP" \
+exec ssh -i "${WAA_HOME:-/root}/.ssh/waa_vm" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -T "Docker@$IP" \
     'C:\Users\Docker\AppData\Local\Programs\oriel\oriel.exe mcp'

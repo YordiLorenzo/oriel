@@ -1,6 +1,7 @@
-# Install Cua Driver 0.38.0 in the WAA VM from the share (checksum-verified zip), turn its telemetry off before first
-# use, then start its daemon and a loopback relay (port 3018) for its stdio MCP. Run in the desktop session, through
-# WAA's /setup/execute. After a VM restart, rerun it (the install steps are idempotent).
+# Install Cua Driver in the WAA VM from the share (the zip and checksums.txt that host/waa-tools.sh put there: 0.38.0
+# in rounds 1-9, 0.46.1 in round 10), checksum-verified, turn its telemetry off before first use, then start its
+# daemon and a loopback relay (port 3018) for its stdio MCP. Run in the desktop session, through WAA's /setup/execute.
+# After a VM restart, rerun it (the install steps are idempotent).
 $src = '\\host.lan\Data'
 $dst = 'C:\agent-tools\cua-driver'
 Start-Transcript "$src\cua-provision.log"
