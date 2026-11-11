@@ -26,7 +26,11 @@ In PowerShell, with Claude Code 2.1.292 or later:
 claude plugin install oriel --marketplace YordiLorenzo/oriel
 ```
 
-Then start `claude` and ask it to open Calculator and work out 127 times 46 by pressing its buttons.
+Then start `claude` and try one of these:
+
+- Which windows are open?
+- Open Calculator and work out 127 times 46 by pressing its buttons.
+- Open Notepad, write a three-line note and save it in Documents as oriel-test.txt.
 
 ## What the plugin runs
 
@@ -58,7 +62,8 @@ program that sends keystrokes and reads other windows.
 
 ## Uninstall
 
-Run `claude plugin uninstall oriel@oriel`, then delete the `%LOCALAPPDATA%\oriel` folder.
+Run `claude plugin uninstall oriel@oriel`. To remove oriel's settings too, stop any copy that still runs
+(`Stop-Process -Name oriel` in PowerShell), then delete the `%LOCALAPPDATA%\oriel` folder.
 
 ## More
 

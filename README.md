@@ -131,7 +131,8 @@ choose **Watch > Custom > Releases** on this repository, or follow the
 
 This stops oriel, removes the logon entry if there is one, deletes the install and settings folders, and lists what
 it removed. Then remove oriel from your MCP client: in Claude Code, `claude mcp remove --scope user oriel`. With the
-plugin, run `claude plugin uninstall oriel@oriel` instead, then delete the `%LOCALAPPDATA%\oriel` folder.
+plugin, run `claude plugin uninstall oriel@oriel` instead. To remove oriel's settings too, stop any copy that still
+runs (`Stop-Process -Name oriel`), then delete the `%LOCALAPPDATA%\oriel` folder.
 
 ## What it does
 
