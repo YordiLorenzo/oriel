@@ -52,6 +52,19 @@ The full runs used one Intel droplet with nested KVM (32 vCPUs), running 10 to 1
 3. `do-instances.sh <first> <last> <disk dir>` makes and boots instances `waa<first>` to `waa<last>` from that disk, and `do-roles.sh <layer> <first> <last>` sets each VM up for its tool layer.
 4. From the client computer: `WAA_DO_HOST=<droplet address> ./run-do.sh oriel:0-4 cua:5-9` runs both layers, each split across its instances. The SSH key comes from `WAA_DO_KEY` (default `~/.ssh/do_waa_ed25519`).
 
+## Round 10 on firecracker
+
+oriel 0.1.1 against Cua Driver 0.46.1, two runs per layer over the same tasks, published whichever side wins.
+
+**The same as round 9:** Claude Sonnet 5.5, the prompt and the one-sentence hint per layer, 50 turns, 900 s per task, Cua Driver's 4 hidden tools, 10 VMs of 8 GB and 4 vCPUs (5 per layer), every VM rebuilt from the warmed image before each run. Cua Driver 0.46.1 has the same 63 tools as 0.38.0, and its docs describe the 4 hidden ones in the same words as 0.38.0's, so the round 9 rule stands.
+
+**What changed:**
+- **Host:** firecracker, the lab's Linux machine (Threadripper 9960X, 48 threads, 122 GiB, KVM on bare metal), instead of a droplet with nested KVM. The agents run there too (`run.py --remote local`), so no client connection can drop mid-run as in rounds 8 and 9.
+- **Agent settings:** Claude Code runs with its own settings folder (`host/agent-home.sh`): no CLAUDE.md, skills, plugins or hooks of the machine's user, and no auto-update during the run. Rounds 1 to 9 ran with the Mac user's settings. On 11 Nov a one-line prompt with round 9's flags started from 50,040 tokens under those settings, 12,682 in the agents' own folder, and 3,652 with round 10's flags.
+- **Model and effort pinned:** `--model claude-sonnet-5-5 --effort xhigh`. Round 9 passed `sonnet`, which named Sonnet 5.5 then and still does, and took the effort from the user's settings. They say `xhigh` in every settings file and backup from 3 Nov on; no record shows round 9's own value.
+- **Claude Code's own tools:** only ToolSearch, which loads deferred MCP tools (`--tools ToolSearch`). Round 9's list of tools to drop leaves 14 newer tools in Claude Code 2.1.322 (Workflow, SendMessage, Skill, Cron and others).
+- **Network:** each VM's web viewer and RDP are published on 127.0.0.1 only (`host/waa-patch.py`).
+
 ## Not tuning to the benchmark
 
 1. **Only general fixes.** A change to oriel must fix something a user on their own PC would hit, and the commit says which failure motivated it. Nothing may depend on WAA's tasks, files or evaluators.
