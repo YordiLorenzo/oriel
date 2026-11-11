@@ -469,11 +469,11 @@ public static class Engine
                 }
             }
             words.Remove("");
-            // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe,
-            // ShellExecute also tries .pif and .lnk), so for a word without a file type each file it could mean counts.
+            // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe),
+            // so for a word without a file type each file it could mean counts.
             foreach (var word in new List<string>(words))
                 if (word.IndexOfAny(Path.GetInvalidPathChars()) < 0 && !Path.HasExtension(word.TrimEnd('.', ' ')))
-                    foreach (var e in ((Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD") + ";.PIF;.LNK").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                    foreach (var e in ProgramTypes())
                         if (Locate(word + e, dir) != null) words.Add(word + e);
             string file;
             foreach (var word in words)
@@ -642,14 +642,17 @@ public static class Engine
     {
         if (command == null) return null;
         command = Environment.ExpandEnvironmentVariables(command);  // Windows expands it before it runs it
-        int cut = command.Length;
+        int cut = command.IndexOf(' ') > 0 ? command.IndexOf(' ') : command.Length;
         if (command.StartsWith("\""))
         {
             if (command.IndexOf('"', 1) > 0) cut = command.IndexOf('"', 1) + 1;
         }
         else  // unquoted, as CreateProcess reads it: the first start up to a space that names a file (C:\Program Files\x.exe %1)
             for (int i = command.IndexOf(' '); i > 0; i = command.IndexOf(' ', i + 1))
-                if (Locate(command.Substring(0, i), dir) != null) { cut = i; break; }
+            {
+                var found = Locate(command.Substring(0, i), dir);
+                if (found != null && File.Exists(found)) { cut = i; break; }
+            }
         string file;
         var program = Runs(root, command.Substring(0, cut), dir, false, depth + 1, out file);
         CheckWords(root, command.Substring(cut), dir, depth + 1);
@@ -667,7 +670,7 @@ public static class Engine
 
     // The file or folder target names, with its long name, found the way ShellExecute finds it: a path (relative to dir,
     // "" for the current directory), or a bare name in dir, the Windows folders, on the PATH or in App Paths. A name without an extension
-    // tries the PATHEXT ones first, so "run" is run.bat when that exists, but a folder is a folder: it gets a trailing \,
+    // tries the ProgramTypes ones first, so "run" is run.bat when that exists, but a folder is a folder: it gets a trailing \,
     // without which ShellExecute would run folder.exe beside it. Null when there is none, or target isn't a path.
     static string Locate(string target, string dir)
     {
@@ -682,7 +685,7 @@ public static class Engine
                 dirs.Add(Environment.SystemDirectory);
                 dirs.AddRange((Environment.GetEnvironmentVariable("PATH") ?? "").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
             }
-            var exts = (Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var exts = ProgramTypes();
             foreach (var folder in dirs)
             {
                 // Nothing on another computer is read (see Runs), whichever folder the path comes from.
@@ -710,6 +713,12 @@ public static class Engine
         catch (NotSupportedException) { }
         catch (IOException) { }            // too long
         return null;
+    }
+
+    // The file types Windows tries for a name without one: PATHEXT's, then .pif and .lnk as ShellExecute does.
+    static string[] ProgramTypes()
+    {
+        return ((Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD") + ";.PIF;.LNK").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
     }
 
     static string LongPath(string path)
