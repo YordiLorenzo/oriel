@@ -511,6 +511,8 @@ public static class Engine
         }
         target = target.Replace('/', '\\');
         if ((target.StartsWith(@"\\?\") || target.StartsWith(@"\\.\")) && target.Length > 5 && target[5] == ':') target = target.Substring(4);
+        if (dir.Replace('/', '\\').StartsWith(@"\\") && !target.StartsWith(@"\\") && !(target.Length > 1 && target[1] == ':'))
+            target = Path.Combine(dir, target.TrimStart('\\'));  // relative to a folder on another computer
         // A UNC path names a file on another computer: launch reads nothing there, since connecting signs in to it, and
         // goes by the name and type alone. It reads the path as text, as Windows will (run.bat. and "run.bat " are run.bat);
         // . .. and short names (~) it can't resolve without asking the server.
@@ -568,7 +570,8 @@ public static class Engine
             {
                 var url = new StringBuilder(32768);
                 if (GetPrivateProfileString(section, "URL", "", url, url.Capacity, file) == 0) continue;
-                opens = Runs(root, url.ToString(), dir, true, depth + 1, out inner);
+                var text = section.EndsWith(".W") ? Encoding.UTF7.GetString(Encoding.ASCII.GetBytes(url.ToString())) : url.ToString();  // .W holds UTF-7
+                opens = Runs(root, text, dir, true, depth + 1, out inner);
                 any = true;
             }
             return any ? opens : Unchecked(root, "the shortcut has no URL");
@@ -643,7 +646,11 @@ public static class Engine
             var exts = (Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var folder in dirs)
             {
-                var full = Path.GetFullPath(Path.Combine(folder.Trim().Trim('"'), target));
+                // Nothing on another computer is read (see Runs), whichever folder the path comes from.
+                var joined = Path.Combine(folder.Trim().Trim('"'), target).Replace('/', '\\');
+                if (joined.StartsWith(@"\\")) continue;
+                var full = Path.GetFullPath(joined);
+                if (full.StartsWith(@"\\")) continue;
                 if (Directory.Exists(full)) return LongPath(full).TrimEnd('\\') + "\\";
                 var names = new List<string>();
                 if (!Path.HasExtension(full)) foreach (var e in exts) names.Add(full + e);
@@ -656,8 +663,8 @@ public static class Engine
                         using (var app = hive.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\App Paths\" + key))
                         {
                             var p = app == null ? null : app.GetValue("") as string;
-                            if (p != null) p = p.Trim().Trim('"');
-                            if (p != null && File.Exists(p)) return LongPath(p);
+                            if (p != null) p = p.Trim().Trim('"').Replace('/', '\\');
+                            if (p != null && !p.StartsWith(@"\\") && File.Exists(p)) return LongPath(p);
                         }
         }
         catch (ArgumentException) { }      // not a name Windows takes as a path (a:b:c)
