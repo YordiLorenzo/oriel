@@ -54,7 +54,7 @@
         "applicationSubCategory": "MCP server",
         "operatingSystem": "Windows 11",
         "softwareRequirements": ".NET Framework 4.8, which Windows includes",
-        "softwareVersion": "0.1.0",
+        "softwareVersion": "0.1.1",
         "datePublished": "2026-10-26",
         "downloadUrl": "https://github.com/YordiLorenzo/oriel/releases/latest/download/oriel.exe",
         "releaseNotes": "https://github.com/YordiLorenzo/oriel/blob/main/CHANGELOG.md",
@@ -92,7 +92,7 @@
           {
             "@type": "Question",
             "name": "It isn't code-signed. Can I trust it?",
-            "acceptedAnswer": { "@type": "Answer", "text": "The source is open and every release lists its hash in SHA256SUMS. From 0.1.1, each release file also carries a GitHub build attestation that gh attestation verify checks. oriel will apply to SignPath Foundation for free code signing; the code signing policy says how it will work. Until then SmartScreen warns, and Smart App Control, where it is on, blocks it." }
+            "acceptedAnswer": { "@type": "Answer", "text": "The source is open and every release lists its hash in SHA256SUMS, and each release file also carries a GitHub build attestation that gh attestation verify checks. oriel will apply to SignPath Foundation for free code signing; the code signing policy says how it will work. Until then SmartScreen warns, and Smart App Control, where it is on, blocks it." }
           },
           {
             "@type": "Question",
@@ -179,7 +179,7 @@
             <h3>Install</h3>
             <p><a class="text-link" href="download/">Download oriel.exe</a>, then run this in PowerShell in the download folder:</p>
             <pre class="code" data-copy="install"><code>.\oriel.exe install</code></pre>
-            <p class="fine">It copies oriel to <code>%LOCALAPPDATA%\Programs\oriel</code>, for your Windows account only. From 0.1.1 it ends by printing the config line for each client, with your path filled in. Not code-signed yet, so Windows will warn: <a class="text-link" href="#windows-warns">why, and how to check the file</a>.</p>
+            <p class="fine">It copies oriel to <code>%LOCALAPPDATA%\Programs\oriel</code>, for your Windows account only. It ends by printing the config line for each client, with your path filled in. Not code-signed yet, so Windows will warn: <a class="text-link" href="#windows-warns">why, and how to check the file</a>.</p>
           </li>
           <li>
             <h3>Add it to Claude Code</h3>
@@ -199,7 +199,7 @@
               <div class="tab-panel panel-claude">
                 <p>In the same PowerShell window:</p>
                 <pre class="code" data-copy="claude-mcp-add"><code>claude mcp add <span class="nw">--scope</span> user oriel -- "$env:LOCALAPPDATA\<wbr>Programs\<wbr>oriel\<wbr>oriel.exe" mcp</code></pre>
-                <p>Or, from 0.1.1, as a Claude Code plugin (Claude Code 2.1.292 or later). Use one of the two, not both.</p>
+                <p>Or as a Claude Code plugin (Claude Code 2.1.292 or later, and Git for Windows, which Claude Code uses to fetch the plugin). Use one of the two, not both.</p>
                 <pre class="code" data-copy="claude-plugin"><code>claude plugin install oriel <span class="nw">--marketplace</span> YordiLorenzo/oriel</code></pre>
               </div>
               <div class="tab-panel panel-ssh">
@@ -222,7 +222,7 @@ args = ["mcp"]</code></pre>
     }
   }
 }</code></pre>
-                <p class="fine">From 0.1.1, each release also has an <code>.mcpb</code> bundle that Claude Desktop installs as an extension.</p>
+                <p class="fine">Each release also has an <code>.mcpb</code> bundle that Claude Desktop installs as an extension.</p>
               </div>
               <div class="tab-panel panel-vscode">
                 <p>Not tested yet. In <code>.vscode\mcp.json</code>:</p>
@@ -266,7 +266,7 @@ args = ["mcp"]</code></pre>
           <h3>Check the file</h3>
           <p>In PowerShell, compare its hash with the release's <code>SHA256SUMS</code>:</p>
           <pre class="code" data-copy="get-filehash"><code>(Get-FileHash .\oriel.exe).Hash</code></pre>
-          <p>From 0.1.1, the GitHub CLI can also check that this repository's release workflow built it:</p>
+          <p>The GitHub CLI can also check that this repository's release workflow built it:</p>
           <pre class="code" data-copy="attestation"><code>gh attestation verify oriel.exe -R YordiLorenzo/oriel</code></pre>
           <p>oriel will apply to SignPath Foundation for free code signing, so that Windows names the publisher. The <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/code-signing.md">code signing policy</a> says what will be signed and who approves it.</p>
         </div>
@@ -432,7 +432,7 @@ args = ["mcp"]</code></pre>
           </details>
           <details>
             <summary>It isn't code-signed. Can I trust it?</summary>
-            <p>The source is open and every release lists its hash in <code>SHA256SUMS</code>. From 0.1.1, each release file also carries a GitHub build attestation that <code>gh attestation verify</code> checks. oriel will apply to SignPath Foundation for free code signing; the <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/code-signing.md">code signing policy</a> says how it will work. Until then SmartScreen warns, and Smart App Control, where it is on, blocks it. <a class="text-link" href="#windows-warns">Each warning</a></p>
+            <p>The source is open and every release lists its hash in <code>SHA256SUMS</code>, and each release file also carries a GitHub build attestation that <code>gh attestation verify</code> checks. oriel will apply to SignPath Foundation for free code signing; the <a class="text-link" href="https://github.com/YordiLorenzo/oriel/blob/main/docs/code-signing.md">code signing policy</a> says how it will work. Until then SmartScreen warns, and Smart App Control, where it is on, blocks it. <a class="text-link" href="#windows-warns">Each warning</a></p>
           </details>
           <details>
             <summary>Does it work on a Mac or on Linux?</summary>

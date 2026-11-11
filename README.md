@@ -51,7 +51,7 @@ oriel needs no admin rights and installs no service or driver. `oriel uninstall`
 ([the full list](#what-oriel-changes-on-your-pc)).
 
 1. Download `oriel.exe` from the [latest release](https://github.com/YordiLorenzo/oriel/releases/latest). To check
-   the file, compare `(Get-FileHash .\oriel.exe).Hash` with the release's `SHA256SUMS`. From release 0.1.1,
+   the file, compare `(Get-FileHash .\oriel.exe).Hash` with the release's `SHA256SUMS`.
    `gh attestation verify oriel.exe -R YordiLorenzo/oriel` also checks that this repository's release workflow built
    it.
 2. In PowerShell, in the download folder:
@@ -61,7 +61,7 @@ oriel needs no admin rights and installs no service or driver. `oriel uninstall`
    ```
 
    This copies oriel to `%LOCALAPPDATA%\Programs\oriel` and starts it. Add `--autostart` if you want it running from
-   the moment you sign in. From release 0.1.1, it ends by printing the config for Claude Code, Claude Desktop, Cursor,
+   the moment you sign in. It ends by printing the config for Claude Code, Claude Desktop, Cursor,
    Codex and SSH, with your real path filled in, ready to paste.
 3. Add it to Claude Code, in the same PowerShell window:
 
@@ -69,7 +69,8 @@ oriel needs no admin rights and installs no service or driver. `oriel uninstall`
    claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp
    ```
 
-   From release 0.1.1, the Claude Code plugin does the same (Claude Code 2.1.292 or later):
+   Or use the Claude Code plugin, which does the same (Claude Code 2.1.292 or later, and
+   [Git for Windows](https://git-scm.com/downloads/win), which Claude Code uses to fetch the plugin):
 
    ```powershell
    claude plugin install oriel --marketplace YordiLorenzo/oriel
@@ -215,16 +216,16 @@ Every tool and its options: [docs/tools.md](docs/tools.md). How it is built and 
 Every client needs the same two things: the full path to the installed `oriel.exe` as the command, and `mcp` as the
 argument.
 
-From release 0.1.1, `oriel install` ends by printing the Claude Code line, the Codex and the Claude Desktop/Cursor
+`oriel install` ends by printing the Claude Code line, the Codex and the Claude Desktop/Cursor
 blocks and the SSH line below with your real path filled in and the backslashes already doubled where JSON and TOML
 need it, so you can paste them as they are. It doesn't print the VS Code or oriel-vnc blocks. With 0.1.0, or without
 that output, replace `<you>` below with your Windows user name. Restart the client after editing its file.
 
 | Client | Command or config file |
 |---|---|
-| Claude Code | `claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp` (in PowerShell), or from release 0.1.1 `claude plugin install oriel --marketplace YordiLorenzo/oriel` |
+| Claude Code | `claude mcp add --scope user oriel -- "$env:LOCALAPPDATA\Programs\oriel\oriel.exe" mcp` (in PowerShell), or `claude plugin install oriel --marketplace YordiLorenzo/oriel` |
 | Codex | `%USERPROFILE%\.codex\config.toml` |
-| Claude Desktop | `%APPDATA%\Claude\claude_desktop_config.json`, or from release 0.1.1 the `.mcpb` bundle |
+| Claude Desktop | `%APPDATA%\Claude\claude_desktop_config.json`, or the `.mcpb` bundle |
 | Cursor | `%USERPROFILE%\.cursor\mcp.json` |
 | VS Code | `.vscode\mcp.json` in a workspace |
 
@@ -246,7 +247,7 @@ args = ["mcp"]
 }
 ```
 
-From release 0.1.1, **Claude Desktop** can also install oriel as an extension: download
+**Claude Desktop** can also install oriel as an extension: download
 `oriel-<version>-win-x64.mcpb` from the [latest release](https://github.com/YordiLorenzo/oriel/releases/latest) and
 open it with Claude Desktop. This way isn't tested yet.
 
