@@ -463,6 +463,28 @@ public static class Engine
         var expanded = Argv(Environment.ExpandEnvironmentVariables(args));
         var values = new HashSet<string>(written, StringComparer.OrdinalIgnoreCase);
         values.UnionWith(expanded);
+        // A program may take its whole argument string as one path, spaces and all (explorer.exe C:\a b\run.bat runs it
+        // unquoted), so that string, and each start of it up to a blank, counts as a path too. In a command line found
+        // inside an argument the string starts after its first word, the program.
+        foreach (var line in new[] { args, Environment.ExpandEnvironmentVariables(args) })
+        {
+            var tail = line.Trim();
+            if (nested)
+            {
+                int cut = tail.StartsWith("\"") ? tail.IndexOf('"', 1) + 1 : tail.IndexOfAny(blanks);
+                tail = cut > 0 ? tail.Substring(cut).Trim() : "";
+            }
+            string file;
+            for (int i = tail.IndexOfAny(blanks); tail.Length > 0; i = tail.IndexOfAny(blanks, i + 1))
+            {
+                var path = (i < 0 ? tail : tail.Substring(0, i)).Trim('"');
+                if (++lookups > 256) throw new OrielError(root + ": the arguments name more words than launch checks (256)");
+                Runs(root, path, dir, false, depth, out file);
+                if (path.IndexOfAny(Path.GetInvalidPathChars()) < 0)
+                    foreach (var match in Found(path, dir, true)) Runs(root, match, dir, false, depth, out file);
+                if (i < 0) break;
+            }
+        }
         foreach (var value in values)
         {
             // In a command line found inside an argument, the first word is the program (CreateProcess adds .exe to it,
