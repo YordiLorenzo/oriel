@@ -122,6 +122,19 @@ def difference_table(everything, feasible):
     return out
 
 
+def host_table(oriel, cua):
+    """Each run's mean host load and PSU output over its rows' start and end readings (round 10 on). Both layers of a
+    run ran side by side, so these should match; a gap means one layer ran under more background load."""
+    out = ["| run | host load, 1 min | PSU output, W |", "|---|---|---|"]
+    for name, path in [*(("oriel " + p, p) for p in oriel), *(("Cua Driver " + p, p) for p in cua)]:
+        rows = [r for r in load(path).values() if "host_load" in r]
+        if rows:
+            load_mean = statistics.mean(x for r in rows for x in r["host_load"])
+            watts = [w for r in rows for w in r["host_psu_w"] if w is not None]
+            out.append(f"| {name} | {load_mean:.1f} | {statistics.mean(watts):.0f} |" if watts else f"| {name} | {load_mean:.1f} | - |")
+    return out if len(out) > 2 else []
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=1)
@@ -137,6 +150,7 @@ def main():
     print("\n".join(levels_table(everything, feasible)) + "\n")
     print("\n".join(difference_table(everything, feasible)) + "\n")
     print("\n".join(run_to_run_table(*run_to_run(args.oriel, args.cua, args.reps, args.seed))))
+    print("\n" + "\n".join(host_table(args.oriel, args.cua)))
 
 
 if __name__ == "__main__":

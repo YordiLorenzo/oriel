@@ -69,6 +69,13 @@ def waa(container: str, *args: str, timeout: int = 600) -> dict:
     raise RuntimeError(f"waa_env.py {' '.join(args)}: {(p.stdout + p.stderr)[-600:]}")
 
 
+def host_state() -> dict:
+    """The WAA host's 1-minute load average and PSU output in watts (host/host-load.sh), so rows can show that both
+    layers ran under the same background load."""
+    p = subprocess.run([*REMOTE, f"{WAA_HOME}/host-load.sh"], capture_output=True, text=True, timeout=60, check=True)
+    return json.loads(p.stdout)
+
+
 def run_agent(prompt: str, mcp: dict, layer: dict, model: str, effort: str | None, max_turns: int, timeout: int,
               trace: str) -> dict:
     """Run the agent; its full event stream goes to `trace`, and the final result event is returned."""
@@ -143,6 +150,7 @@ def main():
         trace = f"traces/{tag}/{task_id}.jsonl"
         command = [*REMOTE, layer["mcp"], args.container]
         mcp = {"command": command[0], "args": command[1:]}
+        host_start = host_state()
         out = run_agent(PROMPT.format(hint=layer["hint"], instruction=instruction), mcp, layer, args.model, args.effort,
                         args.max_turns, args.timeout, trace)
         # The Mac's own connection dropping is no result for either layer: no row, so the next run retries the task.
@@ -155,6 +163,7 @@ def main():
             print(f"{domain}/{task_id} LIMIT {result}", flush=True)
             continue
         infeasible = result.rstrip().rstrip(".").endswith("INFEASIBLE")
+        host_end = host_state()
         try:
             score = waa(args.container, "eval", domain, task_id, *(["--fail"] if infeasible else []))["score"]
         except Exception as e:
@@ -163,6 +172,7 @@ def main():
         row = {"task": task_id, "domain": domain, "layer": args.layer, "model": args.model, "effort": args.effort, "score": score,
                "infeasible_claimed": infeasible, "turns": out.get("num_turns"), "wall_s": out.get("wall_s"),
                "cost_usd": out.get("total_cost_usd"), "error": out.get("is_error"), "subtype": out.get("subtype"),
+               "host_load": [host_start["load1"], host_end["load1"]], "host_psu_w": [host_start["psu_w"], host_end["psu_w"]],
                "instruction": instruction, "result": result[-400:]}
         print(f"{domain}/{task_id[:8]} score={score} turns={row['turns']} wall={row['wall_s']}s ${row['cost_usd'] or 0:.2f}", flush=True)
         with open(out_path, "a") as f:
