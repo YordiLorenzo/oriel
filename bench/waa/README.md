@@ -79,7 +79,28 @@ bash $WAA_HOME/oriel/bench/waa/host/waa-tools.sh 0.1.1 0.46.1  # oriel and Cua D
 bash $WAA_HOME/agent-home.sh                                    # the agents' Claude Code folder
 ```
 
-Then, as in rounds 8 and 9: provision the golden image (OpenSSH, oriel, Cua Driver unpacked) and save it as `storage-provisioned`, and build the warmed image with `do-warm.sh oriel-0.1.1.exe` (`storage-warm`).
+Then, as in rounds 8 and 9, provision the golden image and warm it (LibreOffice's first start):
+
+```bash
+cd $WAA_HOME
+bash waa-snapshot.sh save storage-golden
+setsid nohup ./waa-serve.sh > waa-serve-base.log 2>&1 < /dev/null &    # wait until WAA's server answers, then:
+./vm-exec.sh '& \\host.lan\Data\oriel-provision.ps1'                   # OpenSSH with the key, oriel
+./vm-exec.sh '& \\host.lan\Data\cua-provision.ps1'                     # Cua Driver unpacked, telemetry off
+bash waa-snapshot.sh save storage-provisioned
+bash do-warm.sh oriel-0.1.1.exe                                         # saves storage-warm
+```
+
+### The full run
+
+The run starts at 00:00 on Fri 13 Nov (heavy work on firecracker runs from 00:00 to 08:00).
+
+1. The rig must be on: `ssh firecracker uptime`. If it doesn't answer, `wake firecracker`; if that fails too, press its power button.
+2. Start it: `ssh firecracker 'cd ~/waa && setsid nohup bash round10.sh > round10.log 2>&1 < /dev/null &'`. The VMs and the agents keep the rig awake.
+3. `round10.sh` does each run in turn: rebuild the 10 VMs from `storage-warm`, set up waa0-4 for oriel and waa5-9 for Cua Driver, run both layers (each split over its 5 VMs), then a second pass for tasks that got no row.
+4. Watch it: `ssh firecracker 'tail -4 ~/waa/round10.log; cd ~/waa/oriel/bench/waa && wc -l results-oriel-0.1.1-t*.jsonl results-cua-r10-t*.jsonl'`. Each VM's log is `logs/<tag>-waa<i>.log`, each task's agent trace `traces/<tag>/<task>.jsonl`.
+5. Results land on the rig in `~/waa/oriel/bench/waa`: `results-oriel-0.1.1-t1.jsonl`, `-t2`, `results-cua-r10-t1.jsonl`, `-t2`. Copy them into this folder, add round 10 to `ROUNDS` in `report.py`, and run `stats.py --oriel results-oriel-0.1.1-t1.jsonl results-oriel-0.1.1-t2.jsonl --cua results-cua-r10-t1.jsonl results-cua-r10-t2.jsonl`.
+6. Afterwards: `docker rm -f $(docker ps -aq --filter name=waa)` and delete `~/waa/waa-<i>` (each holds a VM disk).
 
 ## Not tuning to the benchmark
 
