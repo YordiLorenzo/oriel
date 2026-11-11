@@ -53,36 +53,34 @@ Other programs and web pages on the same PC are **not trusted**.
 
 - **No shell by default, no files.** No tool runs commands or reads or writes files.
   - `launch` starts a program, document or URI, as double-clicking it would. It refuses programs that run commands:
-    - shells and script hosts: cmd, powershell, pwsh, wscript and cscript (Windows Script Host), mshta, wsl, bash,
-      sh, ubuntu, conhost, wt and the terminals below;
-    - Windows tools that run a command, script or package that their arguments name: rundll32, regsvr32, forfiles,
-      pcalua, scriptrunner, SyncAppvPublishingServer, cmstp, msbuild, csc, vbc, jsc, wmic, msiexec, mmc, hh, ssh,
-      ftp and git;
-    - script interpreters: python, python3, pythonw, py, pyw, node, perl, ruby and php.
+    - shells, script hosts and script interpreters: cmd, powershell, pwsh, wscript and cscript (Windows Script
+      Host), mshta, rundll32, regsvr32, wsl, bash, sh, ubuntu, conhost, wt, wmic, ssh, ftp, git, python, python3,
+      pythonw, py, pyw, node, perl, ruby, php and the terminals below;
+    - Windows tools that run a command, script, package or DLL that their arguments name: forfiles, pcalua,
+      scriptrunner, SyncAppvPublishingServer, cmstp, msbuild, csc, vbc, jsc, msiexec, mmc and hh.
   - `launch` decides by the program Windows would run, not by the name it gets:
     - for a program, the program itself, by its file name and by the name in its version resource, so a renamed or
       8.3-named copy of cmd.exe is still cmd;
-    - for a batch file (`.bat`, `.cmd`), cmd;
-    - for a shortcut (`.lnk`, `.url`), its target;
+    - for a batch file (`.bat`, `.cmd`), cmd; for a Control Panel item (`.cpl`, a DLL), rundll32;
+    - for a shortcut (`.lnk`, `.url`), its target, with its arguments and its working folder;
     - for any other file or URI, the program that its file type or URI scheme opens with. So `.vbs`, `.vbe`, `.js`,
       `.jse`, `.wsf` and `.wsh` files are refused (wscript), and so are `.hta` (mshta), `.msc` (mmc), `.msi`
       (msiexec) and `.chm` (hh) files. A `.ps1` opens in Notepad unless PowerShell is set to run it; a `.txt`,
       an `https:` link or `ms-settings:` opens as before.
   - The same check applies to every file or program that the arguments name, so `explorer.exe run.bat`,
     `chrome --gpu-launcher="cmd /c ..."` and `notepad run.bat` are refused. It reads the arguments as Windows splits
-    them, checks the program first and looks at the arguments only after that passes.
+    them, as written and with environment variables expanded, and looks at them only after the program passes.
   - `launch` reads no file on another computer (a `\\server\share` path), because connecting would sign in there. It
     goes by the name and file type there, and refuses a shortcut or a name without a file type (end a folder with
     `\`).
-  - `launch` starts the file it checked. A bare name, a path without its extension, an environment variable, a
-    `file:` URI or a `shell:` path becomes the full path of that file first. A folder opens as a folder, even with a
-    program of the same name beside it (Windows itself would run `folder.exe` for the path `folder`). A
-    `shell:AppsFolder` app and a shortcut that points at no file are refused, because launch can't see what they
-    start.
+  - `launch` starts the file it checked. A bare name, a path without its extension, a `file:` URI or a `shell:` path
+    becomes the full path of that file first. A folder opens as a folder, even with a program of the same name beside
+    it (Windows itself would run `folder.exe` for the path `folder`). A `shell:AppsFolder` app and a shortcut that
+    points at no file are refused, because launch can't see what they start.
   - Terminals that are already open are off limits too (Windows Terminal, console windows of cmd and PowerShell, the
     PowerShell ISE, mintty and similar), because keys typed into one run as commands. So are the windows of the
-    programs listed above. In a WindowsAgentArena run, agents typed PowerShell into an open terminal once `launch`
-    refused to start one.
+    shells, script hosts and interpreters listed above. In a WindowsAgentArena run, agents typed PowerShell into an
+    open terminal once `launch` refused to start one.
   - To give the assistant a shell, put `{"shell": true}` in `config.json`. The deny list and an allow-list still
     apply.
   - With an allow-list, `launch` starts only listed programs: the program Windows would run must be listed (with
@@ -124,6 +122,9 @@ Other programs and web pages on the same PC are **not trusted**.
 
 - **The assistant acts as you.** Anything you can do in an allowed window, it can do: send an email, delete a file in
   Explorer (to the Recycle Bin), change a setting. Use the allow-list to keep it to the apps a task needs.
+- **`launch` still starts any program,** including one the assistant downloaded through a browser. The shell rule
+  keeps it from running commands and scripts through Windows' own interpreters, not from running a program it got
+  from the web. An allow-list limits `launch` to the programs you name.
 - **The shell rule covers `launch` and open terminals, not every window.** In an allowed window the assistant can
   start a program the way you can: File Explorer runs a batch file that is opened in it, its address bar and Task
   Manager's **Run new task** run a typed command, and most apps' Open dialogs open files as Explorer does. The list of

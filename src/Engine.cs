@@ -399,12 +399,15 @@ public static class Engine
     }
 
     // oriel operates apps through their UI; programs that run commands or scripts are not its job, so launch refuses
-    // them unless config.json allows them by name or turns "shell" on: shells and script hosts, Windows tools that run a
-    // command, script or package that their arguments name, and common script interpreters.
+    // them unless config.json allows them by name or turns "shell" on. Interpreters: shells, script hosts and script
+    // interpreters, whose windows are off limits too (keys typed into them run as commands).
     static readonly string[] Interpreters = { "cmd", "powershell", "pwsh", "wscript", "cscript", "mshta", "rundll32",
-        "regsvr32", "wsl", "bash", "sh", "ubuntu", "conhost", "wt", "forfiles", "pcalua", "scriptrunner",
-        "SyncAppvPublishingServer", "cmstp", "msbuild", "csc", "vbc", "jsc", "wmic", "msiexec", "mmc", "hh", "ssh", "ftp",
-        "git", "python", "python3", "pythonw", "py", "pyw", "node", "perl", "ruby", "php" };
+        "regsvr32", "wsl", "bash", "sh", "ubuntu", "conhost", "wt", "wmic", "ssh", "ftp", "git", "python", "python3",
+        "pythonw", "py", "pyw", "node", "perl", "ruby", "php" };
+    // Runners: Windows tools that run a command, script, package or DLL that their arguments name. launch refuses them;
+    // their windows (an installer, the Services console) stay usable.
+    static readonly string[] Runners = { "forfiles", "pcalua", "scriptrunner", "SyncAppvPublishingServer", "cmstp",
+        "msbuild", "csc", "vbc", "jsc", "msiexec", "mmc", "hh" };
 
     // A terminal that is already open is a shell too: keys typed into it run as commands. So terminal windows are
     // off limits like interpreters are for launch, unless config.json allows them by name or turns "shell" on. (An agent
@@ -413,17 +416,13 @@ public static class Engine
 
     static bool Listed(string name) { return Allow.Exists(a => string.Equals(a, name, StringComparison.OrdinalIgnoreCase)); }
 
-    static bool RunsCommands(string name)
-    {
-        return Array.Exists(Interpreters, i => string.Equals(i, name, StringComparison.OrdinalIgnoreCase)) ||
-            Array.Exists(Terminals, t => string.Equals(t, name, StringComparison.OrdinalIgnoreCase));
-    }
+    static bool In(string[] names, string name) { return Array.Exists(names, n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase)); }
 
     static bool Allowed(string process)
     {
         if (Deny.Exists(d => string.Equals(d, process, StringComparison.OrdinalIgnoreCase))) return false;
         bool listed = Listed(process);
-        if (!listed && !Shell && RunsCommands(process)) return false;
+        if (!listed && !Shell && (In(Interpreters, process) || In(Terminals, process))) return false;
         return Allow.Count == 0 || listed;
     }
 
@@ -445,13 +444,16 @@ public static class Engine
     // Each file or program that args names may not run commands either: the program started may run it. args is split
     // the way Windows splits a command line, and each value counts whole, in its parts around = , ; | < > (--gpu-launcher=cmd,
     // /root,run.bat), up to each space or tab (an unquoted path with spaces) and as a command line of its own (runas
-    // "cmd /c x"). A relative path is read from dir, the folder the program starts in ("" for this one's).
+    // "cmd /c x"). Each as written and with environment variables expanded, as the program may read it either way. A
+    // relative path is read from dir, the folder the program starts in ("" for this one's).
     static void CheckWords(string root, string args, string dir, int depth)
     {
         if (string.IsNullOrEmpty(args)) return;
         var joins = new[] { '=', ',', ';', '|', '<', '>' };
         var blanks = new[] { ' ', '\t' };
-        foreach (var value in Argv(Environment.ExpandEnvironmentVariables(args)))
+        var values = new HashSet<string>(Argv(args), StringComparer.OrdinalIgnoreCase);
+        values.UnionWith(Argv(Environment.ExpandEnvironmentVariables(args)));
+        foreach (var value in values)
         {
             var words = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { value };
             if (SchemeOf(value) == null)
@@ -500,7 +502,7 @@ public static class Engine
         file = null;
         string inner;
         if (depth > 8) throw new OrielError(root + ": launch follows at most 8 shortcuts and file types in a row");
-        target = Environment.ExpandEnvironmentVariables(target.Trim().Trim('"'));
+        target = target.Trim().Trim('"');  // as written: ShellExecute expands no environment variables
         var scheme = SchemeOf(target);
         if (scheme == "shell" || target.StartsWith("::"))
         {
@@ -581,6 +583,7 @@ public static class Engine
             return any ? opens : Unchecked(root, "the shortcut has no URL");
         }
         if (ext == ".bat" || ext == ".cmd") return Permit(root, "cmd");  // Windows runs batch files with cmd.exe
+        if (ext == ".cpl") return Permit(root, "rundll32");  // a .cpl is a DLL, which Control Panel loads with rundll32
         var command = ext.Length > 0 ? Assoc(ext, false) : null;
         if (command != null && !command.StartsWith("\"%1\"") && !command.StartsWith("%1")) return Command(root, command, dir, depth);
         return Permit(root, Path.GetFileNameWithoutExtension(name));  // a program, or a file no program opens, by its name
@@ -589,7 +592,7 @@ public static class Engine
     // A program that runs commands starts only when config.json allows it by name or turns "shell" on.
     static string Permit(string root, string program)
     {
-        if (!Shell && !Listed(program) && RunsCommands(program))
+        if (!Shell && !Listed(program) && (In(Interpreters, program) || In(Terminals, program) || In(Runners, program)))
             throw new OrielError((string.Equals(root, program, StringComparison.OrdinalIgnoreCase) ? program + " is" : root + " would start " + program + ", which is") +
                 " a command interpreter, script host or terminal; launch starts apps, documents and URIs (\"shell\": true in config.json allows it, or \"" +
                 program + "\" in its allow-list)");
@@ -622,6 +625,7 @@ public static class Engine
     static string Command(string root, string command, string dir, int depth)
     {
         if (command == null) return null;
+        command = Environment.ExpandEnvironmentVariables(command);  // Windows expands it before it runs it
         int cut = command.Length;
         if (command.StartsWith("\""))
         {
