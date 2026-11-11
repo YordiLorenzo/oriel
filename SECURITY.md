@@ -71,8 +71,10 @@ Other programs and web pages on the same PC are **not trusted**.
   - The same check applies to every file or program that the arguments name, so `explorer.exe run.bat`,
     `chrome --gpu-launcher="cmd /c ..."` and `notepad run.bat` are refused.
   - `launch` starts the file it checked. A bare name, a path without its extension, an environment variable, a
-    `file:` URI or a `shell:` path becomes the full path of that file first. A `shell:AppsFolder` app and a shortcut
-    that points at no file are refused, because launch can't see what they start.
+    `file:` URI or a `shell:` path becomes the full path of that file first. A folder opens as a folder, even with a
+    program of the same name beside it (Windows itself would run `folder.exe` for the path `folder`). A
+    `shell:AppsFolder` app and a shortcut that points at no file are refused, because launch can't see what they
+    start.
   - Terminals that are already open are off limits too (Windows Terminal, console windows of cmd and PowerShell, the
     PowerShell ISE, mintty and similar), because keys typed into one run as commands. So are the windows of the
     programs listed above. In a WindowsAgentArena run, agents typed PowerShell into an open terminal once `launch`

@@ -83,7 +83,7 @@ Other replies:
 - any other file or URI counts as the program its file type or URI scheme opens with: `run.vbs` as wscript, `run.hta` as mshta, `report.txt` as Notepad, an `https:` link as your browser;
 - every file or program that `args` names counts too, so `explorer.exe run.bat` and `notepad run.bat` are refused.
 
-It starts the file it checked: a bare name, a path without its extension, an environment variable, a `file:` URI or a `shell:` path becomes that file's full path. [SECURITY.md](../SECURITY.md#what-oriel-does) lists the programs that count.
+It starts the file it checked: a bare name, a path without its extension, an environment variable, a `file:` URI or a `shell:` path becomes that file's full path, and a folder opens as a folder. [SECURITY.md](../SECURITY.md#what-oriel-does) lists the programs that count.
 
 ## Batch steps
 

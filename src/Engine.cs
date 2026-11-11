@@ -434,22 +434,30 @@ public static class Engine
     static string CheckLaunch(string path, string args)
     {
         string file;
-        var program = Runs(path, path, args, true, 0, out file);
+        var program = Runs(path, path, true, 0, out file);
         if (Allow.Count > 0 && (program == null || !Listed(program)))
             throw new OrielError((program ?? path) + " is not in the allow-list in config.json");
+        // Only now the arguments, so a launch refused already looks at no file they name (\\host\share signs in there).
+        CheckWords(path, args, 1);
         return file ?? path;
+    }
+
+    // Each file or program that args names may not run commands either: the program started may run it.
+    static void CheckWords(string root, string args, int depth)
+    {
+        string file;
+        foreach (var word in Words(args)) Runs(root, word, false, depth, out file);
     }
 
     // The name of the program Windows runs for target: the file itself for a program, cmd for a batch file, a shortcut's
     // target, else the program that its file type's or URI scheme's open command starts (null for none, a packaged app or
-    // a COM handler). Throws when that program, or the program for a word in args, runs commands. file is the file or
-    // folder target names, null for a URI. A word in args that names no file still counts by its name and file type.
-    static string Runs(string root, string target, string args, bool named, int depth, out string file)
+    // a COM handler). Throws when that program runs commands. file is the file or folder target names, null for a URI.
+    // A word from args that names no file (named false) still counts by its name and file type.
+    static string Runs(string root, string target, bool named, int depth, out string file)
     {
         file = null;
         string inner;
         if (depth > 8) throw new OrielError(root + ": launch follows at most 8 shortcuts and file types in a row");
-        foreach (var word in Words(args)) Runs(root, word, null, false, depth + 1, out inner);
         target = Environment.ExpandEnvironmentVariables(target.Trim().Trim('"'));
         var scheme = SchemeOf(target);
         if (scheme == "shell" || target.StartsWith("::"))
@@ -462,6 +470,14 @@ public static class Engine
         file = Locate(target);
         if (file == null && named) throw new OrielError("launch can't find " + target);
         if (file != null && Directory.Exists(file)) return "explorer";
+        // Whatever its type, a file built as an interpreter counts as one (by the name in its version resource), so a
+        // renamed or 8.3-named copy of cmd.exe is still cmd: a program can run a file its arguments name directly.
+        if (file != null && File.Exists(file))
+        {
+            var original = FileVersionInfo.GetVersionInfo(file).OriginalFilename ?? "";
+            if (original.EndsWith(".mui", StringComparison.OrdinalIgnoreCase)) original = original.Substring(0, original.Length - 4);
+            Permit(root, Path.GetFileNameWithoutExtension(original));
+        }
         var name = file ?? target;
         string ext;
         try { ext = Path.GetExtension(name).ToLowerInvariant(); } catch (ArgumentException) { return null; }
@@ -474,7 +490,9 @@ public static class Engine
             link.GetPath(to, to.Capacity, IntPtr.Zero, 0);
             link.GetArguments(with, with.Capacity);
             if (to.Length == 0) return Unchecked(root, "the shortcut points at no file");
-            return Runs(root, to.ToString(), with.ToString(), true, depth + 1, out inner);
+            var program = Runs(root, to.ToString(), true, depth + 1, out inner);
+            CheckWords(root, with.ToString(), depth + 1);
+            return program;
         }
         if (file != null && ext == ".url")
         {
@@ -485,7 +503,7 @@ public static class Engine
             {
                 var url = new StringBuilder(32768);
                 if (GetPrivateProfileString(section, "URL", "", url, url.Capacity, file) == 0) continue;
-                opens = Runs(root, url.ToString(), null, true, depth + 1, out inner);
+                opens = Runs(root, url.ToString(), true, depth + 1, out inner);
                 any = true;
             }
             return any ? opens : Unchecked(root, "the shortcut has no URL");
@@ -493,16 +511,7 @@ public static class Engine
         if (ext == ".bat" || ext == ".cmd") return Permit(root, "cmd");  // Windows runs batch files with cmd.exe
         var command = ext.Length > 0 ? Assoc(ext, false) : null;
         if (command != null && !command.StartsWith("\"%1\"") && !command.StartsWith("%1")) return Command(root, command, depth);
-        // A program, or a file no program opens, counts as itself: by its name and by the name it was built with, so a
-        // renamed or 8.3-named copy of cmd.exe is still cmd.
-        var program = Permit(root, Path.GetFileNameWithoutExtension(name));
-        if (file != null && File.Exists(file))
-        {
-            var original = FileVersionInfo.GetVersionInfo(file).OriginalFilename ?? "";
-            if (original.EndsWith(".mui", StringComparison.OrdinalIgnoreCase)) original = original.Substring(0, original.Length - 4);
-            Permit(root, Path.GetFileNameWithoutExtension(original));
-        }
-        return program;
+        return Permit(root, Path.GetFileNameWithoutExtension(name));  // a program, or a file no program opens, by its name
     }
 
     // A program that runs commands starts only when config.json allows it by name or turns "shell" on.
@@ -535,7 +544,9 @@ public static class Engine
         }
         if (cut <= 0) cut = command.Length;
         string file;
-        return Runs(root, command.Substring(0, cut), command.Substring(cut), false, depth + 1, out file);
+        var program = Runs(root, command.Substring(0, cut), false, depth + 1, out file);
+        CheckWords(root, command.Substring(cut), depth + 1);
+        return program;
     }
 
     // The words of args that may name a program or file, read every way a program might: each part between quotes and
