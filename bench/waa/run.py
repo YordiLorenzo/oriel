@@ -3,13 +3,14 @@
 WAA container), and the agent (Claude Code headless) does the task through one computer-use MCP server running in the
 WAA Windows VM, with no other tools.
 
-    python3 run.py [--layer oriel] [--remote wsl|do] [--container winarena] [--shard 0/12] [--domains chrome]
-                   [--only <task_id>,...] [--out FILE]
+    python3 run.py [--layer oriel] [--remote wsl|do|local] [--container winarena] [--shard 0/12] [--domains chrome]
+                   [--only <task_id>,...] [--model sonnet] [--effort xhigh] [--out FILE]
 
-The WAA host is a Windows PC with the WSL distro "waa" (--remote wsl, the PC's ssh name in $ORIEL_BENCH_SSH) or a
-DigitalOcean droplet (--remote do, address in $WAA_DO_HOST, key in $WAA_DO_KEY, default ~/.ssh/do_waa_ed25519). On it,
-the container given with --container runs with its VM up, and /root/vm-<layer>-mcp.sh reaches the layer's MCP server
-in that VM. See README.md here. --shard i/N takes every N-th task, so N copies on N containers split a run; they can
+The WAA host is a Windows PC with the WSL distro "waa" (--remote wsl, the PC's ssh name in $ORIEL_BENCH_SSH), a
+DigitalOcean droplet (--remote do, address in $WAA_DO_HOST, key in $WAA_DO_KEY, default ~/.ssh/do_waa_ed25519), or the
+machine run.py runs on (--remote local, the lab's firecracker). On it, the container given with --container runs with
+its VM up, and $WAA_HOME/vm-<layer>-mcp.sh reaches the layer's MCP server in that VM ($WAA_HOME is the host's folder
+for WAA and these scripts, default /root). See README.md here. --shard i/N takes every N-th task, so N copies on N containers split a run; they can
 share one output file. Rows already in the output file are skipped, so an interrupted run resumes.
 """
 
@@ -24,21 +25,23 @@ REMOTES = {
     "wsl": ["ssh", os.environ.get("ORIEL_BENCH_SSH", ""), "wsl", "-d", "waa", "-u", "root", "--"],
     "do": ["ssh", "-i", os.path.expanduser(os.environ.get("WAA_DO_KEY", "~/.ssh/do_waa_ed25519")), "-o", "IdentityAgent=none",
            "-o", "IdentitiesOnly=yes", "-o", "ServerAliveInterval=30", "root@" + os.environ.get("WAA_DO_HOST", "")],
+    "local": [],
 }
 REMOTE = REMOTES["wsl"]
-CLIENT = "/root/WindowsAgentArena/src/win-arena-container/client"
+WAA_HOME = os.environ.get("WAA_HOME", "/root")
+CLIENT = f"{WAA_HOME}/WindowsAgentArena/src/win-arena-container/client"
 
 ORIEL_HINT = "The oriel tools read windows as text (tree, find) and act on elements by ref (invoke, set, select, scroll, keys)."
 
 # Each layer's MCP server runs in the VM of the container given with --container. "oriel-shell" is the same server
 # with {"shell": true} in the VM's oriel config.json; which VM has that is set up on the VM side (README).
 LAYERS = {
-    "oriel": {"server": "oriel", "mcp": "/root/vm-oriel-mcp.sh", "allowed": ["mcp__oriel"], "hint": ORIEL_HINT},
-    "oriel-shell": {"server": "oriel", "mcp": "/root/vm-oriel-mcp.sh", "allowed": ["mcp__oriel"], "hint": ORIEL_HINT},
-    # Cua Driver 0.38.0 as shipped (63 tools, its browser tools included) except run_script (scripting is outside the
-    # as-shipped oriel comparison; the oriel-shell run covers agents with a shell) and the tools that install or
-    # update software.
-    "cua": {"server": "cua", "mcp": "/root/vm-cua-mcp.sh", "allowed": ["mcp__cua"],
+    "oriel": {"server": "oriel", "mcp": f"{WAA_HOME}/vm-oriel-mcp.sh", "allowed": ["mcp__oriel"], "hint": ORIEL_HINT},
+    "oriel-shell": {"server": "oriel", "mcp": f"{WAA_HOME}/vm-oriel-mcp.sh", "allowed": ["mcp__oriel"], "hint": ORIEL_HINT},
+    # Cua Driver as shipped (63 tools in 0.38.0 and 0.46.1, its browser tools included) except run_script (scripting is
+    # outside the as-shipped oriel comparison; the oriel-shell run covers agents with a shell) and the tools that
+    # install or update software.
+    "cua": {"server": "cua", "mcp": f"{WAA_HOME}/vm-cua-mcp.sh", "allowed": ["mcp__cua"],
             "hidden": ["mcp__cua__" + t for t in ("run_script", "install_ffmpeg", "install_extension", "check_for_update")],
             "hint": "Cua Driver reads a window with get_window_state (include_screenshot false keeps it fast) and acts on "
                     "element tokens (click, set_value), with keyboard and mouse tools too."},
@@ -66,14 +69,26 @@ def waa(container: str, *args: str, timeout: int = 600) -> dict:
     raise RuntimeError(f"waa_env.py {' '.join(args)}: {(p.stdout + p.stderr)[-600:]}")
 
 
-def run_agent(prompt: str, mcp: dict, layer: dict, model: str, max_turns: int, timeout: int, trace: str) -> dict:
+def host_state() -> dict:
+    """The WAA host's 1-minute load average and PSU output in watts (host/host-load.sh), so rows can show that both
+    layers ran under the same background load."""
+    p = subprocess.run([*REMOTE, f"{WAA_HOME}/host-load.sh"], capture_output=True, text=True, timeout=60, check=True)
+    return json.loads(p.stdout)
+
+
+def run_agent(prompt: str, mcp: dict, layer: dict, model: str, effort: str | None, max_turns: int, timeout: int,
+              trace: str) -> dict:
     """Run the agent; its full event stream goes to `trace`, and the final result event is returned."""
     with tempfile.TemporaryDirectory() as empty:
-        cmd = ["claude", "-p", prompt, "--model", model, "--output-format", "stream-json", "--verbose", "--max-turns", str(max_turns),
+        cmd = ["claude", "-p", prompt, "--model", model, *(["--effort", effort] if effort else []),
+               "--output-format", "stream-json", "--verbose", "--max-turns", str(max_turns),
                "--mcp-config", json.dumps({"mcpServers": {layer["server"]: mcp}}),
                "--strict-mcp-config", "--allowedTools", *layer["allowed"],
-               "--disallowedTools", "Bash Edit Write Read Glob Grep WebFetch WebSearch Task NotebookEdit TodoWrite",
-               *layer.get("hidden", [])]
+               # Of Claude Code's own tools only ToolSearch, which loads deferred MCP tools. Rounds 1-9 named the
+               # tools to drop instead (Bash Edit Write Read Glob Grep WebFetch WebSearch Task NotebookEdit TodoWrite),
+               # a list that left 14 newer tools (Workflow, SendMessage, Skill, Cron...) in Claude Code 2.1.322.
+               "--tools", "ToolSearch",
+               *(["--disallowedTools", *layer["hidden"]] if "hidden" in layer else [])]
         start = time.time()
         with open(trace, "w") as f:
             try:
@@ -94,6 +109,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--layer", default="oriel", choices=list(LAYERS))
     ap.add_argument("--model", default="sonnet")
+    ap.add_argument("--effort", help="Claude Code's effort level (default: what Claude Code's settings give)")
     ap.add_argument("--meta", default="test_all.json", help="task list in evaluation_examples_windows")
     ap.add_argument("--domains")
     ap.add_argument("--only")
@@ -132,8 +148,10 @@ def main():
             print(f"{domain}/{task_id} SETUP ERROR {e}", flush=True)
             continue
         trace = f"traces/{tag}/{task_id}.jsonl"
-        mcp = {"command": REMOTE[0], "args": [*REMOTE[1:], layer["mcp"], args.container]}
-        out = run_agent(PROMPT.format(hint=layer["hint"], instruction=instruction), mcp, layer, args.model,
+        command = [*REMOTE, layer["mcp"], args.container]
+        mcp = {"command": command[0], "args": command[1:]}
+        host_start = host_state()
+        out = run_agent(PROMPT.format(hint=layer["hint"], instruction=instruction), mcp, layer, args.model, args.effort,
                         args.max_turns, args.timeout, trace)
         # The Mac's own connection dropping is no result for either layer: no row, so the next run retries the task.
         if '"name":"%s","status":"failed"' % layer["server"] in open(trace).read():
@@ -145,14 +163,16 @@ def main():
             print(f"{domain}/{task_id} LIMIT {result}", flush=True)
             continue
         infeasible = result.rstrip().rstrip(".").endswith("INFEASIBLE")
+        host_end = host_state()
         try:
             score = waa(args.container, "eval", domain, task_id, *(["--fail"] if infeasible else []))["score"]
         except Exception as e:
             print(f"{domain}/{task_id} EVAL ERROR {e}", flush=True)
             continue
-        row = {"task": task_id, "domain": domain, "layer": args.layer, "model": args.model, "score": score,
+        row = {"task": task_id, "domain": domain, "layer": args.layer, "model": args.model, "effort": args.effort, "score": score,
                "infeasible_claimed": infeasible, "turns": out.get("num_turns"), "wall_s": out.get("wall_s"),
                "cost_usd": out.get("total_cost_usd"), "error": out.get("is_error"), "subtype": out.get("subtype"),
+               "host_load": [host_start["load1"], host_end["load1"]], "host_psu_w": [host_start["psu_w"], host_end["psu_w"]],
                "instruction": instruction, "result": result[-400:]}
         print(f"{domain}/{task_id[:8]} score={score} turns={row['turns']} wall={row['wall_s']}s ${row['cost_usd'] or 0:.2f}", flush=True)
         with open(out_path, "a") as f:
