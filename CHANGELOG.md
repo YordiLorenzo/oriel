@@ -2,7 +2,7 @@
 
 All notable changes to oriel are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## 0.1.3 - 2026-11-11
+## 0.1.3 - 2026-11-12
 
 A security fix for `launch`. Update if your assistant reads web pages, mail or documents while it uses oriel.
 
