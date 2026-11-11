@@ -466,11 +466,11 @@ public static class Engine
                 }
             }
             words.Remove("");
-            // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe),
-            // so for a word without a file type, each file it could mean counts: the word with each PATHEXT type that exists.
+            // The program that gets a word may look it up its own way, not as Locate does (CreateProcess adds only .exe,
+            // ShellExecute also tries .pif and .lnk), so for a word without a file type each file it could mean counts.
             foreach (var word in new List<string>(words))
                 if (word.IndexOfAny(Path.GetInvalidPathChars()) < 0 && !Path.HasExtension(word.TrimEnd('.', ' ')))
-                    foreach (var e in (Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                    foreach (var e in ((Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD") + ";.PIF;.LNK").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
                         if (Locate(word + e, dir) != null) words.Add(word + e);
             string file;
             foreach (var word in words)
@@ -537,6 +537,10 @@ public static class Engine
             if (target.IndexOfAny(new[] { '\\', '/', ':' }) >= 0) return null;
         }
         if (file != null && Directory.Exists(file)) return "explorer";
+        // For a path without a file type ShellExecute first tries the program types and .lnk, even when the file exists:
+        // launch report would run report.lnk beside it.
+        if (named && file != null && Path.GetExtension(file).Length == 0)
+            return Unchecked(root, "a file without a file type: Windows opens a program or shortcut of the same name instead, if there is one");
         // Whatever its type, a file built as an interpreter counts as one (by the name in its version resource), so a
         // renamed or 8.3-named copy of cmd.exe is still cmd: a program can run a file its arguments name directly.
         if (file != null && File.Exists(file))
