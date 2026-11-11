@@ -573,7 +573,8 @@ public static class Engine
         file = remote ? null : Locate(target, dir);
         if (file == null && !remote)
         {
-            if (named) throw new OrielError("launch can't find " + target);
+            // Named by root only: a shortcut's target comes with its environment variables expanded, which may hold secrets.
+            if (named) throw new OrielError("launch can't find " + (depth == 0 ? root : "the file " + root + " points at"));
             // A word in args that names no file here counts only as a bare program name, which a program may find itself.
             if (target.IndexOfAny(new[] { '\\', '/', ':' }) >= 0) return null;
         }
@@ -772,8 +773,7 @@ public static class Engine
                 if (Directory.Exists(full))
                 {
                     found.Add(LongPath(full).TrimEnd('\\') + "\\");
-                    if (!all) return found;
-                    continue;
+                    if (!all) return found;  // else also tool.exe beside the folder tool, which CreateProcess would run
                 }
                 var names = new List<string>();
                 if (!Path.HasExtension(full)) foreach (var e in exts) names.Add(full + e);
