@@ -13,9 +13,9 @@ Every tool layer gets the same model, prompt and turn limit (50); only the MCP s
 
 | Path | What |
 |---|---|
-| `run.py` | Runs on the client computer (a Mac in these runs). For each task: WAA reset, agent run, WAA evaluate, then one JSON row. Resumes from its output file. |
+| `run.py` | Runs on the client computer (a Mac in rounds 1 to 9, the WAA host itself in round 10). For each task: WAA reset, agent run, WAA evaluate, then one JSON row. Resumes from its output file. |
 | `waa_env.py` | Runs in the WAA container (`/client`). Calls WAA's setup and scoring. |
-| `host/` | Scripts for the WAA host: the WSL2 distro `waa` on a Windows PC (`waa-*`), or a DigitalOcean droplet (`do-*`). |
+| `host/` | Scripts for the WAA host: the WSL2 distro `waa` on a Windows PC (`waa-*`), or a Linux machine with KVM, a DigitalOcean droplet or the lab's firecracker (`do-*`, `waa-tools.sh`, `agent-home.sh`). They live in `$WAA_HOME` (default `/root`). |
 | `vm/` | Scripts that run inside the WAA VM, from the share (`\\host.lan\Data` = WAA's `vm/setup`). |
 
 ## Setup on a Windows PC with WSL2
