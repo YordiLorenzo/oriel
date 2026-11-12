@@ -8,7 +8,7 @@ starts round10.sh in its place. At DEADLINE it gives up, logs why and exits 1.
    30 s), with the publisher's own login: Home Assistant's API token is not on this machine. A minute without a
    reading starts the count again.
 2. Memory: MemAvailable is at least MEM_GIB.
-3. Nothing in the way: no WAA container (waa<i>, winarena) and no other round 10 run, DISK_GB free, /dev/kvm usable.
+3. Nothing in the way: no WAA container (waa<i>, winarena), no other round 10 run, and DISK_GB free.
 
 Usage: round10-gate.py [--dry-run]   (--dry-run: check and log, but never start round10.sh)
 """
@@ -130,8 +130,6 @@ def in_the_way():
     free = shutil.disk_usage(H).free / 1e9
     if free < DISK_GB:
         found.append(f"only {free:.0f} GB free disk (need {DISK_GB})")
-    if not os.access("/dev/kvm", os.R_OK | os.W_OK):
-        found.append("/dev/kvm is not usable")
     return found
 
 

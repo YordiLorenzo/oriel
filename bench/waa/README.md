@@ -110,7 +110,7 @@ The run starts after 00:00 on Fri 13 Nov, once the start check below passes (hea
 Power: firecracker switched off twice on 11 Nov at 900 to 950 W from other sessions' GPU and CPU jobs, and the round 10 setup was paused for it that evening. So the run starts only after a check (the user's rule of 11 Nov): `waa-round10.timer`, a systemd user timer on firecracker, starts `waa-round10.service` at 00:00, which runs `host/round10-gate.py`. That starts `round10.sh` only when, at one check:
 - every reading of Home Assistant's `sensor.firecracker_power` was under 700 W for 15 minutes in a row. The readings come from the MQTT topic that sensor reads (`homelab/power/firecracker/state`, one every 30 s from the rig's power publisher), with the publisher's own login, since Home Assistant's token isn't on the rig. A minute without a reading starts the count again;
 - at least 90 GiB of memory is free (the 10 VMs take 80 GB);
-- nothing is in the way: no WAA container or other round 10 run, 200 GB of free disk, `/dev/kvm` usable.
+- nothing is in the way: no WAA container, no other round 10 run, and 200 GB of free disk.
 
 It checks once a minute, so the earliest start is 00:15. If the checks don't all pass by 03:00, the run doesn't start, and the log says why. The 10 VMs add load of their own once it starts.
 
@@ -120,11 +120,11 @@ It checks once a minute, so the earliest start is 00:15. If the checks don't all
    rm -f ~/waa/round10.ended; systemctl --user daemon-reload; systemctl --user enable --now waa-round10.timer
    ```
    `python3 ~/waa/round10-gate.py --dry-run` runs the same checks by hand and never starts the run.
-2. No nap until the run ends: a user timer can't wake the rig, and from an ssh login polkit asks for the password to take a sleep block (firecracker skill, `nap-and-wake.md`), so root takes it. The user's line, which holds the block until the service has stopped (it then touches `~/waa/round10.ended`) or for 32 hours at most:
+2. No nap until the run ends: a user timer can't wake the rig, and an open ssh session keeps it awake (firecracker skill, `nap-and-wake.md`). So one ssh session waits until the service has stopped (it then touches `~/waa/round10.ended`), for 30 hours at most, held from a machine that stays on:
    ```bash
-   ssh -t firecracker 'sudo systemd-run --unit=waa-round10-awake systemd-inhibit --what=sleep --who="WAA round 10" --why="until the run ends" timeout 32h sh -c "until [ -e /home/yordidekleijn/waa/round10.ended ]; do sleep 60; done"'
+   nohup ssh -o BatchMode=yes -o ServerAliveInterval=60 firecracker 'timeout 30h sh -c "until [ -e ~/waa/round10.ended ]; do sleep 60; done"' > awake-hold.log 2>&1 < /dev/null &
    ```
-   `nap status` then shows "sleep blocked by WAA round 10". A reboot ends the block: run the line again.
+   `nap status` on the rig then shows "1 ssh session(s)". The session ends when the run ends, and also when the rig reboots or the holding machine sleeps.
 3. `round10.sh` does each run in turn: rebuild the 10 VMs from `storage-warm`, set up waa0-4 for oriel and waa5-9 for Cua Driver, run both layers (each split over its 5 VMs), then a second pass for tasks that got no row. Its last line is `round 10 done`.
 4. Watch it from the Mac: `ssh firecracker 'bash ~/waa/round10-status.sh'` shows the timer, the service's state and result (`inactive`, `success` once both runs ended), rows per results file (153 is a full run), the VMs up and the log's last lines. The log is `~/waa/round10.log` on firecracker: one line per check, then `round10.sh`'s output. Each VM's log is `logs/<tag>-waa<i>.log`, each task's agent trace `traces/<tag>/<task>.jsonl`.
 5. Results land on the rig in `~/waa/oriel/bench/waa`: `results-oriel-0.1.3-t1.jsonl`, `-t2`, `results-cua-r10-t1.jsonl`, `-t2`. Copy them into this folder, add round 10 to `ROUNDS` in `report.py`, and run `stats.py --oriel results-oriel-0.1.3-t1.jsonl results-oriel-0.1.3-t2.jsonl --cua results-cua-r10-t1.jsonl results-cua-r10-t2.jsonl`. Its last table gives each run's mean host load and PSU output; say in RESULTS.md if the layers' load differed.
