@@ -3,6 +3,10 @@
 </p>
 
 <p align="center">
+  <a href="https://yordilorenzo.github.io/oriel/demo.mp4"><img src="docs/images/demo.gif" alt="Claude Code tests a Windows Forms sign-up app with oriel's element actions, runs four checks and ends with a pass or fail table: check 4 fails, because the app treats email addresses as case-sensitive." width="100%"></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/YordiLorenzo/oriel/actions/workflows/build.yml"><img src="https://github.com/YordiLorenzo/oriel/actions/workflows/build.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/YordiLorenzo/oriel/releases/latest"><img src="https://img.shields.io/github/v/release/YordiLorenzo/oriel?label=release&color=FFB547" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-Apache--2.0-22305C" alt="Licence: Apache-2.0"></a>
