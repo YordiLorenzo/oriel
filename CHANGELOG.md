@@ -2,6 +2,12 @@
 
 All notable changes to oriel are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Docs, benchmarks and repository
+
+- **Demo:** the README opens with a 14.5 s GIF of Claude Code testing a Windows Forms sign-up app with only oriel's element actions. It links to the full 43 s clip, which also plays on the site's home page, under the hero.
+
 ## 0.1.3 - 2026-11-12
 
 A security fix for `launch`. Update if your assistant reads web pages, mail or documents while it uses oriel.
