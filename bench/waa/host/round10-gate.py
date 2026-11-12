@@ -27,7 +27,7 @@ import time
 LIMIT_W = 700
 CLEAR_MINUTES = 15
 DEADLINE = datetime.datetime(2026, 11, 13, 3, 0)  # local time
-MEM_GIB = 90   # 10 VMs of 8 GiB, plus QEMU's own memory per VM and 10 agents
+MEM_GIB = 90   # the 12 Nov smoke check: 8.0 GiB per VM's QEMU and 0.2 GiB per agent, so about 83 GiB for 10 of each
 DISK_GB = 200  # 10 VM folders of about 18 GB each
 TOPIC = "homelab/power/firecracker/state"
 H = os.environ.get("WAA_HOME", os.path.expanduser("~/waa"))

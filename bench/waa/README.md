@@ -103,13 +103,27 @@ Two VMs from `storage-warm`, oriel 0.1.1 on waa0 and Cua Driver 0.46.1 on waa1, 
 
 Both agents connected to their MCP server on every task. The agent saw 19 oriel tools or 59 Cua Driver tools, plus ToolSearch, and none of Cua's 4 hidden tools. Cua's agent called ToolSearch once per task, since its tools load on demand; oriel's load up front. No trace shows a Cua update notice. Background load was the same for both layers. WAA's reset and scoring added about 25 s per task. Five tasks are too few to compare the layers; the pilot only shows that setup, agents, scoring and result rows work.
 
+### Smoke check of the 0.1.3 images (12 Nov 2026)
+
+Two VMs from the new `storage-warm`, oriel 0.1.3 on waa0 and Cua Driver 0.46.1 on waa1, at the same time, one dev-half task from the pilot (File Explorer, `f934d80d…-WOS`), with the full run's settings. Rows in `pilot/smoke-r10-*.jsonl`.
+
+| | oriel 0.1.3 | Cua Driver 0.46.1 |
+|---|---|---|
+| task completed | yes | yes |
+| time / turns / model cost | 25.6 s / 9 / $0.05 | 34.8 s / 16 / $0.13 |
+| the same task in the pilot (oriel 0.1.1) | 19.5 s / 16 / $0.07 | 42.0 s / 18 / $0.18 |
+| tools the agent saw | 19 + ToolSearch | 59 + ToolSearch |
+| host load, 1 min / PSU output | 4.0 to 4.8 / 136 to 162 W | 4.1 to 4.8 / 136 to 150 W |
+
+Both MCP servers connected, both agents ran Claude Code 2.1.317 on `claude-sonnet-5-5`. Memory: each VM's QEMU process held 8.0 GiB and each agent 0.2 GiB, so the 10 VMs and 10 agents of the full run take about 83 GiB; the start check asks for 90.
+
 ### The full run
 
 The run starts after 00:00 on Fri 13 Nov, once the start check below passes (heavy work on firecracker runs from 00:00 to 08:00). Expected: about 1 hour per run, 2.5 hours for both with the VM rebuilds. Each run is bounded by Cua Driver's side: 3.3 agent hours at the pilot's pace (3.8 at round 9's), plus about 25 s of reset and scoring per task, over 5 VMs. Model cost, as Claude Code estimates it: about $110 for all four runs at the pilot's rates ($200 at round 9's).
 
 Power: firecracker switched off twice on 11 Nov at 900 to 950 W from other sessions' GPU and CPU jobs, and the round 10 setup was paused for it that evening. So the run starts only after a check (the user's rule of 11 Nov): `waa-round10.timer`, a systemd user timer on firecracker, starts `waa-round10.service` at 00:00, which runs `host/round10-gate.py`. That starts `round10.sh` only when, at one check:
 - every reading of Home Assistant's `sensor.firecracker_power` was under 700 W for 15 minutes in a row. The readings come from the MQTT topic that sensor reads (`homelab/power/firecracker/state`, one every 30 s from the rig's power publisher), with the publisher's own login, since Home Assistant's token isn't on the rig. A minute without a reading starts the count again;
-- at least 90 GiB of memory is free (the 10 VMs take 80 GB);
+- at least 90 GiB of memory is free (the 10 VMs and their agents take about 83 GiB, from the smoke check);
 - nothing is in the way: no WAA container, no other round 10 run, and 200 GB of free disk.
 
 It checks once a minute, so the earliest start is 00:15. If the checks don't all pass by 03:00, the run doesn't start, and the log says why. The 10 VMs add load of their own once it starts.
@@ -119,7 +133,7 @@ It checks once a minute, so the earliest start is 00:15. If the checks don't all
    cp ~/waa/oriel/bench/waa/host/waa-round10.service ~/waa/oriel/bench/waa/host/waa-round10.timer ~/.config/systemd/user/
    rm -f ~/waa/round10.ended; systemctl --user daemon-reload; systemctl --user enable --now waa-round10.timer
    ```
-   `python3 ~/waa/round10-gate.py --dry-run` runs the same checks by hand and never starts the run.
+   `python3 ~/waa/round10-gate.py --dry-run` runs the same checks by hand and never starts the run. Tested on 12 Nov with 2 minutes for 15: with a 5 W limit it logged "not started" after 3 checks and exited 1; with 700 W it logged "all clear" after 2 checks (4 readings, 166 to 174 W) and exited 0. Installed on 12 Nov: `systemctl --user list-timers` shows the next start at Fri 2026-11-13 00:00:00 CET.
 2. No nap until the run ends: a user timer can't wake the rig, and an open ssh session keeps it awake (firecracker skill, `nap-and-wake.md`). So one ssh session waits until the service has stopped (it then touches `~/waa/round10.ended`), for 30 hours at most, held from a machine that stays on:
    ```bash
    nohup ssh -o BatchMode=yes -o ServerAliveInterval=60 firecracker 'timeout 30h sh -c "until [ -e ~/waa/round10.ended ]; do sleep 60; done"' > awake-hold.log 2>&1 < /dev/null &
