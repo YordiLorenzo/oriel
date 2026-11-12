@@ -6,7 +6,7 @@ check, so the run is short: one read of the window, about five tool calls, then 
 ```text
 The window "oriel demo: sign up" is open on this PC. Test its sign-up form with the oriel tools.
 
-Rules, because I am typing in Notepad while you work:
+Rules, so you never take my mouse or keyboard:
 - Read the window as text (tree, find, text) and act only with invoke, set, select and scroll, or a batch of them.
 - Never use keys, click, drag, focus, window, launch or close, take no screenshots, and run no commands.
 - Use one batch per check where you can.
