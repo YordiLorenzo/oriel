@@ -1,0 +1,11 @@
+[Unit]
+Description=Start WAA round 10 at 00:00 on Fri 13 Nov 2026 (local time)
+
+[Timer]
+OnCalendar=2026-11-13 00:00:00
+AccuracySec=1s
+# Off or asleep at 00:00: it starts at the next boot or wake instead, and the start check's 03:00 limit still holds.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -54,7 +54,9 @@ The full runs used one Intel droplet with nested KVM (32 vCPUs), running 10 to 1
 
 ## Round 10 on firecracker
 
-oriel 0.1.1 against Cua Driver 0.46.1, two runs per layer over the same tasks, published whichever side wins.
+oriel 0.1.3 against Cua Driver 0.46.1, two runs per layer over the same tasks, published whichever side wins.
+
+**oriel version:** the pilot ran oriel 0.1.1; the full run uses 0.1.3, the release of 12 Nov 2026 (the user's decision). 0.1.2 added MCP tool annotations to every tool; 0.1.3 is a security fix to `launch`, which now checks the program Windows would run for a path and refuses more programs ([CHANGELOG](../../CHANGELOG.md)). For it, `storage-provisioned` and `storage-warm` were made again on 12 Nov from the 11 Nov `storage-golden`, with the 0.1.3 release's `oriel.exe` (SHA-256 `35081509…83d9f7`, as in its `SHA256SUMS`); Cua Driver 0.46.1 (`ec49cca5…`) and everything else stay as in the pilot. Provisioning took 4 minutes, the warm-up 16. In both warm-up tries LibreOffice's first-run updater ran for about 8 minutes, then LibreOffice closed without opening Calc (on 11 Nov Calc opened after it). The first try then stopped; in the second, Calc was started once more by hand, and `do-warm.sh` went on (Calc, then Writer) and saved `storage-warm`. `do-warm.sh` now stops with the window list when an app never opens; before, it stopped without a message.
 
 **The same as round 9:** Claude Sonnet 5.5, the prompt and the one-sentence hint per layer, 50 turns, 900 s per task, Cua Driver's 4 hidden tools, 10 VMs of 8 GB and 4 vCPUs (5 per layer), every VM rebuilt from the warmed image before each run. Cua Driver 0.46.1 has the same 63 tools as 0.38.0, and its docs describe the 4 hidden ones in the same words as 0.38.0's, so the round 9 rule stands.
 
@@ -77,11 +79,11 @@ export WAA_HOME=~/waa
 git clone -b main https://github.com/YordiLorenzo/oriel.git $WAA_HOME/oriel
 cp $WAA_HOME/oriel/bench/waa/host/* $WAA_HOME/oriel/bench/waa/waa_env.py $WAA_HOME/
 bash $WAA_HOME/do-setup.sh                                      # WAA, patches, ISO, images; the golden image builds in the background
-bash $WAA_HOME/oriel/bench/waa/host/waa-tools.sh 0.1.1 0.46.1  # oriel and Cua Driver into the share, hashes checked
+bash $WAA_HOME/oriel/bench/waa/host/waa-tools.sh 0.1.3 0.46.1  # oriel and Cua Driver into the share, hashes checked
 bash $WAA_HOME/agent-home.sh                                    # the agents' Claude Code folder
 ```
 
-Then, as in rounds 8 and 9, provision the golden image and warm it (LibreOffice's first start), once the golden build's container has exited: `bash $WAA_HOME/waa-provision.sh oriel-0.1.1.exe`. It saves `storage-golden`, installs OpenSSH with the VM key and oriel (`vm/oriel-provision.ps1`) and unpacks Cua Driver with its telemetry off (`vm/cua-provision.ps1`), saves `storage-provisioned`, then runs `do-warm.sh`, which saves `storage-warm`.
+Then, as in rounds 8 and 9, provision the golden image and warm it (LibreOffice's first start), once the golden build's container has exited: `bash $WAA_HOME/waa-provision.sh oriel-0.1.3.exe`. It saves `storage-golden`, installs OpenSSH with the VM key and oriel (`vm/oriel-provision.ps1`) and unpacks Cua Driver with its telemetry off (`vm/cua-provision.ps1`), saves `storage-provisioned`, then runs `do-warm.sh`, which saves `storage-warm`. For a new oriel build, run `waa-tools.sh` and `waa-provision.sh` again: when `storage-golden` exists, the provisioning starts from it.
 
 On 11 Nov, with other work keeping the rig at a load of 50 to 110: the golden image took 40 minutes (18 GB on disk), provisioning 5 minutes, the warm-up 13 (LibreOffice's first-run updater alone 525 s). LibreOffice's first start also opens a web link, and Windows then shows "Pick an app"; those dialogs end at shutdown, and the clean slate before each task closes them anyway.
 
@@ -101,17 +103,45 @@ Two VMs from `storage-warm`, oriel 0.1.1 on waa0 and Cua Driver 0.46.1 on waa1, 
 
 Both agents connected to their MCP server on every task. The agent saw 19 oriel tools or 59 Cua Driver tools, plus ToolSearch, and none of Cua's 4 hidden tools. Cua's agent called ToolSearch once per task, since its tools load on demand; oriel's load up front. No trace shows a Cua update notice. Background load was the same for both layers. WAA's reset and scoring added about 25 s per task. Five tasks are too few to compare the layers; the pilot only shows that setup, agents, scoring and result rows work.
 
+### Smoke check of the 0.1.3 images (12 Nov 2026)
+
+Two VMs from the new `storage-warm`, oriel 0.1.3 on waa0 and Cua Driver 0.46.1 on waa1, at the same time, one dev-half task from the pilot (File Explorer, `f934d80d…-WOS`), with the full run's settings. Rows in `pilot/smoke-r10-*.jsonl`.
+
+| | oriel 0.1.3 | Cua Driver 0.46.1 |
+|---|---|---|
+| task completed | yes | yes |
+| time / turns / model cost | 25.6 s / 9 / $0.05 | 34.8 s / 16 / $0.13 |
+| the same task in the pilot (oriel 0.1.1) | 19.5 s / 16 / $0.07 | 42.0 s / 18 / $0.18 |
+| tools the agent saw | 19 + ToolSearch | 59 + ToolSearch |
+| host load, 1 min / PSU output | 4.0 to 4.8 / 136 to 162 W | 4.1 to 4.8 / 136 to 150 W |
+
+Both MCP servers connected, both agents ran Claude Code 2.1.317 on `claude-sonnet-5-5`. Memory: each VM's QEMU process held 8.0 GiB and each agent 0.2 GiB, so the 10 VMs and 10 agents of the full run take about 83 GiB; the start check asks for 90.
+
 ### The full run
 
-The run starts at 00:00 on Fri 13 Nov (heavy work on firecracker runs from 00:00 to 08:00). Expected: about 1 hour per run, 2.5 hours for both with the VM rebuilds. Each run is bounded by Cua Driver's side: 3.3 agent hours at the pilot's pace (3.8 at round 9's), plus about 25 s of reset and scoring per task, over 5 VMs. Model cost, as Claude Code estimates it: about $110 for all four runs at the pilot's rates ($200 at round 9's).
+The run starts after 00:00 on Fri 13 Nov, once the start check below passes (heavy work on firecracker runs from 00:00 to 08:00). Expected: about 1 hour per run, 2.5 hours for both with the VM rebuilds. Each run is bounded by Cua Driver's side: 3.3 agent hours at the pilot's pace (3.8 at round 9's), plus about 25 s of reset and scoring per task, over 5 VMs. Model cost, as Claude Code estimates it: about $110 for all four runs at the pilot's rates ($200 at round 9's).
 
-Power: firecracker switched off twice on 11 Nov at 900 to 950 W from other sessions' GPU and CPU jobs, and the round 10 setup was paused for it that evening. Check `sensor.firecracker_power` in Home Assistant before the start; the 10 VMs add load of their own.
+Power: firecracker switched off twice on 11 Nov at 900 to 950 W from other sessions' GPU and CPU jobs, and the round 10 setup was paused for it that evening. So the run starts only after a check (the user's rule of 11 Nov): `waa-round10.timer`, a systemd user timer on firecracker, starts `waa-round10.service` at 00:00, which runs `host/round10-gate.py`. That starts `round10.sh` only when, at one check:
+- every reading of Home Assistant's `sensor.firecracker_power` was under 700 W for 15 minutes in a row. The readings come from the MQTT topic that sensor reads (`homelab/power/firecracker/state`, one every 30 s from the rig's power publisher), with the publisher's own login, since Home Assistant's token isn't on the rig. A minute without a reading starts the count again;
+- at least 90 GiB of memory is free (the 10 VMs and their agents take about 83 GiB, from the smoke check);
+- nothing is in the way: no WAA container, no other round 10 run, and 200 GB of free disk.
 
-1. The rig must be on: `ssh firecracker uptime`. If it doesn't answer, `wake firecracker`; if that fails too, press its power button (after the switch-off on 11 Nov, wake packets didn't work).
-2. Start it: `ssh firecracker 'cd ~/waa && setsid nohup bash round10.sh > round10.log 2>&1 < /dev/null &'`. The VMs and the agents keep the rig awake.
-3. `round10.sh` does each run in turn: rebuild the 10 VMs from `storage-warm`, set up waa0-4 for oriel and waa5-9 for Cua Driver, run both layers (each split over its 5 VMs), then a second pass for tasks that got no row.
-4. Watch it: `ssh firecracker 'tail -4 ~/waa/round10.log; cd ~/waa/oriel/bench/waa && wc -l results-oriel-0.1.1-t*.jsonl results-cua-r10-t*.jsonl'`. 153 rows per file is a full run. Each VM's log is `logs/<tag>-waa<i>.log`, each task's agent trace `traces/<tag>/<task>.jsonl`.
-5. Results land on the rig in `~/waa/oriel/bench/waa`: `results-oriel-0.1.1-t1.jsonl`, `-t2`, `results-cua-r10-t1.jsonl`, `-t2`. Copy them into this folder, add round 10 to `ROUNDS` in `report.py`, and run `stats.py --oriel results-oriel-0.1.1-t1.jsonl results-oriel-0.1.1-t2.jsonl --cua results-cua-r10-t1.jsonl results-cua-r10-t2.jsonl`. Its last table gives each run's mean host load and PSU output; say in RESULTS.md if the layers' load differed.
+It checks once a minute, so the earliest start is 00:15. If the checks don't all pass by 03:00, the run doesn't start, and the log says why. The 10 VMs add load of their own once it starts.
+
+1. Install the timer, after copying `host/` to `~/waa` as in the setup:
+   ```bash
+   cp ~/waa/oriel/bench/waa/host/waa-round10.service ~/waa/oriel/bench/waa/host/waa-round10.timer ~/.config/systemd/user/
+   rm -f ~/waa/round10.ended; systemctl --user daemon-reload; systemctl --user enable --now waa-round10.timer
+   ```
+   `python3 ~/waa/round10-gate.py --dry-run` runs the same checks by hand and never starts the run. Tested on 12 Nov with 2 minutes for 15: with a 5 W limit it logged "not started" after 3 checks and exited 1; with 700 W it logged "all clear" after 2 checks (4 readings, 166 to 174 W) and exited 0. Installed on 12 Nov: `systemctl --user list-timers` shows the next start at Fri 2026-11-13 00:00:00 CET.
+2. No nap until the run ends: a user timer can't wake the rig, and an open ssh session keeps it awake (firecracker skill, `nap-and-wake.md`). So one ssh session waits until the service has stopped (it then touches `~/waa/round10.ended`), for 30 hours at most, held from a machine that stays on:
+   ```bash
+   nohup ssh -o BatchMode=yes -o ServerAliveInterval=60 firecracker 'timeout 30h sh -c "until [ -e ~/waa/round10.ended ]; do sleep 60; done"' > awake-hold.log 2>&1 < /dev/null &
+   ```
+   `nap status` on the rig then shows "1 ssh session(s)". The session ends when the run ends, and also when the rig reboots or the holding machine sleeps.
+3. `round10.sh` does each run in turn: rebuild the 10 VMs from `storage-warm`, set up waa0-4 for oriel and waa5-9 for Cua Driver, run both layers (each split over its 5 VMs), then a second pass for tasks that got no row. Its last line is `round 10 done`.
+4. Watch it from the Mac: `ssh firecracker 'bash ~/waa/round10-status.sh'` shows the timer, the service's state and result (`inactive`, `success` once both runs ended), rows per results file (153 is a full run), the VMs up and the log's last lines. The log is `~/waa/round10.log` on firecracker: one line per check, then `round10.sh`'s output. Each VM's log is `logs/<tag>-waa<i>.log`, each task's agent trace `traces/<tag>/<task>.jsonl`.
+5. Results land on the rig in `~/waa/oriel/bench/waa`: `results-oriel-0.1.3-t1.jsonl`, `-t2`, `results-cua-r10-t1.jsonl`, `-t2`. Copy them into this folder, add round 10 to `ROUNDS` in `report.py`, and run `stats.py --oriel results-oriel-0.1.3-t1.jsonl results-oriel-0.1.3-t2.jsonl --cua results-cua-r10-t1.jsonl results-cua-r10-t2.jsonl`. Its last table gives each run's mean host load and PSU output; say in RESULTS.md if the layers' load differed.
 6. Afterwards, free the VMs and their disks (each `~/waa/waa-<i>` holds 18 GB, partly root's): `ssh firecracker 'docker rm -f $(docker ps -aq --filter name=waa); for i in $(seq 0 9); do WAA_HOME=~/waa ~/waa/as-root.sh rm -rf ~/waa/waa-$i; done'`.
 
 ## Not tuning to the benchmark

@@ -23,7 +23,7 @@ for app in calc writer; do
         if echo "$w" | grep -q "$want" && ! echo "$w" | grep -q "LibreOffice Update"; then echo "$app ready after $((i*5))s"; break; fi
         sleep 5
     done
-    echo "$w" | grep -i 'libreoffice\|tip of the day'
+    echo "$w" | grep -i 'libreoffice\|tip of the day' || { echo "$app not ready after 120 checks; windows: $w"; exit 1; }
     sleep 5
     O close --Window "\"$want\"" || true
     sleep 5
