@@ -8,7 +8,7 @@ The scripts, and how to run them on your own PC, are in [bench/README.md](../ben
 
 | Benchmark | What it measures | Result |
 |---|---|---|
-| [3. WindowsAgentArena](#3-windowsagentarena-benchwaa) | Whole tasks: Microsoft's 153 scored tasks in a Windows 11 VM, the same model on both sides, only the MCP server swapped | Round 9 (October 2026), oriel v12 against Cua Driver 0.38.0 without 4 of its 63 tools (`run_script` among them): a median 49 s per task against 70 s, 21.8 model turns against 27.0, and $38 against $61 per run in model cost as Claude Code estimates it. Each of these gaps holds at 95% confidence and is larger than either layer's own run-to-run gap. Cua Driver completed more tasks: 67% against 63%. Its own two runs differed by 6.5 points. |
+| [3. WindowsAgentArena](#3-windowsagentarena-benchwaa) | Whole tasks: Microsoft's 153 scored tasks in a Windows 11 VM, the same model on both sides, only the MCP server swapped | Round 10 (13 Nov 2026), oriel 0.1.3 against Cua Driver 0.46.1 without 4 of its 63 tools (`run_script` among them), run 1 of 2 on 151 tasks: a median 49 s per task against 68 s, 28.8 model turns against 32.9, and $22 against $50 per run in model cost as Claude Code estimates it. Each of these gaps holds at 95% confidence. Tasks completed: 73% against 75%, a gap whose 95% interval reaches zero. In run 2 the model API refused most calls, so it is left out. Round 9 (October 2026, oriel v12 against Cua Driver 0.38.0, two runs): a median 49 s against 70 s, $38 against $61 per run, 67% of tasks completed by Cua Driver against 63%. |
 | [2. Head-to-head](#2-head-to-head-benchheadtohead) | Single MCP calls on the same PC | 2026-11-10, oriel 0.1.0 against Cua Driver 0.46.1 and agent-desktop 1.2.0: oriel took less time on every call measured. Listing windows 2 ms against 31 and 44 ms, launching an app 193 ms against 605 and 251 ms, an action 2 ms against 3 to 6 and 174 to 187 ms. |
 | [1. Latency per call](#1-latency-per-call-benchlatencypy) | oriel's own time per call, over SSH (2026-10-21/22, PC locked) | Most calls take 5 to 60 ms. |
 | [4. Agent task suite](#4-agent-task-suite-benchtasks) | 18 tasks written alongside oriel (2026-10-21/22, PC locked) | oriel passed 36 of 36 runs, Cua Driver 0.38.0 16 of 18. WindowsAgentArena is the larger, external test. |
@@ -17,14 +17,14 @@ The scripts, and how to run them on your own PC, are in [bench/README.md](../ben
 
 Read these before you quote a number from this page.
 
-- **Which feature saved the time.** Swapping the server cut time, turns and cost in round 9. The benchmark does not show which part of oriel did it.
-- **That oriel completes as many tasks.** Cua Driver 0.38.0 completed 4.2 points more in round 9 (67% against 63%). Its own two runs, with the same set-up, differed by 6.5 points (98 and 108 of 153 tasks), so the gap is within run-to-run variation. But its lower run still beat oriel's higher run (97), and it completed more in every round since round 5 ([every round](#every-round)).
-- **That the infeasible tasks cause the completion gap.** On the 140 tasks that `tasks.json` marks feasible, it is 63% against 68%, so the gap is there without the 13 infeasible tasks too. Most of it is LibreOffice Writer: 5 against 8.9 of 19 tasks.
-- **That the time gap comes from failing sooner.** On the 77 tasks that all four round 9 runs completed, oriel still took a median 46 s against 63 s, with 17.8 against 23.7 turns per task.
+- **Which feature saved the time.** Swapping the server cut time, turns and cost in rounds 9 and 10. The benchmark does not show which part of oriel did it.
+- **That oriel completes as many tasks.** In round 10 (run 1), Cua Driver 0.46.1 completed 1.9 points more (75% against 73%). The 95% interval of that gap runs from 7.0 points in Cua Driver's favour to 3.3 in oriel's, so it reaches zero: round 10 shows no completion difference. Cua Driver 0.38.0 completed 4.2 points more in round 9 (67% against 63%). Its own two runs, with the same set-up, differed by 6.5 points (98 and 108 of 153 tasks), so the gap is within run-to-run variation. But its lower run still beat oriel's higher run (97), and it completed more in every round since round 5 ([every round](#every-round)).
+- **That the infeasible tasks cause the completion gap.** In round 9, on the 140 tasks that `tasks.json` marks feasible, it is 63% against 68%, so the gap is there without the 13 infeasible tasks too. Most of it is LibreOffice Writer: 5 against 8.9 of 19 tasks. In round 10 Writer was 15 against 14.
+- **That the time gap comes from failing sooner.** On the 77 tasks that all four round 9 runs completed, oriel still took a median 46 s against 63 s, with 17.8 against 23.7 turns per task. On the 102 tasks that both round 10 run 1s completed: 39 s against 62 s, with 26.7 against 32.0 turns.
 - **Cua Driver with all its tools.** It ran without 4 of its 63 tools. `run_script` runs JavaScript over Cua Driver's own tools in a sandbox with no file, network or process access. It was hidden because oriel has no script tool. With it, Cua Driver might need fewer turns, less time and a lower cost. `install_ffmpeg` and `install_extension` install software, and `check_for_update` checks GitHub for a newer driver ([details](#what-each-layer-could-use)).
-- **The current Cua Driver on whole tasks.** WindowsAgentArena ran Cua Driver 0.38.0 (released 2026-10-21). The newest on 2026-11-10 is 0.46.1. Only the per-call test (section 2) ran 0.46.1; no WindowsAgentArena round has.
-- **Money spent.** Model cost is the `total_cost_usd` that Claude Code reports: its list-price estimate from the token counts, not a bill. The runs used one Claude account, which hit its usage limit in rounds 7 and 9; the tasks it cut short were rerun.
-- **Other set-ups.** One model (Claude Sonnet 5.5 in Claude Code), one prompt, nested VMs on one droplet. Not other models, other clients or real hardware.
+- **The current Cua Driver on whole tasks.** WindowsAgentArena rounds 1 to 9 ran Cua Driver 0.38.0 (released 2026-10-21). Round 10 ran 0.46.1, the newest release on 2026-11-10. The newest on 2026-11-17 is 0.53.0, which no round has run.
+- **Money spent.** Model cost is the `total_cost_usd` that Claude Code reports: its list-price estimate from the token counts, not a bill. The runs used one Claude account, which hit its usage limit in rounds 7 and 9; the tasks it cut short were rerun. In round 10's run 2 the model API refused most calls (429), so only run 1 counts.
+- **Other set-ups.** One model (Claude Sonnet 5.5 in Claude Code), one prompt, nested VMs on one droplet (rounds 1 to 9) or VMs on one Linux PC (round 10). Not other models, other clients or real hardware.
 - **Other tools.** oriel was not measured against Claude Desktop's or ChatGPT's computer use. agent-desktop 1.2.0 ran only in the per-call test (section 2), not on WindowsAgentArena.
 
 ## 1. Latency per call (`bench/latency.py`)
@@ -117,8 +117,8 @@ Kept as history. Cua Driver's figures here came from a locked PC and differ from
 - Settings, Paint, Clock, Calculator, Notepad.
 
 The harness keeps WAA's own setup and evaluators for every task and swaps only the agent's tools:
-- **Agent:** Claude Sonnet 5.5 through Claude Code, the same prompt and turn limit (50) for every layer. The prompt differs in one sentence only, which names the layer's tools (quoted below).
-- **Hosting:** one DigitalOcean droplet, 10 VMs from round 7 on (14 before).
+- **Agent:** Claude Sonnet 5.5 through Claude Code, the same prompt and turn limit (50) for every layer. Round 10 sets the effort to `xhigh` on the command line; rounds 1 to 9 took it from the user's settings, and no record shows its value. The prompt differs in one sentence only, which names the layer's tools (quoted below).
+- **Hosting:** one DigitalOcean droplet with nested KVM, 10 VMs from round 7 on (14 before). Round 10: firecracker, a Linux PC in the author's lab (Threadripper 9960X, KVM on bare metal), 10 VMs, with a Windows image built new on 11 Nov 2026 ([round 10 set-up](../bench/waa/README.md#round-10-on-firecracker)).
 - **Patches:** WAA no longer runs as published, so `host/waa-patch.py` repairs its setup (dead LibreOffice mirror, hanging Caddy download, missing VC++ runtime, Chrome 136+ ignoring remote debugging on the default profile). The same patch applies to every layer.
 - **Scoring:** `waa_env.py` scores each task with `float(env.evaluate())`. WAA's `show_result.py`, which counts a result it cannot parse as a pass ([WAA issue #86](https://github.com/microsoft/WindowsAgentArena/issues/86)), is not used.
 - **Tuning guard:** the tasks are split by hash into a dev half (traces read while fixing oriel) and a held-out half (never read). Every result is reported for both.
@@ -126,13 +126,13 @@ The harness keeps WAA's own setup and evaluators for every task and swaps only t
 
 ### What each layer could use
 
-The agent had only the layer's MCP server. For both layers, Claude Code's own tools (Bash, Read, Edit, Write, Glob, Grep, WebFetch, WebSearch, Task, NotebookEdit, TodoWrite) were removed. The one sentence of the prompt that differs (`bench/waa/run.py`):
+The agent had only the layer's MCP server. For both layers, Claude Code's own tools (Bash, Read, Edit, Write, Glob, Grep, WebFetch, WebSearch, Task, NotebookEdit, TodoWrite) were removed. Round 10 keeps only ToolSearch, which loads deferred MCP tools. The one sentence of the prompt that differs (`bench/waa/run.py`):
 - **oriel:** "The oriel tools read windows as text (tree, find) and act on elements by ref (invoke, set, select, scroll, keys)."
 - **Cua Driver:** "Cua Driver reads a window with get_window_state (include_screenshot false keeps it fast) and acts on element tokens (click, set_value), with keyboard and mouse tools too."
 
 What each layer had:
 - **oriel:** every tool, as shipped. Its shell tool is off by default and stayed off. Round 3 also ran oriel with the shell on (`bench/waa/RESULTS.md`).
-- **Cua Driver 0.38.0** ([release](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.38.0), 2026-10-21): the Windows x86_64 build, checksum checked against the release, telemetry off, the agent cursor overlay off (`serve --no-overlay`). The agent had 59 of its 63 tools ([tool list at 0.38.0](https://github.com/trycua/cua/blob/cua-driver-rs-v0.38.0/.github/scripts/cua-driver-mcp-compat/expected-tools.json)). `run.py` removed four from the model's context with Claude Code's `--disallowedTools` ([CLI reference](https://code.claude.com/docs/en/cli-reference)), in every round:
+- **Cua Driver 0.38.0** ([release](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.38.0), 2026-10-21) in rounds 1 to 9, and [0.46.1](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.46.1) in round 10: the Windows x86_64 build, checksum checked against the release, telemetry off, the agent cursor overlay off (`serve --no-overlay`). The agent had 59 of its 63 tools ([tool list at 0.38.0](https://github.com/trycua/cua/blob/cua-driver-rs-v0.38.0/.github/scripts/cua-driver-mcp-compat/expected-tools.json)). `run.py` removed four from the model's context with Claude Code's `--disallowedTools` ([CLI reference](https://code.claude.com/docs/en/cli-reference)), in every round. 0.46.1 has the same 63 tools. In round 10, every Cua Driver trace of both runs lists 59 Cua Driver tools and none of the four:
 
 | Hidden tool | What it does ([Cua Driver 0.38.0 docs](https://github.com/trycua/cua/blob/cua-driver-rs-v0.38.0/docs/content/docs/cua-driver/reference/mcp-tools/batch-recording-and-settings.mdx)) | Why it was hidden |
 |---|---|---|
@@ -143,11 +143,47 @@ What each layer had:
 
 Of the four, only `run_script` could help with a task. Cua Driver with `run_script` was not measured in any round. It might lower Cua Driver's turns, time and cost, because a loop over rows becomes one call. Cua Driver's `run_steps` (several actions in one call) stayed available, as did oriel's `batch`.
 
-The newest Cua Driver on 2026-11-10 is [0.46.1](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.46.1), released that day. On WindowsAgentArena, versions after 0.38.0 were not measured; the per-call head-to-head (section 2) was rerun with 0.46.1 on 2026-11-10.
+Round 10 ran [0.46.1](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.46.1), the newest Cua Driver on 2026-11-10; the per-call head-to-head (section 2) ran it that day too. Versions between 0.38.0 and 0.46.1, and after 0.46.1, were not measured on WindowsAgentArena.
+
+### Round 10
+
+Latest: round 10 (oriel 0.1.3 against Cua Driver 0.46.1, 13 Nov 2026). Both layers ran two runs over WAA's 154 tasks at the same time on the same host. Only run 1 counts: in run 2 the model API answered 429 (rate limit) to both layers' agents for 16 minutes, and `run.py` wrote those tasks as rows (85 of oriel's 153 rows, 95 of Cua Driver's 152; [details](../bench/waa/RESULTS.md#round-10-run-2-not-a-fair-run)). The figures below use the 151 tasks that both run 1 files scored.
+
+| | oriel 0.1.3 | Cua Driver 0.46.1 |
+|---|---|---|
+| All tasks (151) | 109.8 (73%) | **112.7 (75%)** |
+| Feasible tasks (138) | 101.8 | **105.7** |
+| Held-out half (67) | **51** | 49 |
+| Dev half (84) | 59 | **64** |
+| LibreOffice Writer (19) | **15** | 14 |
+| Time per task, median / mean | **49 s / 61 s** | 68 s / 84 s |
+| Turns per task, mean | **28.8** | 32.9 |
+| Model cost per run (list-price estimate) | **$22** | $50 |
+
+- **Time, turns and cost:** with oriel, tasks took a median 49 s against 68 s (mean 61 s against 84 s), with 4.1 fewer model turns and 56% lower estimated model cost.
+- **Completion:** Cua Driver completed 2.9 tasks more (1.9 points). The 95% interval of the gap runs from 7.0 points in Cua Driver's favour to 3.3 points in oriel's, so it reaches zero. oriel completed more on the held-out half (51 against 49) and in LibreOffice Writer (15 against 14); Cua Driver completed more on the dev half (64 against 59) and in Edge (10 against 7 of 13).
+- **Set-up:** not the same as round 9. Round 10 ran on firecracker with a new Windows image, effort `xhigh`, and only ToolSearch of Claude Code's own tools ([round 10 set-up](../bench/waa/README.md#round-10-on-firecracker)). Both layers completed more tasks and took more turns than in round 9. The host's mean 1-minute load was 52 during both layers' run 1 (52.2 and 51.9), so background load hit both alike.
+
+![WindowsAgentArena round 10, run 1, 151 tasks. oriel's difference from Cua Driver with 95% intervals: time per task 29% lower (14% to 42%), model cost 56% lower (53% to 60%), turns per task 13% lower (5% to 19%). Tasks completed: oriel 72.7%, Cua Driver 74.6%.](images/benchmark-round10.png)
+
+`python3 bench/waa/stats.py --oriel results-oriel-0.1.3-t1.jsonl --cua results-cua-r10-t1.jsonl`, the same bootstrap as round 9 with one run per layer:
+
+| oriel minus Cua Driver | All 151 tasks | 95% interval | 138 feasible tasks | 95% interval |
+|---|---|---|---|---|
+| Completion | -1.9 points (-2.9 tasks) | -7.0 to 3.3 points | -2.8 points (-3.9 tasks) | -8.4 to 2.2 points |
+| Time per task, median | -29% (-20 s) | -42% to -14% | -29% (-18 s) | -43% to -14% |
+| Time per task, mean | -27% (-23 s) | -36% to -18% | -28% (-22 s) | -35% to -19% |
+| Model cost per run | -56% (-$28.23) | -60% to -53% | -57% (-$25.34) | -61% to -53% |
+| Turns per task | -13% (-4.1) | -19% to -5% | -14% (-4.5) | -21% to -6% |
+
+- **Time, cost and turns:** oriel's lower figures hold in every interval, with or without the infeasible tasks.
+- **Completion:** the interval reaches zero with and without the infeasible tasks, so round 10 shows no completion difference between the layers.
+- **Tasks both layers completed:** on the 102 tasks that both run 1s completed, oriel took a median 39 s against 62 s, with 26.7 against 32.0 turns per task (from the two round 10 run 1 `results-*.jsonl` files). So the time gap is not only oriel failing sooner.
+- **What the intervals cover:** which tasks happen to be in the benchmark. With one run per layer they do not cover the variation between two runs of a task; in round 9 that variation moved Cua Driver's completion by 6.5 points. They do not cover another model, prompt, Cua Driver version or real hardware either.
 
 ### Round 9
 
-Latest: round 9 (oriel v12, October 2026), two runs per layer, 153 of WAA's 154 tasks (one Chrome task's evaluator failed in every run). Completion is the mean of the two runs.
+Round 9 (oriel v12, October 2026), two runs per layer, 153 of WAA's 154 tasks (one Chrome task's evaluator failed in every run). Completion is the mean of the two runs.
 
 | | oriel v12 | Cua Driver 0.38.0 |
 |---|---|---|
@@ -196,7 +232,7 @@ The same method compares each layer's run 2 with its run 1, with the same set-up
 
 ### Every round
 
-Cua Driver 0.38.0 in every round, without the same 4 tools. Completion is the mean of the runs.
+Cua Driver 0.38.0 in rounds 1 to 9 and 0.46.1 in round 10, without the same 4 tools in every round. Completion is the mean of the runs.
 
 | Round | oriel | Tasks | Runs per layer | Completed, oriel / Cua Driver | Median time per task, oriel / Cua Driver | Model cost per run, oriel / Cua Driver |
 |---|---|---|---|---|---|---|
@@ -208,8 +244,10 @@ Cua Driver 0.38.0 in every round, without the same 4 tools. Completion is the me
 | 7, run 1 only | v9 | 153 | 1 | 59% / 66% | 74 s / 72 s | $42 / $62 |
 | 8 | v11 | 153 | 2 | 62% / 63% | 51 s / 64 s | $38 / $60 |
 | 9 | v12 | 153 | 2 | 63% / 67% | 49 s / 70 s | $38 / $61 |
+| 10, run 1 only | 0.1.3 | 151 | 1 | 73% / 75% | 49 s / 68 s | $22 / $50 |
 
 - **Completion:** Cua Driver completed more in every round since round 5. In round 4 the two were level: oriel 100.2 and Cua Driver 99.9 tasks.
+- **Round 10:** its set-up differs from round 9 in more than the versions: another host, a new Windows image, effort `xhigh` set on the command line, and only ToolSearch of Claude Code's own tools. Both layers completed more tasks than in round 9 and took more turns, so compare round 10's layers with each other, not with earlier rounds. Run 2 is left out: in it the model API refused most calls ([details](../bench/waa/RESULTS.md#round-10-run-2-not-a-fair-run)).
 - **Time:** the median time gap appeared in round 8 (oriel v11, every VM rebuilt before the run); the benchmark does not show which change caused it. In rounds 1 to 7, oriel's median was the same as Cua Driver's or longer (34 s longer in round 1).
 - **Cost:** oriel's estimated model cost per run was about a third lower in every round.
 - **Round 2:** RESULTS.md has no round 2 with Cua Driver. Its "oriel v2 on the cold image" table compares oriel v2 with oriel v1 only.

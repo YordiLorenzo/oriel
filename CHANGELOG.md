@@ -6,6 +6,7 @@ All notable changes to oriel are listed here. The format follows [Keep a Changel
 
 ### Docs, benchmarks and repository
 
+- **WindowsAgentArena round 10:** oriel 0.1.3 against Cua Driver 0.46.1, run 1 on 151 tasks: a median 49 s per task against 68 s, $22 against $50 in model cost per run, 28.8 against 32.9 turns per task, and 73% against 75% of tasks completed, a gap whose 95% interval reaches zero. In run 2 the model API refused most calls, so it is left out. [docs/benchmarks.md](docs/benchmarks.md#round-10)
 - **Demo:** the README opens with a 14.5 s GIF of Claude Code testing a Windows Forms sign-up app with only oriel's element actions. It links to the full 43 s clip, which also plays on the site's home page, under the hero.
 
 ## 0.1.3 - 2026-11-12
