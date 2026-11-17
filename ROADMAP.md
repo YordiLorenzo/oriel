@@ -24,6 +24,9 @@ thread in [Discussions](https://github.com/YordiLorenzo/oriel/discussions/catego
 ## Later
 
 - Tested on more setups: high-DPI scaling, several monitors, a standard (non-admin) Windows account.
+- Screen recording: a `record` tool that films the screen while an agent works, so it can show that a flow
+  worked, and a screenshot of the whole screen, not only of one window. Both would use what Windows has built in
+  (Desktop Duplication and its H.264 encoder), so oriel.exe stays one small file with no ffmpeg and no driver.
 - Keys and Store apps in the head-to-head benchmark. The run of 2026-11-10 was on an unlocked PC, but it repeated the
   tasks of 2026-10-21, which use neither.
 
