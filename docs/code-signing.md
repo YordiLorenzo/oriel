@@ -1,6 +1,6 @@
 # Code signing policy
 
-**Status, 11 November 2026:** SignPath Foundation has not accepted oriel yet, so releases up to 0.1.1 are unsigned.
+**Status, 17 November 2026:** oriel has not applied to SignPath Foundation yet, so every release up to 0.1.3 is unsigned.
 This policy applies from the first signed release.
 
 Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by
