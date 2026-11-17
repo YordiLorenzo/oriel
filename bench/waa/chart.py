@@ -2,13 +2,15 @@
 # requires-python = ">=3.11"
 # dependencies = ["matplotlib==3.9.2"]
 # ///
-"""The round 9 chart in docs/benchmarks.md, drawn from stats.py's figures.
+"""The round 9 and round 10 charts in docs/benchmarks.md, drawn from stats.py's figures.
 
-    uv run --script chart.py [--out ../../docs/images/benchmark-round9.png] [--oriel RUN1 RUN2] [--cua RUN1 RUN2]
+    uv run --script chart.py [--round 9|10] [--out ../../docs/images/benchmark-round<N>.png] [--oriel RUN1 [RUN2]]
+                             [--cua RUN1 [RUN2]]
 
 Top: oriel's time per task (median), model cost and turns per task as a difference from Cua Driver's, with the 95%
-interval from stats.py's bootstrap. Bottom: each layer's completion rate in run 1 and run 2, so the gap between the
-layers can be read against the gap between one layer's own two runs. Swapping the --oriel and --cua files must flip
+interval from stats.py's bootstrap. Bottom: each layer's completion rate in each run, so with two runs the gap between
+the layers can be read against the gap between one layer's own two runs. Round 10 draws run 1 only: in run 2 the model
+API refused most calls (docs/benchmarks.md). Swapping the --oriel and --cua files must flip
 every bar to the other side of zero. It prints the figures it drew, to check against `python3 stats.py`.
 """
 import argparse
@@ -29,6 +31,14 @@ GRID, BASELINE = "#e1e0d9", "#c3c2b7"
 ORIEL, CUA = "#2a78d6", "#eb6834"
 DPI = 200
 BAR_PX, END_PX = 40, 7  # bar thickness and rounded end in image pixels: about 22 and 4 px at GitHub's page width
+# Per round: oriel's and Cua Driver's results files, the subtitle and the footer's set-up.
+ROUNDS = {
+    9: (stats.ORIEL, stats.CUA, "{n} tasks, two runs per tool layer, the same model and prompt; only the MCP server changes.",
+        "Claude Sonnet 5.5 in Claude Code, 50-turn limit. oriel v12; Cua Driver 0.38.0"),
+    10: (["results-oriel-0.1.3-t1.jsonl"], ["results-cua-r10-t1.jsonl"],
+         "{n} tasks, run 1 of 2 per tool layer: in run 2 the model API refused most calls.",
+         "Sonnet 5.5, effort xhigh, 50-turn limit. oriel 0.1.3; Cua Driver 0.46.1"),
+}
 
 
 def rounded_bar(ax, end, y, color):
@@ -60,22 +70,25 @@ def style(ax):
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=os.path.join(here, "..", "..", "docs", "images", "benchmark-round9.png"))
-    ap.add_argument("--oriel", nargs=2, default=stats.ORIEL)
-    ap.add_argument("--cua", nargs=2, default=stats.CUA)
+    ap.add_argument("--round", type=int, default=9, choices=list(ROUNDS))
+    ap.add_argument("--out")
+    ap.add_argument("--oriel", nargs="+")
+    ap.add_argument("--cua", nargs="+")
     args = ap.parse_args()
-    out = os.path.abspath(args.out)  # against the caller's folder
+    oriel_paths, cua_paths, subtitle, setup = ROUNDS[args.round]
+    oriel_paths, cua_paths = args.oriel or oriel_paths, args.cua or cua_paths
+    out = os.path.abspath(args.out or os.path.join(here, "..", "..", "docs", "images", f"benchmark-round{args.round}.png"))
     os.chdir(here)  # stats.py reads tasks.json and the results files from here, as when it runs itself
-    _, everything, _ = stats.compare(args.oriel, args.cua)
-    oriel_runs, cua_runs = stats.run_to_run(args.oriel, args.cua)
+    _, everything, _ = stats.compare(oriel_paths, cua_paths)
+    two = len(oriel_paths) == len(cua_paths) == 2
     n, o, c = everything["n"], everything["oriel"], everything["cua"]
 
     plt.rcParams.update({"font.family": ["Arial", "Helvetica", "DejaVu Sans"], "text.color": INK, "text.parse_math": False})
     fig = plt.figure(figsize=(8, 6.1), dpi=DPI, facecolor=SURFACE)
     top = fig.add_axes((0.31, 0.47, 0.64, 0.3))
     bottom = fig.add_axes((0.31, 0.15, 0.64, 0.15))
-    fig.text(0.04, 0.955, "WindowsAgentArena round 9: oriel against Cua Driver", fontsize=13.5, fontweight="bold")
-    fig.text(0.04, 0.922, f"{n} tasks, two runs per tool layer, the same model and prompt; only the MCP server changes.",
+    fig.text(0.04, 0.955, f"WindowsAgentArena round {args.round}: oriel against Cua Driver", fontsize=13.5, fontweight="bold")
+    fig.text(0.04, 0.922, subtitle.format(n=n),
              fontsize=9.5, color=INK2)
 
     # Top: time, cost and turns as oriel's difference from Cua Driver, with the bootstrap's 95% interval.
@@ -107,36 +120,41 @@ def main():
     top.xaxis.set_major_formatter(lambda v, _: "0" if v == 0 else f"{v:+.0f}%")
     top.set_xlabel("Difference from Cua Driver (left of 0: oriel lower)", fontsize=8.5, color=MUTED, labelpad=6)
 
-    # Bottom: completion rate of each layer's run 1 and run 2, and the mean the summary uses.
+    # Bottom: completion rate of each layer's runs, and the mean the summary uses.
     pct = lambda tasks: 100 * tasks / n  # noqa: E731
-    layers = [("oriel", ORIEL, oriel_runs), ("Cua Driver", CUA, cua_runs)]
+    # Each layer's completion rate per run. run_to_run compares run 2 ("oriel") with run 1 ("cua").
+    runs = ([[pct(r[k]["completed"]) for k in ("cua", "oriel")] for r in stats.run_to_run(oriel_paths, cua_paths)] if two
+            else [[pct(o["completed"])], [pct(c["completed"])]])
+    layers = [("oriel", ORIEL, runs[0]), ("Cua Driver", CUA, runs[1])]
     gap, gap_lo, gap_hi = (pct(v) for v in everything["diff"]["completed"])
-    fig.text(0.04, 0.375, "Tasks completed: each layer's two runs", fontsize=11, fontweight="bold")
+    fig.text(0.04, 0.375, "Tasks completed: each layer's two runs" if two else "Tasks completed: run 1", fontsize=11,
+             fontweight="bold")
     # Said from the leader's side; the bounds keep their signs, so an interval that contains 0 still shows it.
     leader, lead, lead_lo, lead_hi = ("Cua Driver", -gap, -gap_hi, -gap_lo) if gap < 0 else ("oriel", gap, gap_lo, gap_hi)
     fig.text(0.04, 0.358, f"Gap between the layers: {leader} {lead:.1f} points ahead (95% interval {lead_lo:.1f} to "
-             f"{lead_hi:.1f}).\nGap between one layer's own two runs: oriel "
-             f"{abs(pct(oriel_runs['diff']['completed'][0])):.1f}, Cua Driver {abs(pct(cua_runs['diff']['completed'][0])):.1f}.",
+             f"{lead_hi:.1f})." + (f"\nGap between one layer's own two runs: oriel {abs(runs[0][1] - runs[0][0]):.1f}, "
+                                   f"Cua Driver {abs(runs[1][1] - runs[1][0]):.1f}." if two else ""),
              fontsize=9, color=INK2, va="top", linespacing=1.5)
-    values = [pct(r[k]["completed"]) for _, _, r in layers for k in ("cua", "oriel")]  # "cua" is run 1, "oriel" run 2
+    values = [v for r in runs for v in r]
     bottom.set_xlim(min(values) - 3, max(values) + 3)
     bottom.set_ylim(1.6, -0.6)
     style(bottom)
     for y, (name, color, r) in enumerate(layers):
-        run1, run2 = pct(r["cua"]["completed"]), pct(r["oriel"]["completed"])
-        mean = (run1 + run2) / 2
-        bottom.plot([run1, run2], [y, y], color=color, linewidth=2, solid_capstyle="round", zorder=2)
-        bottom.plot([run1, run2], [y, y], "o", markersize=9, color=color, markeredgecolor=SURFACE, markeredgewidth=2, zorder=3)
-        bottom.plot([mean, mean], [y - 0.28, y + 0.28], color=INK, linewidth=1.2, zorder=4)
-        bottom.text(mean, y - 0.36, f"mean {mean:.0f}%", ha="center", va="bottom", fontsize=8.5, color=INK2)
+        mean = sum(r) / len(r)
+        if two:
+            bottom.plot(r, [y, y], color=color, linewidth=2, solid_capstyle="round", zorder=2)
+            bottom.plot([mean, mean], [y - 0.28, y + 0.28], color=INK, linewidth=1.2, zorder=4)
+        bottom.plot(r, [y] * len(r), "o", markersize=9, color=color, markeredgecolor=SURFACE, markeredgewidth=2, zorder=3)
+        bottom.text(mean, y - 0.36, f"mean {mean:.0f}%" if two else f"{mean:.0f}%", ha="center", va="bottom", fontsize=8.5,
+                    color=INK2)
         bottom.text(-0.02, y - 0.06, name, transform=bottom.get_yaxis_transform(), ha="right", va="bottom", fontsize=10)
-        bottom.text(-0.02, y + 0.06, f"run 1 {run1:.1f}%, run 2 {run2:.1f}%", transform=bottom.get_yaxis_transform(),
-                    ha="right", va="top", fontsize=9, color=INK2)
+        bottom.text(-0.02, y + 0.06, ", ".join(f"run {i + 1} {v:.1f}%" for i, v in enumerate(r)),
+                    transform=bottom.get_yaxis_transform(), ha="right", va="top", fontsize=9, color=INK2)
     bottom.set_yticks([])
     bottom.xaxis.set_major_formatter(lambda v, _: f"{v:.0f}%")
     bottom.set_xlabel(f"Tasks completed, % of {n}", fontsize=8.5, color=MUTED, labelpad=6)
 
-    fig.text(0.04, 0.035, "Claude Sonnet 5.5 in Claude Code, 50-turn limit. oriel v12; Cua Driver 0.38.0 without 4 of its 63 tools "
+    fig.text(0.04, 0.035, f"{setup} without 4 of its 63 tools "
              "(run_script, 2 that install software, check_for_update).\nCost is Claude Code's list-price estimate. Intervals: bootstrap over "
              "tasks, 10,000 draws, bench/waa/stats.py. Rows: bench/waa/results-*.jsonl.", fontsize=7.5, color=MUTED,
              linespacing=1.5)
@@ -146,7 +164,7 @@ def main():
         print(f"{name}: {d:.0f}% ({lo:.0f}% to {hi:.0f}%)")
     print(f"completion gap: {gap:.1f} points ({gap_lo:.1f} to {gap_hi:.1f})")
     for name, _, r in layers:
-        print(f"{name}: run 1 {pct(r['cua']['completed']):.1f}%, run 2 {pct(r['oriel']['completed']):.1f}%")
+        print(f"{name}: " + ", ".join(f"run {i + 1} {v:.1f}%" for i, v in enumerate(r)))
     print(f"wrote {out}")
 
 

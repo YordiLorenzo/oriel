@@ -20,7 +20,8 @@ ROUNDS = [
      "Fixes before the foreground bug was found; stopped at 101 tasks."),
 ]
 NAMES = {"oriel-v4": "oriel v4", "cua-warm": "Cua Driver 0.38.0", "oriel-shell-v4": "oriel v4 + shell",
-         "oriel": "oriel v1", "cua": "Cua Driver 0.38.0", "oriel-v2": "oriel v2"}
+         "oriel": "oriel v1", "cua": "Cua Driver 0.38.0", "oriel-v2": "oriel v2",
+         "oriel-0.1.3-t1": "oriel 0.1.3, run 1", "cua-r10-t1": "Cua Driver 0.46.1, run 1"}
 
 
 def load(layer):
@@ -66,6 +67,31 @@ def two_runs(tasks, oriel, cua, title, note):
     return out
 
 
+def one_run(tasks, title, layers, note):
+    """A round whose layers ran each task once (or of which one run counts); each layer's own results file."""
+    data = {l: load(l) for l in layers}
+    if not all(data.values()):
+        return []
+    shared = sorted(set.intersection(*(set(d) for d in data.values())))
+    out = [f"## {title}", "", note, "", f"{len(shared)} tasks finished by every layer.", ""]
+    out.append("| | " + " | ".join(NAMES[l] for l in layers) + " |")
+    out.append("|---|" + "---|" * len(layers))
+    score = lambda l, ks: sum(data[l][k]["score"] for k in ks)
+    for label, ks in (("All", shared), ("Dev half", [k for k in shared if tasks[k]["split"] == "dev"]),
+                      ("Held-out half", [k for k in shared if tasks[k]["split"] == "holdout"])):
+        out.append(f"| **{label}** ({len(ks)}) | " + " | ".join(f"{score(l, ks):.0f} ({100 * score(l, ks) / max(1, len(ks)):.0f}%)" for l in layers) + " |")
+    by_app = defaultdict(list)
+    for k in shared:
+        by_app[tasks[k]["domain"]].append(k)
+    for app, ks in sorted(by_app.items()):
+        out.append(f"| {app} ({len(ks)}) | " + " | ".join(f"{score(l, ks):.0f}" for l in layers) + " |")
+    out.append("| median turns | " + " | ".join(f"{statistics.median(data[l][k]['turns'] or 50 for k in shared):.0f}" for l in layers) + " |")
+    out.append("| median time per task | " + " | ".join(f"{statistics.median(data[l][k]['wall_s'] for k in shared):.0f} s" for l in layers) + " |")
+    out.append("| cost | " + " | ".join(f"${sum(data[l][k]['cost_usd'] or 0 for k in shared):.0f}" for l in layers) + " |")
+    out.append("")
+    return out
+
+
 def main():
     tasks = {t["id"]: t for t in json.load(open("tasks.json"))}
     out = ["# WindowsAgentArena results", "",
@@ -73,7 +99,12 @@ def main():
            "server changes. WAA's own setup and evaluators score each task (see README.md for the harness and the "
            "rules against tuning to the benchmark). Rounds 1-3 ran each task once, so differences of a few tasks "
            "there are noise; round 4 ran each task twice.", ""]
-    out += two_runs(tasks, "oriel-v12", "cua-r9", "Round 9: oriel v12 vs Cua, two runs each, fresh VMs (current)",
+    out += one_run(tasks, "Round 10: oriel 0.1.3 vs Cua Driver 0.46.1, run 1, on firecracker (current)",
+                   ["oriel-0.1.3-t1", "cua-r10-t1"],
+                   "Set-up as in README.md, \"Round 10 on firecracker\": a new host and Windows image, effort xhigh, "
+                   "Cua Driver 0.46.1 without the same 4 tools, both layers at the same time. Two runs were made, but "
+                   "only run 1 is a fair measurement: in run 2 the model API refused most calls (below).")
+    out += two_runs(tasks, "oriel-v12", "cua-r9", "Round 9: oriel v12 vs Cua, two runs each, fresh VMs",
                     "As round 8. oriel v12: keys types a parenthesis or bracket that no modifier opens as itself "
                     "(=SUM(A1:A3) used to be refused until escaped), and a window that matches nothing lists the open "
                     "windows in the error. Tasks cut short by the account's usage limit or by the Mac losing its "
@@ -102,26 +133,7 @@ def main():
                     "dialogs closed, as WAA's own setup gets by reverting the VM). oriel v6: keys through paced SendInput "
                     "(modifiers no longer dropped) and keys to hung apps.")
     for title, layers, note in ROUNDS:
-        data = {l: load(l) for l in layers}
-        if not all(data.values()):
-            continue
-        shared = sorted(set.intersection(*(set(d) for d in data.values())))
-        out += [f"## {title}", "", note, "", f"{len(shared)} tasks finished by every layer.", ""]
-        out.append("| | " + " | ".join(NAMES[l] for l in layers) + " |")
-        out.append("|---|" + "---|" * len(layers))
-        score = lambda l, ks: sum(data[l][k]["score"] for k in ks)
-        for label, ks in (("All", shared), ("Dev half", [k for k in shared if tasks[k]["split"] == "dev"]),
-                          ("Held-out half", [k for k in shared if tasks[k]["split"] == "holdout"])):
-            out.append(f"| **{label}** ({len(ks)}) | " + " | ".join(f"{score(l, ks):.0f} ({100 * score(l, ks) / max(1, len(ks)):.0f}%)" for l in layers) + " |")
-        by_app = defaultdict(list)
-        for k in shared:
-            by_app[tasks[k]["domain"]].append(k)
-        for app, ks in sorted(by_app.items()):
-            out.append(f"| {app} ({len(ks)}) | " + " | ".join(f"{score(l, ks):.0f}" for l in layers) + " |")
-        out.append("| median turns | " + " | ".join(f"{statistics.median(data[l][k]['turns'] or 50 for k in shared):.0f}" for l in layers) + " |")
-        out.append("| median time per task | " + " | ".join(f"{statistics.median(data[l][k]['wall_s'] for k in shared):.0f} s" for l in layers) + " |")
-        out.append("| cost | " + " | ".join(f"${sum(data[l][k]['cost_usd'] or 0 for k in shared):.0f}" for l in layers) + " |")
-        out.append("")
+        out += one_run(tasks, title, layers, note)
     open("RESULTS.md", "w").write("\n".join(out) + "\n")
     print("\n".join(out))
 

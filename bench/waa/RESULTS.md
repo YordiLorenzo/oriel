@@ -4,18 +4,72 @@ Claude Sonnet 5.5 through Claude Code, the same prompt and a 50-turn limit for e
 
 ## How the layers ran
 
-- **Both layers:** the agent has only the layer's MCP server. `run.py` removes Claude Code's own tools (Bash, Edit, Write, Read, Glob, Grep, WebFetch, WebSearch, Task, NotebookEdit, TodoWrite) with `--disallowedTools`, which takes a tool out of the model's context ([Claude Code CLI reference](https://code.claude.com/docs/en/cli-reference)). The prompt differs in one sentence only, which names the layer's tools (`ORIEL_HINT` and the Cua hint in `run.py`).
+- **Both layers:** the agent has only the layer's MCP server. In rounds 1 to 9, `run.py` removed Claude Code's own tools (Bash, Edit, Write, Read, Glob, Grep, WebFetch, WebSearch, Task, NotebookEdit, TodoWrite) with `--disallowedTools`, which takes a tool out of the model's context ([Claude Code CLI reference](https://code.claude.com/docs/en/cli-reference)). From round 10 on it keeps only ToolSearch, which loads deferred MCP tools (`--tools ToolSearch`). The prompt differs in one sentence only, which names the layer's tools (`ORIEL_HINT` and the Cua hint in `run.py`).
 - **oriel:** every tool, as shipped, with the shell off (its default). The oriel + shell layer in round 3 has it on.
-- **Cua Driver 0.38.0** ([release](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.38.0), published 2026-10-21): the Windows x86_64 binary, its SHA-256 checked against the release's `checksums.txt`, telemetry off and the agent cursor overlay off (`serve --no-overlay`), set up by `vm/cua-provision.ps1`. Its daemon refuses clients from the SSH session, so its own stdio MCP proxy runs in the desktop session behind a loopback byte relay (`bench/headtohead/mcp-relay.ps1`).
+- **Cua Driver 0.38.0** ([release](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.38.0), published 2026-10-21) in rounds 1 to 9, 0.46.1 in round 10: the Windows x86_64 binary, its SHA-256 checked against the release's `checksums.txt`, telemetry off and the agent cursor overlay off (`serve --no-overlay`), set up by `vm/cua-provision.ps1`. Its daemon refuses clients from the SSH session, so its own stdio MCP proxy runs in the desktop session behind a loopback byte relay (`bench/headtohead/mcp-relay.ps1`).
 - **Cua Driver's hidden tools:** 63 tools on Windows ([tool list at 0.38.0](https://github.com/trycua/cua/blob/cua-driver-rs-v0.38.0/.github/scripts/cua-driver-mcp-compat/expected-tools.json)), of which the agent had 59. `run.py` hides four (descriptions from [Cua's 0.38.0 docs](https://github.com/trycua/cua/blob/cua-driver-rs-v0.38.0/docs/content/docs/cua-driver/reference/mcp-tools/batch-recording-and-settings.mdx)):
   - `run_script` runs a JavaScript program over Cua Driver's own tools in one call (loops, branches, retries), in a sandbox with no file, network or process access. It is on by default. It was hidden because oriel has no script tool, so scripting was kept out of the comparison; scripting was measured only for oriel, as oriel + shell in round 3. Cua Driver with `run_script` was not measured in any round.
   - `install_ffmpeg` and `install_extension` install software in the test VM.
   - `check_for_update` checks GitHub for a newer driver; no task needs it, and the version under test stays fixed.
-  - All four were hidden in every round.
-- **Newer Cua Driver:** on 2026-11-10 the newest release is [0.46.1](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.46.1), published that day. GitHub labels both releases "Pre-release"; Cua's release notes say that label only stops the repository's "Latest" pointer from switching between its separate products, and a plain version number is a stable release. Versions after 0.38.0 were not measured.
+  - All four were hidden in every round. In round 10, every Cua Driver trace of both runs lists 59 Cua Driver tools and none of the four.
+- **Newer Cua Driver:** on 2026-11-10 the newest release is [0.46.1](https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.46.1), published that day. GitHub labels both releases "Pre-release"; Cua's release notes say that label only stops the repository's "Latest" pointer from switching between its separate products, and a plain version number is a stable release. Round 10 ran 0.46.1; versions between the two were not measured.
 - **Cost:** each row's `cost_usd` is the `total_cost_usd` that Claude Code reports. Claude Code computes it from the token counts with its list-price table, so it is an estimate, not a bill ([Claude Code docs](https://code.claude.com/docs/en/agent-sdk/cost-tracking)).
 
-## Round 9: oriel v12 vs Cua, two runs each, fresh VMs (current)
+## Round 10: oriel 0.1.3 vs Cua Driver 0.46.1, run 1, on firecracker (current)
+
+Set-up as in README.md, "Round 10 on firecracker": a new host and Windows image, effort xhigh, Cua Driver 0.46.1 without the same 4 tools, both layers at the same time. Two runs were made, but only run 1 is a fair measurement: in run 2 the model API refused most calls (below).
+
+151 tasks finished by every layer.
+
+| | oriel 0.1.3, run 1 | Cua Driver 0.46.1, run 1 |
+|---|---|---|
+| **All** (151) | 110 (73%) | 113 (75%) |
+| **Dev half** (84) | 59 (70%) | 64 (76%) |
+| **Held-out half** (67) | 51 (76%) | 49 (73%) |
+| chrome (16) | 10 | 10 |
+| clock (4) | 3 | 3 |
+| file_explorer (19) | 16 | 17 |
+| libreoffice_calc (24) | 13 | 13 |
+| libreoffice_writer (19) | 15 | 14 |
+| microsoft_paint (3) | 3 | 3 |
+| msedge (13) | 7 | 10 |
+| notepad (1) | 1 | 1 |
+| settings (5) | 5 | 5 |
+| vlc (20) | 16 | 15 |
+| vs_code (24) | 18 | 19 |
+| windows_calc (3) | 3 | 3 |
+| median turns | 24 | 29 |
+| median time per task | 49 s | 68 s |
+| cost | $22 | $50 |
+
+### Round 10, run 2: not a fair run
+
+In run 2 the model API answered `API Error: Request rejected (429)` to the agents of both layers between 02:31 and 02:47 on 13 Nov 2026 (the traces' write times). The model never ran on those tasks, but `run.py` scored them and wrote a row: it leaves out only the account's "You've hit your" limit reply. `grep -c '"result": "API Error: Request rejected (429)'` counts 85 such rows of oriel's 153 and 95 of Cua Driver's 152; run 1 has none. The run 2 files are kept as they are (`results-oriel-0.1.3-t2.jsonl`, `results-cua-r10-t2.jsonl`), and the figures here use run 1 only, as round 7 did.
+
+### How sure the round 10 differences are
+
+`python3 stats.py --oriel results-oriel-0.1.3-t1.jsonl --cua results-cua-r10-t1.jsonl` (seed 1, 10,000 draws), the same method as round 9 with one run per layer. It compares the 151 tasks that both run 1 files scored: oriel's has no row for one Chrome task (its evaluator returned HTTP 500, as in round 9) and one VLC task (its setup failed); Cua Driver's has none for the same Chrome task and one Notepad task (its scoring failed). Negative means oriel is lower.
+
+| | oriel, all | Cua Driver, all | oriel, feasible | Cua Driver, feasible |
+|---|---|---|---|---|
+| tasks completed | 109.8 | 112.7 | 101.8 | 105.7 |
+| time per task, median (s) | 49 | 68 | 44 | 62 |
+| time per task, mean (s) | 61 | 84 | 56 | 78 |
+| model cost per run ($) | 21.87 | 50.10 | 18.94 | 44.28 |
+| turns per task, mean | 28.8 | 32.9 | 27.7 | 32.2 |
+
+| oriel minus Cua Driver | All 151 tasks | 95% interval | 138 feasible tasks | 95% interval |
+|---|---|---|---|---|
+| tasks completed | -2.9 | -10.6 to 5.0 | -3.9 | -11.5 to 3.1 |
+| completion rate | -1.9 points | -7.0 to 3.3 | -2.8 points | -8.4 to 2.2 |
+| time per task, median | -20 s (-29%) | -42% to -14% | -18 s (-29%) | -43% to -14% |
+| time per task, mean | -23 s (-27%) | -36% to -18% | -22 s (-28%) | -35% to -19% |
+| model cost per run | -$28.23 (-56%) | -60% to -53% | -$25.34 (-57%) | -61% to -53% |
+| turns per task, mean | -4.1 (-13%) | -19% to -5% | -4.5 (-14%) | -21% to -6% |
+
+The completion interval reaches zero in both columns, so round 10 shows no completion difference between the layers. The time, cost and turns intervals do not reach zero. With one run per layer there is no run-to-run table. Host load: both layers' run 1 rows ran at a mean 1-minute load of 52 (52.2 and 51.9) and a PSU output of 454 and 453 W (the last table `stats.py` prints), so background load hit both alike.
+
+## Round 9: oriel v12 vs Cua, two runs each, fresh VMs
 
 As round 8. oriel v12: keys types a parenthesis or bracket that no modifier opens as itself (=SUM(A1:A3) used to be refused until escaped), and a window that matches nothing lists the open windows in the error. Tasks cut short by the account's usage limit or by the Mac losing its connection to the VMs were rerun; the Chrome task whose evaluator returns HTTP 500 is left out. Scores are the mean of the two runs.
 

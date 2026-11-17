@@ -332,7 +332,8 @@ the MCP server was swapped. Two runs each, averaged over the 153 tasks scored in
 - **Cua Driver's version and tools:** round 9 ran Cua Driver 0.38.0 without 4 of its 63 tools. `run_script` runs
   JavaScript over Cua Driver's own tools in a sandbox with no file, network or process access; it was hidden because
   oriel has no script tool. `install_ffmpeg` and `install_extension` install software, and `check_for_update` checks
-  GitHub for a newer driver. Cua Driver 0.46.1, the newest on 10 Nov 2026, has not run on WindowsAgentArena.
+  GitHub for a newer driver. Round 10 (13 Nov 2026) ran Cua Driver 0.46.1 without the same 4 tools
+  ([round 10](docs/benchmarks.md#round-10)).
 - **Cost** is the figure Claude Code reported, worked out from its list prices: an estimate, not a bill.
 
 Every run, the 95% intervals and the earlier rounds: [bench/waa/RESULTS.md](bench/waa/RESULTS.md). Before you quote

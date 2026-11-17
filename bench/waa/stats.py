@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Bootstrap 95% confidence intervals for round 9: oriel minus Cua Driver in completion, time, cost and turns.
+"""Bootstrap 95% confidence intervals: oriel minus Cua Driver in completion, time, cost and turns (round 9 by default).
 
-    python3 stats.py [--seed 1] [--reps 10000] [--oriel RUN1 RUN2] [--cua RUN1 RUN2]
+    python3 stats.py [--seed 1] [--reps 10000] [--oriel RUN1 [RUN2]] [--cua RUN1 [RUN2]]
 
-Only tasks scored in all four runs are compared. A task's completion is the mean of its two runs, as in RESULTS.md.
+Only tasks scored in every run given are compared. A task's completion is the mean of its runs, as in RESULTS.md.
 Each resample draws that many tasks with replacement and keeps both runs of both layers for each task drawn, so the
 pairing by task stays. The interval is the 2.5th to 97.5th percentile of the resampled differences. The feasible
-columns leave out the tasks that tasks.json marks infeasible. The third table compares each layer's run 2 with its run 1
-in the same way. RESULTS.md shows the second and third tables this prints.
+columns leave out the tasks that tasks.json marks infeasible. With two runs per layer, the third table compares each
+layer's run 2 with its run 1 in the same way. RESULTS.md shows the second and third tables this prints.
 """
 import argparse
 import json
@@ -92,7 +92,7 @@ def run_to_run_table(o, c):
 
 def levels_table(everything, feasible):
     out = ["| | oriel, all | Cua Driver, all | oriel, feasible | Cua Driver, feasible |", "|---|---|---|---|---|"]
-    names = {"completed": ("tasks completed (mean of 2 runs)", "{:.1f}"), "median_s": ("time per task, median (s)", "{:.0f}"),
+    names = {"completed": ("tasks completed (mean of the runs)", "{:.1f}"), "median_s": ("time per task, median (s)", "{:.0f}"),
              "mean_s": ("time per task, mean (s)", "{:.0f}"), "cost_run": ("model cost per run ($)", "{:.2f}"),
              "turns": ("turns per task, mean", "{:.1f}")}
     for k, (name, f) in names.items():
@@ -112,7 +112,7 @@ def difference_table(everything, feasible):
         unit = {"median_s": "{:.0f} s", "mean_s": "{:.0f} s", "cost_run": "${:.2f}", "turns": "{:.1f}"}[k]
         value = ("-" if d < 0 else "") + unit.format(abs(d))
         return [(f"{value} ({p:.0f}%)", f"{plo:.0f}% to {phi:.0f}%")]
-    names = {"completed": ["tasks completed (mean of 2 runs)", "completion rate"], "median_s": ["time per task, median"],
+    names = {"completed": ["tasks completed (mean of the runs)", "completion rate"], "median_s": ["time per task, median"],
              "mean_s": ["time per task, mean"], "cost_run": ["model cost per run"], "turns": ["turns per task, mean"]}
     out = [f"| oriel minus Cua Driver | All {everything['n']} tasks | 95% interval | {feasible['n']} feasible tasks | 95% interval |",
            "|---|---|---|---|---|"]
@@ -139,18 +139,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--reps", type=int, default=10000)
-    ap.add_argument("--oriel", nargs=2, default=ORIEL)
-    ap.add_argument("--cua", nargs=2, default=CUA)
+    ap.add_argument("--oriel", nargs="+", default=ORIEL)
+    ap.add_argument("--cua", nargs="+", default=CUA)
     args = ap.parse_args()
     total, everything, feasible = compare(args.oriel, args.cua, args.reps, args.seed)
     print(f"oriel: {' + '.join(args.oriel)}")
     print(f"Cua Driver: {' + '.join(args.cua)}")
-    print(f"{everything['n']} of {total} tasks compared (scored in all four runs), {feasible['n']} of them feasible. "
+    print(f"{everything['n']} of {total} tasks compared (scored in every run given), {feasible['n']} of them feasible. "
           f"Bootstrap over tasks, {args.reps} resamples, seed {args.seed}.\n")
     print("\n".join(levels_table(everything, feasible)) + "\n")
     print("\n".join(difference_table(everything, feasible)) + "\n")
-    print("\n".join(run_to_run_table(*run_to_run(args.oriel, args.cua, args.reps, args.seed))))
-    print("\n" + "\n".join(host_table(args.oriel, args.cua)))
+    if len(args.oriel) == len(args.cua) == 2:
+        print("\n".join(run_to_run_table(*run_to_run(args.oriel, args.cua, args.reps, args.seed))) + "\n")
+    print("\n".join(host_table(args.oriel, args.cua)))
 
 
 if __name__ == "__main__":
